@@ -4,14 +4,19 @@ Parameters=
 ShortcutKey=
 SeparateMemorySpace=No
 Run=Normal Window
-FileGroup=
-Replace=Yes
 IconIndex=
+Replace=Yes
+FileGroup=
 StartIn=
-InternetShortcut=No
 IconFile=
-Comments=
+InternetShortcut=No
 DisplayText=Excel Example
+Comments=
+
+[Folder4]
+Type=Common
+Comments=
+DisplayText=FOLDER_NAME
 
 [Shortcut1]
 Target=<svTarget1>\gm05programming manual.pdf
@@ -19,18 +24,13 @@ Parameters=
 ShortcutKey=
 SeparateMemorySpace=No
 Run=Normal Window
-FileGroup=
-Replace=Yes
 IconIndex=
+Replace=Yes
+FileGroup=
 StartIn=
-InternetShortcut=No
 IconFile=
-Comments=
+InternetShortcut=No
 DisplayText=GM0 Programming reference
-
-[Folder4]
-Type=Common
-DisplayText=FOLDER_NAME
 Comments=
 
 [Shortcut2]
@@ -39,14 +39,14 @@ Parameters=
 ShortcutKey=
 SeparateMemorySpace=No
 Run=Normal Window
-FileGroup=
-Replace=Yes
 IconIndex=
+Replace=Yes
+FileGroup=
 StartIn=
-InternetShortcut=No
 IconFile=
-Comments=
+InternetShortcut=No
 DisplayText=Dll Test Application
+Comments=
 
 [Shortcut3]
 Target=<svTarget1>\GM0Example.exe
@@ -54,14 +54,14 @@ Parameters=
 ShortcutKey=
 SeparateMemorySpace=No
 Run=Normal Window
-FileGroup=
-Replace=Yes
 IconIndex=
+Replace=Yes
+FileGroup=
 StartIn=
-InternetShortcut=No
 IconFile=
-Comments=
+InternetShortcut=No
 DisplayText=VB Example Application
+Comments=
 
 [Shortcut4]
 Target=<svTarget1>
@@ -69,14 +69,14 @@ Parameters=
 ShortcutKey=
 SeparateMemorySpace=No
 Run=Normal Window
-FileGroup=
-Replace=Yes
 IconIndex=
+Replace=Yes
+FileGroup=
 StartIn=
-InternetShortcut=No
 IconFile=
-Comments=
+InternetShortcut=No
 DisplayText=Source Code
+Comments=
 
 [Shortcut5]
 Target=<svTarget1>\labview\gm0.vi
@@ -84,24 +84,24 @@ Parameters=
 ShortcutKey=
 SeparateMemorySpace=No
 Run=Normal Window
-FileGroup=
-Replace=Yes
 IconIndex=
+Replace=Yes
+FileGroup=
 StartIn=
-InternetShortcut=No
 IconFile=
-Comments=
+InternetShortcut=No
 DisplayText=Labview VI
+Comments=
 
 [Data]
-Shortcut0=Folder4\New Shortcut-3
 Folder3=<FOLDER_STARTUP>
-Shortcut1=Folder4\New Shortcut-6
+Shortcut0=Folder4\New Shortcut-3
 Folder4=Folder2\New Folder-1
-Shortcut2=Folder4\New Shortcut-7
+Shortcut1=Folder4\New Shortcut-6
 Group0=Main
-Shortcut3=Folder4\New Shortcut-4
+Shortcut2=Folder4\New Shortcut-7
 Group1=Startup
+Shortcut3=Folder4\New Shortcut-4
 Shortcut4=Folder4\New Shortcut-5
 Shortcut5=Folder4\New Shortcut-8
 Folder0=<FOLDER_DESKTOP>

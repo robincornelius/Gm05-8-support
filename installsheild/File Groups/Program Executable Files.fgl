@@ -1,6 +1,6 @@
 [TopDir]
-file0=M:\dlls\gm0\gm0\dlltest\Release\dlltest.exe
-file1=M:\dlls\gm0\VBGM0\GM0Example.exe
+file0=C:\gm0cvs\gm0lib\consoleexample\Release\consoleexample.exe
+file1=C:\gm0cvs\gm0lib\apps\VBExample1\GM0Example.exe
 
 [General]
 Type=FILELIST

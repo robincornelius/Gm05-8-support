@@ -3,76 +3,28 @@
 <pre>
 <h1>Build Log</h1>
 <h3>
---------------------Configuration: gm0 - Win32 Release--------------------
-</h3>
-<h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP11E.tmp" with contents
-[
-/nologo /Gz /MD /W3 /GX /Od /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "GM0_EXPORTS" /D "_WIN32_DCOM" /Fo"Release/" /Fd"Release/" /FD /c 
-"M:\dlls\gm0\gm0\gm0_comms.c"
-]
-Creating command line "cl.exe @C:\DOCUME~1\robin\LOCALS~1\Temp\RSP11E.tmp" 
-Creating temporary file "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP11F.tmp" with contents
-[
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:no /pdb:"Release/gm0.pdb" /machine:I386 /out:"Release/gm0.dll" /implib:"Release/gm0.lib" 
-.\Release\gm0.obj
-.\Release\gm0_comms.obj
-.\Release\linuxcomms.obj
-.\Release\NTcomms.obj
-.\Release\resource.res
-]
-Creating command line "link.exe @C:\DOCUME~1\robin\LOCALS~1\Temp\RSP11F.tmp"
-<h3>Output Window</h3>
-Compiling...
-gm0_comms.c
-M:\dlls\gm0\gm0\gm0_comms.c(74) : warning C4047: 'function' : 'unsigned int ' differs in levels of indirection from 'void *'
-M:\dlls\gm0\gm0\gm0_comms.c(74) : warning C4024: 'MessageBoxA' : different types for formal and actual parameter 4
-M:\dlls\gm0\gm0\gm0_comms.c(83) : warning C4047: 'function' : 'unsigned int ' differs in levels of indirection from 'void *'
-M:\dlls\gm0\gm0\gm0_comms.c(83) : warning C4024: 'MessageBoxA' : different types for formal and actual parameter 4
-M:\dlls\gm0\gm0\gm0_comms.c(355) : warning C4047: 'function' : 'unsigned int ' differs in levels of indirection from 'void *'
-M:\dlls\gm0\gm0\gm0_comms.c(355) : warning C4024: 'MessageBoxA' : different types for formal and actual parameter 4
-M:\dlls\gm0\gm0\gm0_comms.c(404) : warning C4553: '==' : operator has no effect; did you intend '='?
-M:\dlls\gm0\gm0\gm0_comms.c(341) : warning C4101: 'msg' : unreferenced local variable
-M:\dlls\gm0\gm0\gm0_comms.c(480) : warning C4047: 'function' : 'unsigned int ' differs in levels of indirection from 'void *'
-M:\dlls\gm0\gm0\gm0_comms.c(480) : warning C4024: '_beginthread' : different types for formal and actual parameter 2
-M:\dlls\gm0\gm0\gm0_comms.c(574) : warning C4047: 'function' : 'unsigned int ' differs in levels of indirection from 'void *'
-M:\dlls\gm0\gm0\gm0_comms.c(574) : warning C4024: 'MessageBoxA' : different types for formal and actual parameter 4
-M:\dlls\gm0\gm0\gm0_comms.c(652) : warning C4047: 'function' : 'unsigned int ' differs in levels of indirection from 'void *'
-M:\dlls\gm0\gm0\gm0_comms.c(652) : warning C4024: 'MessageBoxA' : different types for formal and actual parameter 4
-Linking...
-   Creating library Release/gm0.lib and object Release/gm0.exp
-Creating temporary file "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP123.bat" with contents
-[
-@echo off
-echo Copying dll to windows sys dir
-copy .\Release\gm0.dll c:\winnt\system32\ /y
-]
-Creating command line "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP123.bat"
-
-Copying dll to windows sys dir
-        1 file(s) copied.
-<h3>
 --------------------Configuration: GMControl2 - Win32 Release--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP124.tmp" with contents
+Creating temporary file "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP269.tmp" with contents
 [
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ../release/gm0.lib /nologo /subsystem:windows /dll /incremental:yes /pdb:"Release/GMControl2.pdb" /debug /machine:I386 /def:".\GMControl2.def" /out:".\release\GMControl2.dll" /implib:"Release/GMControl2.lib" /pdbtype:sept 
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ../lib/release/gm0.lib /nologo /subsystem:windows /dll /incremental:yes /pdb:"Release/GMControl2.pdb" /debug /machine:I386 /def:".\GMControl2.def" /out:".\release\GMControl2.dll" /implib:"Release/GMControl2.lib" /pdbtype:sept 
 .\Release\GM0Control2.obj
 .\Release\GMControl2.obj
 .\Release\StdAfx.obj
 .\Release\GMControl2.res
-\dlls\gm0\gm0\Release\gm0.lib
+\gm0cvs\gm0lib\lib\Release\gm0.lib
 ]
-Creating command line "link.exe @C:\DOCUME~1\robin\LOCALS~1\Temp\RSP124.tmp"
-Creating temporary file "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP125.bat" with contents
+Creating command line "link.exe @C:\DOCUME~1\robin\LOCALS~1\Temp\RSP269.tmp"
+Creating temporary file "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP26A.bat" with contents
 [
 @echo off
 regsvr32 /s /c ".\release\GMControl2.dll"
 echo regsvr32 exec. time > ".\Release\regsvr32.trg"
 ]
-Creating command line "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP125.bat"
+Creating command line "C:\DOCUME~1\robin\LOCALS~1\Temp\RSP26A.bat"
 Linking...
+LINK : LNK6004: .\release\GMControl2.dll not found or not built by the last incremental link; performing full link
    Creating library Release/GMControl2.lib and object Release/GMControl2.exp
 <h3>Output Window</h3>
 Performing registration
@@ -80,7 +32,7 @@ Performing registration
 
 
 <h3>Results</h3>
-GMControl2.dll - 0 error(s), 14 warning(s)
+GMControl2.dll - 0 error(s), 0 warning(s)
 </pre>
 </body>
 </html>

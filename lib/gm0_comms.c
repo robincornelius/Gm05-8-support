@@ -286,6 +286,8 @@ void processgmcomms(HANDLEGM hand)
 	*(pGMS[hand]->pvalue+4)=*(pGMS[hand]->pIncomming+(pGMS[hand]->index-(12+offset))+4);
 	*(pGMS[hand]->pvalue+5)=*(pGMS[hand]->pIncomming+(pGMS[hand]->index-(12+offset))+5);
 	*(pGMS[hand]->pvalue+6)=*(pGMS[hand]->pIncomming+(pGMS[hand]->index-(12+offset))+6);
+	*(pGMS[hand]->pvalue+7)=0;
+	
 
 	*(pGMS[hand]->prange)=*(pGMS[hand]->pIncomming+(pGMS[hand]->index-(5+offset)));
 
@@ -325,7 +327,9 @@ void processgmcomms(HANDLEGM hand)
 	pGMS[hand]->store.time.min=(unsigned char)strtol(pGMS[hand]->ptime_min,&stop,10);
 	pGMS[hand]->store.time.hour=(unsigned char)strtol(pGMS[hand]->ptime_hour,&stop,10);
 
-
+	
+//	printf("RT: %lf \n",pGMS[hand]->store.value);
+	
 	pGMS[hand]->samplecount++;
 	pGMS[hand]->index=0; // reset the readthread buffer to zero
 

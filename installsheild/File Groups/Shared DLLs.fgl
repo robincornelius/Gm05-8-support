@@ -1,7 +1,7 @@
 [TopDir]
 file0=M:\dlls\gm0\labview\gmXcontrol.ocx
-file1=M:\dlls\gm0\gm0\HMI_timer\Release\HMI_timer.dll
-file2=M:\dlls\gm0\gm0\GMControl2\Release\GMControl2.dll
+file1=C:\gm0cvs\gm0lib\GM0Control\Release\GMControl2.dll
+file2=C:\gm0cvs\gm0lib\HMI_Timer\Release\HMI_timer.dll
 
 [General]
 Type=FILELIST

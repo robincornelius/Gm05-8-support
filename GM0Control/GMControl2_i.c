@@ -5,9 +5,9 @@
 
 
 /* File created by MIDL compiler version 5.01.0164 */
-/* at Thu Aug 26 16:31:32 2004
+/* at Thu Sep 16 11:38:16 2004
  */
-/* Compiler settings for M:\dlls\gm0\gm0\GMControl2\GMControl2.idl:
+/* Compiler settings for C:\gm0cvs\gm0lib\GM0Control\GMControl2.idl:
     Oicf (OptLev=i2), W1, Zp8, env=Win32, ms_ext, c_ext
     error checks: allocation ref bounds_check enum stub_data 
 */

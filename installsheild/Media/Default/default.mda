@@ -1,51 +1,51 @@
-[Platforms]
-key0=0000000000000010
-key1=0000000000001000
-key2=0000000000010000
-count=3
-
-[Filter]
-LANGUAGEDEFAULT=0009
-
-[GeneralInfo]
-MEDIATYPE=CDROM
-DATAASFILES=No
-BUILDTYPE=Full
-BuildLocation=M:\dlls\gm0\GM0 Install Sheild\Media\Default
-BREAKBYTOPCOMPONENT=No
-REFRESH_DATAFILES=Yes
-REFRESH_SPLASH=Yes
-BUILDSIZE=
-Name=Default
-REVIEWREPORT=No
-REFRESH_IFILES=Yes
-PASSWORD=
-
-[SetupInfo]
-ENABLELANGDLG=Yes
-ALTERNATEISDELETENAME=
-APPLICATIONNAME=Hirst Gaussmeter Drivers
-HIDESTATUSBAR=No
-WIN32SENABLE=No
-
-[InstallDateInfo]
-TYPE=BUILDTIME
-TIME=
-DATE=
-
-[FileInstallDateInfo]
-TYPE=ORIGINAL
-TIME=
-DATE=
-
-[Languages]
-key0=0009
-count=1
-
-[TagFileInfo]
-PRODUCTCATEGORY=Development Tool
-APPLICATIONNAME=Hirst Gaussmeter Drivers
-COMPANYNAME=Hirst Magnetic Instruments Ltd
-VERSION=2.01
-INFO=
-
+[Platforms]
+key0=0000000000000010
+key1=0000000000001000
+key2=0000000000010000
+count=3
+
+[Filter]
+LANGUAGEDEFAULT=0009
+
+[GeneralInfo]
+MEDIATYPE=CDROM
+DATAASFILES=No
+BUILDTYPE=Full
+BuildLocation=M:\dlls\gm0\GM0 Install Sheild\Media\Default
+BREAKBYTOPCOMPONENT=No
+REFRESH_DATAFILES=Yes
+REFRESH_SPLASH=Yes
+BUILDSIZE=
+Name=Default
+REVIEWREPORT=No
+REFRESH_IFILES=Yes
+PASSWORD=
+
+[SetupInfo]
+ENABLELANGDLG=Yes
+ALTERNATEISDELETENAME=
+APPLICATIONNAME=Hirst Gaussmeter Drivers
+HIDESTATUSBAR=No
+WIN32SENABLE=No
+
+[InstallDateInfo]
+TYPE=BUILDTIME
+TIME=
+DATE=
+
+[FileInstallDateInfo]
+TYPE=ORIGINAL
+TIME=
+DATE=
+
+[Languages]
+key0=0009
+count=1
+
+[TagFileInfo]
+PRODUCTCATEGORY=Development Tool
+APPLICATIONNAME=Hirst Gaussmeter Drivers
+COMPANYNAME=Hirst Magnetic Instruments Ltd
+VERSION=2.01
+INFO=
+
