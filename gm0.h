@@ -127,10 +127,10 @@ unsigned char year;
 
 // A struct for dealing with data in the registers
 struct gm_store{
-	struct gm_time time;
-	unsigned char range;
-	unsigned char mode;
-	unsigned char units;
+ struct gm_time time;
+ unsigned char range;
+ unsigned char mode;
+ unsigned char units;
 double value;
 };
 
@@ -169,10 +169,14 @@ GM0_API struct gm_time LIBTYPE gm0_gettime BKET (HANDLEGM hand);
 GM0_API struct gm_store LIBTYPE gm0_getstore BKET (HANDLEGM hand,int pos);
 
 // Callback functions
-GM0_API int LIBTYPE gm0_setcallback BKET (HANDLEGM hand,	void (__stdcall *)(int hand,struct gm_store store));
-GM0_API int LIBTYPE gm0_setconnectcallback BKET (HANDLEGM hand,void (__stdcall * pCallback)(void));
-GM0_API int LIBTYPE gm0_setdisconnectcallback BKET (HANDLEGM hand,void (__stdcall * pCallback)(HANDLEGM hand));
-GM0_API int LIBTYPE gm0_setnullcallback BKET (HANDLEGM hand,void (__stdcall * pCallback)(void));
+GM0_API int LIBTYPE gm0_setcallback BKET (HANDLEGM hand, void (__stdcall *)(int
+hand,struct gm_store store));
+GM0_API int LIBTYPE gm0_setconnectcallback BKET (HANDLEGM hand,void (__stdcall
+* pCallback)(void));
+GM0_API int LIBTYPE gm0_setdisconnectcallback BKET (HANDLEGM hand,void
+(__stdcall * pCallback)(HANDLEGM hand));
+GM0_API int LIBTYPE gm0_setnullcallback BKET (HANDLEGM hand,void (__stdcall *
+pCallback)(void));
 
 // Advanced
 GM0_API int  LIBTYPE gm0_simkey BKET (HANDLEGM,char keycode);
