@@ -1,0 +1,30 @@
+[Version]
+Version=1.0.0.0
+
+[GM0Example.exe <0009>]
+Dest=$(AppPath)
+Date=24/03/2003
+Time=15:58
+Version=1.0.0.0
+CABFilename=GM0Example.CAB
+CABINFFile=GM0Example.INF
+Uses1=msvbvm60.dll
+Uses2=oleaut32.dll
+Uses3=olepro32.dll
+Uses4=asycfilt.dll
+Uses5=stdole2.tlb
+Uses6=COMCAT.DLL
+Uses7=FM20.DLL
+Uses8=GMControl2.dll
+
+[FM20.DLL <0009>]
+Dest=$(WinSysPath)
+Date=28/10/1999
+Time=00:49
+Version=2.1.6927.1
+
+[GMControl2.dll <0009>]
+Dest=$(WinSysPath)
+Date=18/03/2003
+Time=11:06
+Version=1.0.0.1

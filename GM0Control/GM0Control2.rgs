@@ -1,0 +1,34 @@
+HKCR
+{
+	GMControl2.GM0Control2.1 = s 'GM0Control2 Class'
+	{
+		CLSID = s '{CD25C73B-B31D-41A5-B792-439006542309}'
+	}
+	GMControl2.GM0Control2 = s 'GM0Control2 Class'
+	{
+		CLSID = s '{CD25C73B-B31D-41A5-B792-439006542309}'
+		CurVer = s 'GMControl2.GM0Control2.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {CD25C73B-B31D-41A5-B792-439006542309} = s 'GM0Control2 Class'
+		{
+			ProgID = s 'GMControl2.GM0Control2.1'
+			VersionIndependentProgID = s 'GMControl2.GM0Control2'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			ForceRemove 'Control'
+			ForceRemove 'Insertable'
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 101'
+			'MiscStatus' = s '0'
+			{
+			    '1' = s '132497'
+			}
+			'TypeLib' = s '{427A7646-A9FD-4CB6-8F90-5ABC8B67866A}'
+			'Version' = s '1.0'
+		}
+	}
+}

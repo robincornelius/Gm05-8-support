@@ -1,0 +1,59 @@
+// HMI_timer.idl : IDL source for HMI_timer.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (HMI_timer.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+#include "olectl.h"
+	
+
+	[
+		object,
+		uuid(E52981AC-DF62-11D6-98FA-005004B84D6A),
+		dual,
+		helpstring("IHirstTimer Interface"),
+		pointer_default(unique)
+	]
+	interface IHirstTimer : IDispatch
+	{
+		[propget, id(1), helpstring("property interval")] HRESULT interval([out, retval] short *pVal);
+		[propput, id(1), helpstring("property interval")] HRESULT interval([in] short newVal);
+		[propget, id(2), helpstring("property active")] HRESULT active([out, retval] BOOL *pVal);
+		[propput, id(2), helpstring("property active")] HRESULT active([in] BOOL newVal);
+		[id(3), helpstring("method StartTimer")] HRESULT StartTimer();
+		[id(4), helpstring("method StopTimer")] HRESULT StopTimer();
+	};
+
+[
+	uuid(E52981A0-DF62-11D6-98FA-005004B84D6A),
+	version(1.0),
+	helpstring("HMI_timer 1.0 Type Library")
+]
+library HMI_TIMERLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(E52981AE-DF62-11D6-98FA-005004B84D6A),
+		helpstring("_IHirstTimerEvents Interface")
+	]
+	dispinterface _IHirstTimerEvents
+	{
+		properties:
+		methods:
+		[id(1), helpstring("method TimerEvent")] HRESULT TimerEvent();
+	};
+
+	[
+		uuid(E52981AD-DF62-11D6-98FA-005004B84D6A),
+		helpstring("HirstTimer Class")
+	]
+	coclass HirstTimer
+	{
+		[default] interface IHirstTimer;
+		[default, source] dispinterface _IHirstTimerEvents;
+	};
+};

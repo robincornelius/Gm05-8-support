@@ -1,0 +1,100 @@
+// GMControl2.idl : IDL source for GMControl2.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (GMControl2.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+#include "olectl.h"
+	
+
+	[
+		object,
+		uuid(AD946CAF-9C38-407C-8AD4-569A777FD721),
+		dual,
+		helpstring("IGM0Control2 Interface"),
+		pointer_default(unique)
+	]
+	interface IGM0Control2 : IDispatch
+	{
+		[propget, id(1), helpstring("property ComPort")] HRESULT ComPort([out, retval] short *pVal);
+		[propput, id(1), helpstring("property ComPort")] HRESULT ComPort([in] short newVal);
+		[propget, id(2), helpstring("property lastvalue")] HRESULT lastvalue([out, retval] float *pVal);
+		[propget, id(3), helpstring("property lastmode")] HRESULT lastmode([out, retval] short *pVal);
+		[propget, id(4), helpstring("property lastunits")] HRESULT lastunits([out, retval] short *pVal);
+		[propget, id(5), helpstring("property store_value")] HRESULT store_value([out, retval] double *pVal);
+		[propget, id(6), helpstring("property store_range")] HRESULT store_range([out, retval] short *pVal);
+		[propget, id(7), helpstring("property store_units")] HRESULT store_units([out, retval] short *pVal);
+		[propget, id(8), helpstring("property store_mode")] HRESULT store_mode([out, retval] short *pVal);
+		[propget, id(9), helpstring("property year")] HRESULT year([out, retval] short *pVal);
+		[propput, id(9), helpstring("property year")] HRESULT year([in] short newVal);
+		[propget, id(10), helpstring("property month")] HRESULT month([out, retval] short *pVal);
+		[propput, id(10), helpstring("property month")] HRESULT month([in] short newVal);
+		[propget, id(11), helpstring("property day")] HRESULT day([out, retval] short *pVal);
+		[propput, id(11), helpstring("property day")] HRESULT day([in] short newVal);
+		[propget, id(12), helpstring("property hour")] HRESULT hour([out, retval] short *pVal);
+		[propput, id(12), helpstring("property hour")] HRESULT hour([in] short newVal);
+		[propget, id(13), helpstring("property min")] HRESULT min([out, retval] short *pVal);
+		[propput, id(13), helpstring("property min")] HRESULT min([in] short newVal);
+		[propget, id(14), helpstring("property sec")] HRESULT sec([out, retval] short *pVal);
+		[propput, id(14), helpstring("property sec")] HRESULT sec([in] short newVal);
+		[id(15), helpstring("method AttemptConnect")] HRESULT AttemptConnect();
+		[id(16), helpstring("method SetMode")] HRESULT SetMode(short mode);
+		[id(17), helpstring("method SetRange")] HRESULT SetRange(short range);
+		[id(18), helpstring("method SetUnits")] HRESULT SetUnits(short units);
+		[id(19), helpstring("method SetLanguage")] HRESULT SetLanguage(short lang);
+		[id(20), helpstring("method DoAutoZero")] HRESULT DoAutoZero();
+		[id(21), helpstring("method DoNull")] HRESULT DoNull();
+		[id(22), helpstring("method GetRegister")] HRESULT GetRegister(short reg);
+		[id(23), helpstring("method ProbeInSheild")] HRESULT ProbeInSheild();
+		[id(24), helpstring("method Initalise")] HRESULT Initalise();
+		[id(25), helpstring("method close")] HRESULT close();
+		[id(26), helpstring("method settime")] HRESULT settime();
+		[id(27), helpstring("method gettime")] HRESULT gettime();
+		[propget, id(28), helpstring("property lastrange")] HRESULT lastrange([out, retval] short *pVal);
+		[propget, id(29), helpstring("property gmserial")] HRESULT gmserial([out, retval] short *pVal);
+		[propget, id(30), helpstring("property probeserial")] HRESULT probeserial([out, retval] short *pVal);
+		[id(31), helpstring("method startcmdseq")] HRESULT startcmdseq();
+		[id(32), helpstring("method endcmdseq")] HRESULT endcmdseq();
+		[propget, id(33), helpstring("property sendtimeinfo")] HRESULT sendtimeinfo([out, retval] BOOL *pVal);
+		[propput, id(33), helpstring("property sendtimeinfo")] HRESULT sendtimeinfo([in] BOOL newVal);
+	};
+
+[
+	uuid(427A7646-A9FD-4CB6-8F90-5ABC8B67866A),
+	version(1.0),
+	helpstring("GMControl2 1.0 Type Library")
+]
+library GMCONTROL2Lib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(9975CC1B-7CBE-4D8A-9753-D66521AE4B4A),
+		helpstring("_IGM0Control2Events Interface")
+	]
+	dispinterface _IGM0Control2Events
+	{
+		properties:
+		methods:
+		[id(1), helpstring("method NewData")] HRESULT NewData();
+		[id(2), helpstring("method NewRange")] HRESULT NewRange();
+		[id(3), helpstring("method NewUnits")] HRESULT NewUnits();
+		[id(4), helpstring("method NewMode")] HRESULT NewMode();
+		[id(5), helpstring("method Connected")] HRESULT Connected();
+		[id(6), helpstring("method DisConnected")] HRESULT DisConnected();
+		[id(7), helpstring("method RequireSheild")] HRESULT RequireSheild();
+	};
+
+	[
+		uuid(CD25C73B-B31D-41A5-B792-439006542309),
+		helpstring("GM0Control2 Class")
+	]
+	coclass GM0Control2
+	{
+		[default] interface IGM0Control2;
+		[default, source] dispinterface _IGM0Control2Events;
+	};
+};
