@@ -1,0 +1,162 @@
+////////////////////////////////////////////////////////////////////////////////
+///////////////////InstallShield Media Library Report Summary///////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+Media Name      : File
+Report Filename : M:\dlls\gm0\Hirst Gaussmeter Drivers\Media\File\Report Files\11-29-2002 11.01.49AM.rpt
+Date            : 11/29/2002
+Time            : 11:01AM
+
+Number of Components:                4 
+Number of File Groups:               5 
+Number of Files:                    11 
+Total Size of Files:           482,394 (bytes)
+
+==========
+COMPONENTS
+==========
+
+
+     Program Files
+     Example Files
+     Help Files
+     Shared DLLs
+
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////Report Details/////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+================================================================================
+                           COMPONENT: "Program Files"
+================================================================================
+
+SUMMARY:
+    Total Files:                1 (files for this component only)
+    Source Bytes:          20,480 (files for this component only)
+
+
+                **** File Group: "Program Executable Files" ****
+
+
+<Directory>: M:\dlls\gm0\gm0\dlltest\Release
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    dlltest.exe                 11/29/2002  11:00:10       20,480  1.0.0.0      
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                20,480               
+
+
+================================================================================
+                           COMPONENT: "Example Files"
+================================================================================
+
+SUMMARY:
+    Total Files:                4 (files for this component only)
+    Source Bytes:         136,282 (files for this component only)
+
+
+                     **** File Group: "Example Files" ****
+
+
+<Directory>: M:\dlls\gm0
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    GMExample.xls               11/29/2002  10:24:52       92,160               
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                92,160               
+
+
+<Directory>: M:\dlls\gm0\gm0\dlltest
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    dlltest.cpp                 11/28/2002  15:31:46        8,242               
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                 8,242               
+
+
+<Directory>: M:\dlls\gm0\gm0
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    gm0.h                       11/27/2002  08:44:36        3,698               
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                 3,698               
+
+
+<Directory>: M:\dlls\gm0\gm0\Release
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    gm0.lib                     11/29/2002  10:59:08       11,702               
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                11,702               
+
+
+================================================================================
+                            COMPONENT: "Help Files"
+================================================================================
+
+SUMMARY:
+    Total Files:                3 (files for this component only)
+    Source Bytes:         285,786 (files for this component only)
+
+
+                       **** File Group: "Help Files" ****
+
+
+<Directory>: M:\dlls\gm0
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    GM0DLLAPI.doc               11/28/2002  12:46:34       34,816               
+    GM0ControlAPI.doc           11/28/2002  16:29:24       28,672               
+    Serial protocol.doc         11/28/2002  16:08:24       86,016               
+    --------------------------  ----------  --------  -----------  -------------
+    Count=3                                               149,504               
+
+
+================================================================================
+                            COMPONENT: "Shared DLLs"
+================================================================================
+
+SUMMARY:
+    Total Files:                3 (files for this component only)
+    Source Bytes:         482,394 (files for this component only)
+
+
+                      **** File Group: "Program DLLs" ****
+
+
+<Directory>: M:\dlls\gm0\gm0\Release
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    gm0.dll                     11/29/2002  10:59:08       32,768  1.0.0.0      
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                32,768               
+
+
+                      **** File Group: "Shared DLLs" ****
+
+
+<Directory>: M:\dlls\gm0\gm0\HMI_timer\Release
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    HMI_timer.dll               11/29/2002  10:58:52       69,632  1.0.0.0      
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                69,632               
+
+
+<Directory>: M:\dlls\gm0\gm0\GMControl\Release
+
+    Filename                    Date        Time      Size         Version      
+    --------------------------  ----------  --------  -----------  -------------
+    GMControl.dll               11/29/2002  10:59:30       94,208  1.0.0.0      
+    --------------------------  ----------  --------  -----------  -------------
+    Count=1                                                94,208               

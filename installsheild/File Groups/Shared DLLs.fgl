@@ -1,0 +1,9 @@
+[TopDir]
+file0=M:\dlls\gm0\labview\gmXcontrol.ocx
+file1=M:\dlls\gm0\gm0\HMI_timer\Release\HMI_timer.dll
+file2=M:\dlls\gm0\gm0\GMControl2\Release\GMControl2.dll
+
+[General]
+Type=FILELIST
+Version=1.00.000
+

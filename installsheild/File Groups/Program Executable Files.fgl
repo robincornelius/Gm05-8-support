@@ -1,0 +1,8 @@
+[TopDir]
+file0=M:\dlls\gm0\gm0\dlltest\Release\dlltest.exe
+file1=M:\dlls\gm0\VBGM0\GM0Example.exe
+
+[General]
+Type=FILELIST
+Version=1.00.000
+

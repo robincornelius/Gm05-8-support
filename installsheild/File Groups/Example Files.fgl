@@ -1,0 +1,103 @@
+[Labview\ActiveXVBWrapperSrc]
+file0=M:\dlls\gm0\labview\gmXcontrol.ctl
+file1=M:\dlls\gm0\labview\gmXcontrol.cls
+file2=M:\dlls\gm0\labview\gmXcontrol.vbp
+fulldirectory=
+
+[Visual Studio C Code]
+file0=M:\dlls\gm0\VSCGM0\StdAfx.h
+file1=M:\dlls\gm0\VSCGM0\Example.dsp
+file2=M:\dlls\gm0\VSCGM0\Example.dsw
+file3=M:\dlls\gm0\VSCGM0\gm0.h
+file4=M:\dlls\gm0\VSCGM0\gm0.lib
+file5=M:\dlls\gm0\VSCGM0\dlltest.cpp
+fulldirectory=
+
+[More Examples]
+file0=M:\dlls\gm0\GM05Disk\GM05.DOC
+file1=M:\dlls\gm0\GM05Disk\CONTENTS.DOC
+file2=M:\dlls\gm0\GM05Disk\HARDWARE.DOC
+SubDir0=More Examples\GMCMD
+SubDir1=More Examples\GMTIME
+SubDir2=More Examples\GMLOAD
+SubDir3=More Examples\GMVIS
+fulldirectory=
+SubDir4=More Examples\SERLIB
+
+[More Examples\GMLOAD]
+file0=M:\dlls\gm0\GM05Disk\GMLOAD\REGISTER.DAT
+file1=M:\dlls\gm0\GM05Disk\GMLOAD\GMLOAD.BAK
+file2=M:\dlls\gm0\GM05Disk\GMLOAD\Gmload.cpp
+file3=M:\dlls\gm0\GM05Disk\GMLOAD\GMLOAD.DSW
+file4=M:\dlls\gm0\GM05Disk\GMLOAD\GMLOAD.EXE
+file5=M:\dlls\gm0\GM05Disk\GMLOAD\gmload.ide
+file6=M:\dlls\gm0\GM05Disk\GMLOAD\GM05.LOG
+fulldirectory=
+
+[VB Code]
+file0=M:\dlls\gm0\VBGM0\Project1.vbp
+file1=M:\dlls\gm0\VBGM0\Form1.frm
+file2=M:\dlls\gm0\VBGM0\Form1.frx
+file3=M:\dlls\gm0\VBGM0\GM0Example.DEP
+file4=M:\dlls\gm0\VBGM0\GM0Example.exe
+file5=M:\dlls\gm0\VBGM0\Project1.PDM
+file6=M:\dlls\gm0\VBGM0\Project1.vbw
+file7=M:\dlls\gm0\VBGM0src.zip
+fulldirectory=
+
+[More Examples\GMCMD]
+file0=M:\dlls\gm0\GM05Disk\GMCMD\MENU.CFG
+file1=M:\dlls\gm0\GM05Disk\GMCMD\Gmcmd.cpp
+file2=M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.DSW
+file3=M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.EXE
+file4=M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.H
+file5=M:\dlls\gm0\GM05Disk\GMCMD\gmcmd.ide
+file6=M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.BAK
+file7=M:\dlls\gm0\GM05Disk\GMCMD\USERSER.DOC
+fulldirectory=
+
+[Labview]
+file0=M:\dlls\gm0\labview\gm0.vi
+SubDir0=Labview\ActiveXVBWrapperSrc
+fulldirectory=
+
+[TopDir]
+file0=M:\dlls\gm0\GMExample2.xls
+SubDir0=VB Code
+SubDir1=Visual Studio C Code
+SubDir2=More Examples
+SubDir3=Labview
+SubDir4=Generic C Code
+
+[More Examples\GMVIS]
+file0=M:\dlls\gm0\GM05Disk\GMVIS\gmvis.ide
+file1=M:\dlls\gm0\GM05Disk\GMVIS\Gmvis.cpp
+file2=M:\dlls\gm0\GM05Disk\GMVIS\GMVIS.DSW
+file3=M:\dlls\gm0\GM05Disk\GMVIS\GMVIS.EXE
+file4=M:\dlls\gm0\GM05Disk\GMVIS\GMVIS.~DE
+fulldirectory=
+
+[Generic C Code]
+file0=M:\dlls\gm0\gm0\NOVCTest\novcmain.c
+fulldirectory=
+
+[More Examples\GMTIME]
+file0=M:\dlls\gm0\GM05Disk\GMTIME\gmtime.ide
+file1=M:\dlls\gm0\GM05Disk\GMTIME\Gmtime.cpp
+file2=M:\dlls\gm0\GM05Disk\GMTIME\GMTIME.DSW
+file3=M:\dlls\gm0\GM05Disk\GMTIME\GMTIME.EXE
+file4=M:\dlls\gm0\GM05Disk\GMTIME\GM05.LOG
+fulldirectory=
+
+[General]
+Type=FILELIST
+Version=1.00.000
+
+[More Examples\SERLIB]
+file0=M:\dlls\gm0\GM05Disk\SERLIB\USERSER.DOC
+file1=M:\dlls\gm0\GM05Disk\SERLIB\Gmcomms.cpp
+file2=M:\dlls\gm0\GM05Disk\SERLIB\GMCOMMS.H
+file3=M:\dlls\gm0\GM05Disk\SERLIB\SERLIB.DOC
+file4=M:\dlls\gm0\GM05Disk\SERLIB\GMCOMMS.BAK
+fulldirectory=
+

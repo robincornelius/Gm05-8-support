@@ -1,0 +1,54 @@
+Build started at February 4, 2004 2:59:35 PM.
+Calculating size of cabinet files...
+The following files are missing from the file group link:
+M:\dlls\gm0\VSCGM0\StdAfx.h
+M:\dlls\gm0\VSCGM0\Example.dsp
+M:\dlls\gm0\VSCGM0\Example.dsw
+M:\dlls\gm0\VSCGM0\gm0.h
+M:\dlls\gm0\VSCGM0\gm0.lib
+M:\dlls\gm0\VSCGM0\dlltest.cpp
+M:\dlls\gm0\GM05Disk\GM05.DOC
+M:\dlls\gm0\GM05Disk\CONTENTS.DOC
+M:\dlls\gm0\GM05Disk\HARDWARE.DOC
+M:\dlls\gm0\GM05Disk\GMCMD\MENU.CFG
+M:\dlls\gm0\GM05Disk\GMCMD\Gmcmd.cpp
+M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.DSW
+M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.EXE
+M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.H
+M:\dlls\gm0\GM05Disk\GMCMD\gmcmd.ide
+M:\dlls\gm0\GM05Disk\GMCMD\GMCMD.BAK
+M:\dlls\gm0\GM05Disk\GMCMD\USERSER.DOC
+M:\dlls\gm0\GM05Disk\GMTIME\gmtime.ide
+M:\dlls\gm0\GM05Disk\GMTIME\Gmtime.cpp
+M:\dlls\gm0\GM05Disk\GMTIME\GMTIME.DSW
+M:\dlls\gm0\GM05Disk\GMTIME\GMTIME.EXE
+M:\dlls\gm0\GM05Disk\GMTIME\GM05.LOG
+M:\dlls\gm0\GM05Disk\GMLOAD\REGISTER.DAT
+M:\dlls\gm0\GM05Disk\GMLOAD\GMLOAD.BAK
+M:\dlls\gm0\GM05Disk\GMLOAD\Gmload.cpp
+M:\dlls\gm0\GM05Disk\GMLOAD\GMLOAD.DSW
+M:\dlls\gm0\GM05Disk\GMLOAD\GMLOAD.EXE
+M:\dlls\gm0\GM05Disk\GMLOAD\gmload.ide
+M:\dlls\gm0\GM05Disk\GMLOAD\GM05.LOG
+M:\dlls\gm0\GM05Disk\GMVIS\gmvis.ide
+M:\dlls\gm0\GM05Disk\GMVIS\Gmvis.cpp
+M:\dlls\gm0\GM05Disk\GMVIS\GMVIS.DSW
+M:\dlls\gm0\GM05Disk\GMVIS\GMVIS.EXE
+M:\dlls\gm0\GM05Disk\GMVIS\GMVIS.~DE
+M:\dlls\gm0\GM05Disk\SERLIB\USERSER.DOC
+M:\dlls\gm0\GM05Disk\SERLIB\Gmcomms.cpp
+M:\dlls\gm0\GM05Disk\SERLIB\GMCOMMS.H
+M:\dlls\gm0\GM05Disk\SERLIB\SERLIB.DOC
+M:\dlls\gm0\GM05Disk\SERLIB\GMCOMMS.BAK
+M:\dlls\gm0\GM0ControlAPI.rtf
+M:\dlls\gm0\GM0DLLAPI.rtf
+M:\dlls\gm0\Serial protocol.rtf
+M:\dlls\gm0\gm0\Release\gm0.dll
+Copying InstallShield engine files to Disk 1...
+Building system cabinet file '_sys1.cab'...
+Copying uncompressed setup files to Disk 1...
+Building user cabinet file '_user1.cab'...
+Building cabinet file 'data1.cab'...
+Creating disk layout file 'layout.bin'...
+Media 'File' created successfully.
+Build completed successfully at February 4, 2004 2:59:56 PM.
