@@ -1,8 +1,0 @@
-[TopDir]
-file0=C:\gm0lib\HMI_Timer\Release\HMI_timer.dll
-file1=C:\gm0lib\GM0Control\Release\GMControl2.dll
-
-[General]
-Type=FILELIST
-Version=1.00.000
-

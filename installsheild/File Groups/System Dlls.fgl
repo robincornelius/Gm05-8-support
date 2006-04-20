@@ -1,9 +1,0 @@
-[TopDir]
-file0=C:\WINNT\system32\msvbvm60.dll
-file1=C:\WINNT\system32\msvcrt.dll
-file2=C:\WINNT\system32\mfc42.dll
-
-[General]
-Type=FILELIST
-Version=1.00.000
-
