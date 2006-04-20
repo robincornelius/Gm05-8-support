@@ -23,7 +23,20 @@
 
 */
 
+/*
+ This code is compatable with win32 systems and POSIX systems (eg linux etc) 
+ To run on linux make sure you compile with the _LINUX flag defined this will
+ patch some of the gaps between win32 and linux, mainly a few defines and the 
+ method of dynamic library loading.
+*/
+
+
 #define NOVC 
+
+/* This define avoids using Visual C stuff and compiles as a true win32 console app without
+visual C extensions
+*/
+
 
 #ifdef _LINUX
 	#define HMODULE int
@@ -34,13 +47,12 @@
 #endif
 
 #include <stdio.h>
-#include "../lib/gm0.h"
 #include <time.h>
+#include "../lib/gm0.h"
 
 void loadfunction (HANDLE lib,void ** functionpointer,char * functionname);
-void  loadallfunctions();
+void loadallfunctions();
 void showmenu();
-
 void __stdcall callback(HANDLEGM hand,struct gm_store store);
 
 int main(int argv, char * argvc[])
@@ -93,13 +105,13 @@ int main(int argv, char * argvc[])
 	
 	if(gm0_getconnect(mygm)==FALSE)
 	{
-		printf("Communications have failed ... aborting\n");
+		printf("\n ** Communications have failed ... aborting ** \n");
 		gm0_killgm(mygm);
 		exit(-1);
 	}
 	else
 	{
-		printf("Communications have succeded\n");
+		printf("\n** Communications have succeded **\n");
 	}
 
 	showmenu();
@@ -110,6 +122,7 @@ int main(int argv, char * argvc[])
 	{
 		printf("Enter option :");
 		scanf("%c",&cmd);
+		printf("\n");
 		switch(cmd)
 		{
 			case 'r':
@@ -288,19 +301,8 @@ int main(int argv, char * argvc[])
 		}
 
 	}
-
-//	Sleep(2000);
-
-//	store.value=gm0_getvalue(mygm);
-//	store.range=gm0_getrange(mygm);
-//	store.units=gm0_getunits(mygm);
-	
-//	value=gm0_getvalue(mygm);
-//	printf("Reading %lf range %d units %d\n",store.value,store.range,store.units);
 	
 	gm0_killgm(mygm);
-
-
 }
 
 
@@ -320,7 +322,7 @@ printf(" (A) - Auto Zero        (N) - Null                  (T) - Enable Time\n"
 printf(" (1) - Enable callback  (0) - Disable callback      (<) - Set GM Time\n");
 printf(" (I) - Set interval     (Q) - Reset peak            (>) - Get GM Time\n");	
 printf(" (W) - Power Off        (G) - Get reg               (H) - Get Reg(s)\n");
-printf(" (B) - Reconnect        (X)-Exit                    (9) - Get E2\n");	
+printf(" (B) - Reconnect        (X) - Exit                  (9) - Get E2\n");	
 printf("\n\n");
 
 }

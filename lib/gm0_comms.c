@@ -28,18 +28,19 @@
 
 
 #ifndef _LINUX
- #include <objbase.h>
- #include <process.h>
- #include "windows.h"
+	#include <objbase.h>
+	#include <process.h>
+	#include "windows.h"
+	#include <locale.h>
 #else
-#include <pthread.h>
+	#include <pthread.h>
 #endif
 
 #ifdef _LINUX
 
  Sleep(int dwMs) // wrapper for sleep function 
  {
-  sleep(dwMs);
+	sleep(dwMs);
  }
 
 #endif
@@ -77,16 +78,12 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     switch (ul_reason_for_call)
 	{
 		case DLL_PROCESS_ATTACH:
-//			MessageBox(NULL,"Process attach","INFO",NULL);
 			break;
 		case DLL_THREAD_ATTACH:
-		//	MessageBox(NULL,"Thread attach","INFO",NULL);	
 			break;
 		case DLL_THREAD_DETACH:
-		//	MessageBox(NULL,"Thread detach","INFO",NULL);
 			break;
 		case DLL_PROCESS_DETACH:
-//			MessageBox(NULL,"Process detach","INFO",NULL);
 			for(handcount=0;handcount<255;handcount++)
 			{
 				if(pGMS[handcount]!=NULL)
@@ -104,6 +101,15 @@ int gm0_openport(HANDLEGM hand)
 {
 	char * pportstring; 
 
+	#ifndef _LINUX
+		/* Set the locale for this instance */
+		setlocale( LC_ALL , "English" );
+	#else
+		/* POSIX warning */
+		/* There may be a locale problem running on non english systems that use , for 
+		decimal point, this was fixed on windows with above setlocale() code */
+	#endif
+
 	pportstring=(char *)malloc(sizeof(char)*5);
 	if(pportstring==NULL)
 		return GM_MEMORY_ERROR;
@@ -114,14 +120,6 @@ int gm0_openport(HANDLEGM hand)
 	sprintf(pportstring,"/dev/ttyS%d",pGMS[hand]->m_Iportno);
 #endif
 	pGMS[hand]->com.fd=rs232_open(pportstring,4800,'N',8,1,0);
-
-//	while(0!=1)
-//	{
-//	 x="Hello World This is a really stupid test\0";
-//	rs232_puts(&pGMS[hand]->com, x);
-//
-//	}
-
 
 	pGMS[hand]->port_open=true;
 
@@ -263,9 +261,6 @@ void processgmcomms(HANDLEGM hand)
 	if(pGMS[hand]->gm0_threadrun==false)
 		return;
 
-	//fprintf(logfile, "In gm comms TR GMC %d\n", pGMS[hand]->gm0_threadrun);
-	//////////fflush(logfile);
-
 	offset=0;
 	if (pGMS[hand]->index==12)
 		offset=0;
@@ -326,16 +321,12 @@ void processgmcomms(HANDLEGM hand)
 	pGMS[hand]->store.time.sec=(unsigned char)strtol(pGMS[hand]->ptime_sec,&stop,10);
 	pGMS[hand]->store.time.min=(unsigned char)strtol(pGMS[hand]->ptime_min,&stop,10);
 	pGMS[hand]->store.time.hour=(unsigned char)strtol(pGMS[hand]->ptime_hour,&stop,10);
-
-	
-//	printf("RT: %lf \n",pGMS[hand]->store.value);
 	
 	pGMS[hand]->samplecount++;
 	pGMS[hand]->index=0; // reset the readthread buffer to zero
 
 	// signal data has been collected
 	pGMS[hand]->datasignal=true;
-
 
 	if(pGMS[hand]->pCallback!=NULL && pGMS[hand]->gm0_threadrun==true)
 	{
@@ -348,27 +339,15 @@ GM0_API HANDLEGM gm0_newgm(int port)
 {
 	HANDLEGM newhand=0;
 	int portret;
-		char msg[255];
-
-//essageBox(NULL,"NEW GM0 CALLED","LABVIEW TEST",NULL);
 
 	while(pGMS[newhand]!=NULL && newhand<255)
 	{
-//		sprintf(msg,"Checking instance %d\n",newhand);
-//		debugprint(msg);
 		if(pGMS[newhand]->m_Iportno==port)
 			return newhand;
 		newhand++;
 	}
 
 	debugprint("Creating a new GM\n");
-//	MessageBox(NULL,"Creating NEW GM","INFO",NULL);
-
-//	if(pGMS[newhand]->m_Iportno==port)
-//	{
-//		debugprint("Found open comport alreay no new instance\n");	
-//		return;
-//	}
 
 	if(newhand==255)
 		return GM_MEMORY_ERROR;
@@ -453,41 +432,21 @@ GM0_API HANDLEGM gm0_startconnect(HANDLEGM hand)
 
 	char msg[255];
 
-//	debugprint("Start Connect");
-
 	if(pGMS[hand]==NULL)
 		return GM_DATAERROR;
-
-//	debugprint(" A");
-
 
 	if(hand<0 || hand > 255)
 		return GM_DATAERROR;
 
-//	debugprint(" B");
-
-
-//	MessageBox(NULL,"START 2 CONNECT CALLED","LABVIEW TEST",NULL);
-
-
-
 	if(pGMS[hand]->connected==true)
 		return -1;
-
-//	debugprint(" C");
-
 
 	if(pGMS[hand]->connecting==true)
 		return -1;
 	
-//	debugprint(" D");
-
-
 	pGMS[hand]->connecting=true;
 
 	sprintf(msg,"Hand is %d\n",hand);
-
-//	MessageBox(NULL,"START CONNECT CALLED","LABVIEW TEST",NULL);
 
 	debugprint("Start Connect Activated ");
 	debugprint(msg);
@@ -509,9 +468,6 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 	clock_t increment;
 	int timeout = 0;
 	
-
-
-//	MessageBox(NULL,"KILL","KILL",MB_OK);
 	if(hand<0 || hand >255)
 		return 0;
 	
@@ -531,8 +487,6 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 
 	pGMS[hand]->shutdownstarted=true;
 
-
-
 	increment = clock() + 6000;
 	timeout=0;
 
@@ -542,18 +496,13 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 		if (clock() > increment)
 		{
 			timeout = 1;
-			#ifndef _LINUX
-			MessageBox(NULL,"Time out waiting for read thread to terminate\n!","HELP",MB_OK);
-			#endif
+			/* we timed out waiting for the read thread to terminate
+			 this is bad but what can we do about it now? */
 		}
 
 
 		Sleep(20);
 	}
-	
-//	gm0_setcallback(hand,NULL);
-//	gm0_setconnectcallback(hand,NULL);
-//	gm0_setdisconnectcallback(hand,NULL);
 
 	gm0_closeport(hand);
 	free(pGMS[hand]->pIncomming);
@@ -568,7 +517,6 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 	free(pGMS[hand]->ptime_year);
 	free(pGMS[hand]->ptime_month);
 	free(pGMS[hand]);
-
 	pGMS[hand]=NULL;
 
 return 0;
@@ -582,6 +530,7 @@ void __cdecl connectthread(void * pParam)
 	char ret;
 	HANDLEGM hand;
 	int connected,timeout;
+	int retdata;
 	hand=(HANDLEGM)pParam;
 
 	timeout=false;
@@ -589,8 +538,6 @@ void __cdecl connectthread(void * pParam)
 	pGMS[hand]->gm0_threadrun=true; // if this shoudn't be true then this function shoudn't have been started!
 
 	pGMS[hand]->gm0_usereadthread=false; // if this shoudn't be true then this function shoudn't have been started!
-
-//	MessageBox(NULL,"Starting a connect thread","INFO",NULL);
 
 	#ifndef _LINUX
 		_beginthread(readthread,0,(void*)hand);
@@ -612,40 +559,25 @@ void __cdecl connectthread(void * pParam)
 	
 	while(connected==false && timeout==false && pGMS[hand]->gm0_threadrun==true)
 	{
-	ret=-1; // default to allow entry below
+		ret=-1; // default to allow entry below
 
-	while(ret!=0 && pGMS[hand]->gm0_threadrun==true)
-	{
+		while(ret!=0 && pGMS[hand]->gm0_threadrun==true)
+		{
+			ret=gm0_dothestar(hand); // this does not need threadlock counting 
+		}
 
-		debugwrite("doing star");
-		ret=gm0_dothestar(hand); // this does not need threadlock counting 
-	
-//		Sleep(500);
-	}
+		if(pGMS[hand]->gm0_threadrun==false)
+		{
+			#ifndef _LINUX
+				CoUninitialize();
+			#endif
+			pGMS[hand]->threadlockcount--;
+			return;
+		}
 
-	if(pGMS[hand]->gm0_threadrun==false)
-	{
-		#ifndef _LINUX
-			CoUninitialize();
-		#endif
-		pGMS[hand]->threadlockcount--;
-		return;
-	}
-
-	//gm0_setdatalo(hand,20);
-	debugwrite("Set data 0xABCD");
-	gm0_setdata(hand,0xABCD);
-	
-	{
-	int retdata;
-
-//	retdata=gm0_getdatalo(hand);
-//	retdata=gm0_getdatahi(hand);
-
-	debugwrite("Get Data");
-
-
-	retdata=gm0_getdata(hand);
+		gm0_setdata(hand,0xABCD);
+		
+		retdata=gm0_getdata(hand);
 
 		if(retdata==0xABCD)
 		{
@@ -654,15 +586,13 @@ void __cdecl connectthread(void * pParam)
 		else
 		{
 			#ifndef _LINUX
-			CoUninitialize();
+				CoUninitialize();
 			#endif
 			pGMS[hand]->threadlockcount--;
-
 			return;
 		}
 	}
-	}
-
+	
 	gm0_gmmode1(hand);
 
 	if(pGMS[hand]->gm0_threadrun==false)
@@ -675,25 +605,19 @@ void __cdecl connectthread(void * pParam)
 		return;
 	}
 
-
 	pGMS[hand]->connected=true;
  
- debugwrite("Connected");
- debugprint("*********Connected*************\n");
+	gm0_setinterval(hand,1);
 
- //MessageBox(NULL,"Connected","INFO",NULL);
- gm0_setinterval(hand,1);
+	if(pGMS[hand]->pConnectCallback!=NULL)
+	{
+		pGMS[hand]->pConnectCallback();
+	}
 
- if(pGMS[hand]->pConnectCallback!=NULL)
- {
-  pGMS[hand]->pConnectCallback();
- }
+	#ifndef _LINUX
+		CoUninitialize();
+	#endif
 
-#ifndef _LINUX
- CoUninitialize();
-#endif
-
- pGMS[hand]->threadlockcount--;
-
+	pGMS[hand]->threadlockcount--;
 
 }

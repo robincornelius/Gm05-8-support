@@ -21,79 +21,54 @@
    MA 02111-1307 USA
 
 */
-
-
-
-#ifndef _LINUX
- #include <objbase.h>
- #include <process.h>
- #include "windows.h"
-#else
- #include <pthread.h>
-#endif
-
-
 #include <stdio.h>
 #include <time.h>
+
+#ifndef _LINUX
+	#include <objbase.h>
+	#include <process.h>
+	#include "windows.h"
+#else
+	#include <pthread.h>
+#endif
 
 
 #include "gm0_private.h"
 #include "gm0.h"
 
 	/* The DP position indexed by [units][range] */
-	int DP_position[4][4] =
-	 {
+	int DP_position[4][4] = {
 	 {4, 2, 3, 4},
 	 {3, 4, 2, 3},
 	 {1, 2, 3, 4},
-	 {3, 4, 2, 3}
-	};
+	 {3, 4, 2, 3}};
 
 	/* The divisor for each DP position */
-	int divisor[5] =
-	 {
-	 1, 1, 10, 100, 1000
-	};
+	int divisor[5] = {
+		1, 1, 10, 100, 1000 };
 
 /******************** COMMAND WRAPPERS *******************/
 
 
 GM0_API int gm0_gmcmd(HANDLEGM hand,unsigned char cmd,unsigned char data)
 {
- int retdata;
+	int retdata;
 
- if(pGMS[hand]->doingnull==true)
-  return 0;
+	if(pGMS[hand]->doingnull==true)
+		return 0;
 
- retdata=packetbyte(hand,cmd);
- pGMS[hand]->cmdstatus=packetbyte(hand,data); 
+	retdata=packetbyte(hand,cmd);
+	pGMS[hand]->cmdstatus=packetbyte(hand,data); 
 
- return retdata;
+	return retdata;
 }
 
 int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 {
-
- packetbyte(hand,GMC_MODE1);
- packetbyte(hand,GMC_NULL);
-
-//	pGMS[hand]->gm0_threadrun=true;
-
+	packetbyte(hand,GMC_MODE1);
+	packetbyte(hand,GMC_NULL);
 	pGMS[hand]->gm0_usereadthread=true;
-
-
-//	#ifndef _LINUX
-//		_beginthread(readthread,0,(void*)hand);
-//	#else
-//	{
-//		pthread_t  p_thread; 
-//		pthread_create(&p_thread, NULL, readthread, (void*)hand);
-//	}
-
-//#endif
-
 	return 0;
-
 }
 
 
@@ -283,17 +258,13 @@ GM0_API int gm0_resetnull(HANDLEGM hand)
 
 GM0_API double gm0_getvalue(HANDLEGM hand)
 {
-//	Sleep(1);
-
 	if(!checkhand(hand))
 	{
 		printf("CHECK FAILED\n");
 		return -4;
 	}
-//	Beep(1000,10);
-	printf("DBG: %lf\n",pGMS[hand]->store.value);
-	return pGMS[hand]->store.value;
 
+	return pGMS[hand]->store.value;
 }
 
 
@@ -649,13 +620,8 @@ GM0_API struct gm_store gm0_getstore(HANDLEGM hand,int pos)
 	unsigned __int8 reg[8];
 	signed __int16 tempvalue;
 
-//	Sleep(250);
 	gm0_gmcmd(hand,GMC_REGPTR,pos+128);
-//	Sleep(500);
 	gm0_gmcmd(hand,GMC_GETREG,0);
-
-//	Sleep(500);
-
 
 	reg[0]=gm0_gmcmd(hand,GMC_TIME0,0); 
 	reg[1]=gm0_gmcmd(hand,GMC_TIME1,0); 
@@ -669,20 +635,7 @@ GM0_API struct gm_store gm0_getstore(HANDLEGM hand,int pos)
 	if(reg[3]==255)
 		printf("THIS REGISTER IS EMPTY\n");
 
-
 	// decode the compressed data
-/*
-	tempvalue = (reg[0] << 8) + reg[1];
-    store.range = reg[2] & 0x3;
-    store.units = (reg[2] >> 2) & 0x7;
-    store.mode = reg[3];
-    store.time.sec = reg[4] & 0x3f;
-    store.time.min = (reg[5] & 0xf) + ((reg[4] >> 2) & 0x30);
-    store.time.hour = (reg[5] >> 4) + ((reg[6] & 0x1) << 4);
-    store.time.day = (reg[6] >> 1) & 0x1f;
-    store.time.month = ((reg[7] & 0x3) << 2) + (reg[6] >> 6);
-    store.time.year = (reg[7] >> 2) + ((reg[2] & 0x80) >> 1);
-*/
 
 	tempvalue=(int)(reg[0]*256)+reg[1];
 	store.range=reg[2] & 3;
@@ -695,20 +648,15 @@ GM0_API struct gm_store gm0_getstore(HANDLEGM hand,int pos)
 	store.time.month=(int)((reg[7] & 3)*4)+(int)(reg[6]/64);
 	store.time.year=(int)(reg[7]/4)+(int)((reg[3] & 128)/2);
 
-//	printf("Reg 5 is %d and reg 6 is %d reg5/16 is %d and reg 6 &1 is %d\n",reg[5],reg[6],reg[5]/16,reg[6]&1);
-
 	/* Scale the value appropriately for the units and range */
 
     if(store.units>=0 && store.range>=0 && store.units<5 && store.range<5)
 	{
 		store.value = ((float)tempvalue) / divisor[DP_position[store.units][store.range]];
-//		printf("Debug value is %d mode is %d range is %d units are %d\n",tempvalue,store.mode,store.range,store.units);
 	}
 	else
 	{
 		printf("***Ilegal value***\n");
-//		printf("Debug value is %d mode is %d range is %d units are %d\n",tempvalue,store.mode,store.range,store.units);
-
 	}
 
 	return(store);
