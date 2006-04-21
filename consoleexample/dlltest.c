@@ -381,7 +381,7 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 void loadallfunctions()
 {
 	HMODULE lib;
-	lib=LoadLibrary("gm0D.dll");
+	lib=LoadLibrary("gm0.dll");
 	
 	if(lib==NULL)
 	{
