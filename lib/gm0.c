@@ -223,9 +223,12 @@ GM0_API int gm0_donull(HANDLEGM hand)
 	gm0_gmstar(hand);
 
 	gm0_gmcmd(hand,GMC_DONULL,0);
+	Sleep(1000);
+	gm0_resetnull(hand);
+	Sleep(9000);
+	gm0_gmmode1(hand);
+
 	return 0;
-	
-	Sleep(15000);
 
 }
 
@@ -233,7 +236,10 @@ GM0_API int gm0_doaz(HANDLEGM hand)
 {
 	gm0_gmstar(hand);
 	gm0_gmcmd(hand,GMC_DOAZ,0);
-	Sleep(30000);
+	Sleep(33000);
+	gm0_resetnull(hand);
+	Sleep(33000);
+	gm0_gmmode1(hand);
 
 	return 0;
 }
@@ -248,8 +254,7 @@ GM0_API int gm0_simkey(HANDLEGM hand,char keycode)
 GM0_API int gm0_resetnull(HANDLEGM hand)
 {
 	gm0_gmcmd(hand,GMC_SIMKEY,'0');
-	Sleep(30000);
-	gm0_gmmode1(hand);
+
 	return 0;
 }
 
@@ -274,27 +279,31 @@ GM0_API long gm0_getsamplecount(HANDLEGM hand)
 	return pGMS[hand]->samplecount;
 }
 
-
-
-GM0_API int gm0_setcallback(HANDLEGM hand,	void (__stdcall * pCallback)(int,struct gm_store))
+GM0_API int gm0_setcallback(HANDLEGM hand,	void (* pCallback)(int,struct gm_store))
 {
 	pGMS[hand]->pCallback=pCallback;
 	return (0);
 }
 
-GM0_API int gm0_setconnectcallback(HANDLEGM hand,void (__stdcall * pCallback)(void))
+GM0_API int gm0_setcallback2(HANDLEGM hand,	void (* pCallback)(int))
+{
+	pGMS[hand]->pCallback2=pCallback;
+	return (0);
+}
+
+GM0_API int gm0_setconnectcallback(HANDLEGM hand,void ( * pCallback)(void))
 {
 	pGMS[hand]->pConnectCallback=pCallback;
 	return (0);
 }
 
-GM0_API int gm0_setdisconnectcallback(HANDLEGM hand,void (__stdcall * pCallback)(HANDLEGM hand))
+GM0_API int gm0_setdisconnectcallback(HANDLEGM hand,void ( * pCallback)(HANDLEGM hand))
 {
 	pGMS[hand]->pDisConnectCallback=pCallback;
 	return (0);
 }
 
-GM0_API int gm0_setnullcallback(HANDLEGM hand,void (__stdcall * pCallback)(void))
+GM0_API int gm0_setnullcallback(HANDLEGM hand,void ( * pCallback)(void))
 {
 	pGMS[hand]->pNullCallback=pCallback;
 	return (0);
@@ -440,9 +449,17 @@ GM0_API int gm0_unlock(HANDLEGM hand,BOOL lockon)
 }
 
 
+GM0_API int gm0_settime2(HANDLEGM hand,struct gm_time *time)
+{
+	struct gm_time temp;
+	temp=*time;
+	gm0_settime(hand,temp);
+
+	return 0;
+}
+
 GM0_API int gm0_settime(HANDLEGM hand,struct gm_time time)
 {
-
 	gm0_gmstar(hand);
 	gm0_gmcmd(hand,GMC_TIME,1); // allow write to time reg
 
@@ -469,6 +486,8 @@ GM0_API int gm0_settime(HANDLEGM hand,struct gm_time time)
 
 	return 0;
 }
+
+
 
 GM0_API struct gm_time gm0_gettime(HANDLEGM hand)
 {
@@ -601,15 +620,17 @@ GM0_API int gm0_probebutton(HANDLEGM hand)
 }
 
 
-GM0_API void gm0_startcmd(HANDLEGM hand)
+GM0_API	long gm0_startcmd(HANDLEGM hand)
 {
 	gm0_gmstar(hand);
 	Sleep(250);
+	return 0;
 }
 
-GM0_API void gm0_endcmd(HANDLEGM hand)
+GM0_API long gm0_endcmd(HANDLEGM hand)
 {
 	gm0_gmmode1(hand);
+	return 0;
 }
 
 

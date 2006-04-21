@@ -171,15 +171,9 @@ void __cdecl readthread(void * pParam)
 
 	readthreadstarted=true;
 
-
 	hand = (int)pParam;
 
-	debugwrite("Starting a read thread");
-
 	pGMS[hand]->threadlockcount++;
-
-	OutputDebugString("this is read thread\n");
-	
 
 	while(pGMS[hand]->gm0_threadrun==true)
 	{
@@ -205,8 +199,6 @@ void __cdecl readthread(void * pParam)
 
 	readthreadstarted=false;
 
-		debugwrite("READ THEAD EXIT");
-
 
 #ifndef _LINUX
 	CoUninitialize();
@@ -223,29 +215,17 @@ char packetbyte(HANDLEGM hand, char dataout)
 	char msg []="          \0";
 
 
-	debugwrite("Packet byte start");
-
 	oldindex=pGMS[hand]->index;
 	target=oldindex+1;
 
 	rs232_write(&pGMS[hand]->com, &dataout, 1);
 
-    length = rs232_read(&pGMS[hand]->com, &retdata,1,250);
+    length = rs232_read(&pGMS[hand]->com, &retdata,1,500);
 
 	if (length != 1)
 	{
-
-		OutputDebugString("WAIT TIMEOUT\n");
 		printf("timeout recieve\n");
-		commerror(hand);
 	}
-
-	
-	sprintf(msg,"O:%d I:d",dataout,retdata);
-
-	debugwrite(msg);
-
-
 
 	return(retdata);
 }
@@ -332,6 +312,13 @@ void processgmcomms(HANDLEGM hand)
 	{
 		pGMS[hand]->pCallback(hand,pGMS[hand]->store);
 	}
+
+	if(pGMS[hand]->pCallback2!=NULL && pGMS[hand]->gm0_threadrun==true)
+	{
+		pGMS[hand]->pCallback2(hand);
+	}
+
+
 }
 
 
@@ -387,6 +374,7 @@ GM0_API HANDLEGM gm0_newgm(int port)
 	pGMS[newhand]->gm0_threadrun=true;
 
 	pGMS[newhand]->pCallback=NULL;
+	pGMS[newhand]->pCallback2=NULL;
 	pGMS[newhand]->pConnectCallback=NULL;
 	pGMS[newhand]->pDisConnectCallback=NULL;
 	pGMS[newhand]->pNullCallback=NULL;
@@ -414,14 +402,14 @@ GM0_API HANDLEGM gm0_newgm(int port)
 
 void debugprint(char * msg)
 {
-
+/*
 	FILE * debug;
 	debug=fopen("c:\\gm0dll.txt","a+");
 	if(debug==NULL)
 		return;
 	fprintf(debug,msg);
 	fflush(debug);
-
+*/
 	return;
 }
 
@@ -554,8 +542,6 @@ void __cdecl connectthread(void * pParam)
 #endif
 	
 	pGMS[hand]->threadlockcount++;
-
-	debugwrite("Starting connect thread");
 	
 	while(connected==false && timeout==false && pGMS[hand]->gm0_threadrun==true)
 	{

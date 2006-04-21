@@ -23,14 +23,12 @@
 
 */
 
-// THIS IS THE STATIC IMPORT LIB HEADER FILE !
-
 #ifndef __GM0H__
 #define __GM0H__
 
 #ifdef _LINUX
  #define GM0_API /*GM0_API*/
- #define __stdcall /*__stdcall*/
+ #define __ /*__*/
  #define BOOL int
  #define TRUE 1
  #define FALSE 0
@@ -55,7 +53,8 @@
   #define BKET )
  #else
   #ifdef GM0_EXPORTS
-   #define GM0_API  __declspec(dllexport)
+   /*#define GM0_API  __declspec(dllexport)*/
+	#define GM0_API  /**/
   #else
    #define GM0_API extern "C" __declspec(dllimport)
   #endif
@@ -131,7 +130,7 @@ struct gm_store{
  unsigned char range;
  unsigned char mode;
  unsigned char units;
-double value;
+ float value;
 };
 
 // Thread and initaliseation fuctions
@@ -165,18 +164,17 @@ GM0_API int LIBTYPE gm0_resetnull BKET (HANDLEGM hand);
 // Date time and register functions
 GM0_API int LIBTYPE gm0_sendtime BKET (HANDLEGM hand,BOOL extended);
 GM0_API int LIBTYPE gm0_settime BKET (HANDLEGM hand,struct gm_time);
+GM0_API int LIBTYPE gm0_settime2 BKET (HANDLEGM hand,struct gm_time *time);
 GM0_API struct gm_time LIBTYPE gm0_gettime BKET (HANDLEGM hand);
 GM0_API struct gm_store LIBTYPE gm0_getstore BKET (HANDLEGM hand,int pos);
 
 // Callback functions
-GM0_API int LIBTYPE gm0_setcallback BKET (HANDLEGM hand, void (__stdcall *)(int
-hand,struct gm_store store));
-GM0_API int LIBTYPE gm0_setconnectcallback BKET (HANDLEGM hand,void (__stdcall
-* pCallback)(void));
-GM0_API int LIBTYPE gm0_setdisconnectcallback BKET (HANDLEGM hand,void
-(__stdcall * pCallback)(HANDLEGM hand));
-GM0_API int LIBTYPE gm0_setnullcallback BKET (HANDLEGM hand,void (__stdcall *
-pCallback)(void));
+GM0_API int LIBTYPE gm0_setcallback BKET (HANDLEGM hand, void (__stdcall * pCallback)(int,struct gm_store));
+GM0_API int LIBTYPE gm0_setcallback2 BKET (HANDLEGM hand, void (__stdcall * pCallback)(int));
+
+GM0_API int LIBTYPE gm0_setconnectcallback BKET (HANDLEGM hand,void (__stdcall * pCallback)(void));
+GM0_API int LIBTYPE gm0_setdisconnectcallback BKET (HANDLEGM hand,void (__stdcall * pCallback)(HANDLEGM hand));
+GM0_API int LIBTYPE gm0_setnullcallback BKET (HANDLEGM hand,void ( * pCallback)(void));
 
 // Advanced
 GM0_API int  LIBTYPE gm0_simkey BKET (HANDLEGM,char keycode);
@@ -194,7 +192,7 @@ GM0_API unsigned __int16 LIBTYPE gm0_getaddr BKET (HANDLEGM hand);
 GM0_API unsigned __int16 LIBTYPE gm0_getdata BKET (HANDLEGM hand);
 
 
-GM0_API void LIBTYPE gm0_startcmd BKET (HANDLEGM hand);
-GM0_API void LIBTYPE gm0_endcmd BKET (HANDLEGM hand);
+GM0_API long LIBTYPE gm0_startcmd BKET (HANDLEGM hand);
+GM0_API long LIBTYPE gm0_endcmd BKET (HANDLEGM hand);
 
 #endif

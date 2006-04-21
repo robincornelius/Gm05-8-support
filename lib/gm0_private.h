@@ -1,4 +1,4 @@
-
+
 /*
 	gm0.dll/gm0.so shared gaussmeter function driver library for Hirst Gaussmeters
     Copyright (C) 2004  Robin Cornelius/Hirst Magnetic Instruments Ltd
@@ -41,7 +41,8 @@ struct GM_STRUCT{
 	unsigned int index;
 	unsigned int *pIncomming;
 	char * pvalue,*punits,*pmode,*prange, *ptime_day,*ptime_month,*ptime_year,*ptime_sec,*ptime_min,*ptime_hour;
-	void (__stdcall * pCallback)(int handle,struct gm_store);
+	void (__stdcall * pCallback)(int handle,struct gm_store);	void (__stdcall * pCallback2)(int handle);
+
 	void (__stdcall * pConnectCallback)(void);
 	void (__stdcall * pDisConnectCallback)(HANDLEGM hand);
 	void (__stdcall * pNullCallback)(HANDLEGM hand);

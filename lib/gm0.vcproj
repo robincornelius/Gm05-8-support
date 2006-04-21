@@ -37,9 +37,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="./Debug/gm0D.dll"
+				OutputFile=".\Debug/gm0D.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				ModuleDefinitionFile="gm0.def"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/gm0D.pdb"
 				ImportLibrary=".\Debug/gm0D.lib"
@@ -89,13 +90,15 @@ copy .\Debug\gm0D.dll c:\windows\system32 /y
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;GM0_EXPORTS;_WIN32_DCOM"
 				RuntimeLibrary="2"
+				StructMemberAlignment="4"
 				PrecompiledHeaderFile=".\Release/gm0.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				CallingConvention="2"/>
+				CallingConvention="2"
+				CompileAs="1"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -103,6 +106,7 @@ copy .\Debug\gm0D.dll c:\windows\system32 /y
 				OutputFile=".\Release/gm0.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				ModuleDefinitionFile="gm0.def"
 				ProgramDatabaseFile=".\Release/gm0.pdb"
 				ImportLibrary=".\Release/gm0.lib"
 				TargetMachine="1"/>
@@ -162,6 +166,9 @@ copy .\Release\gm0.dll c:\windows\system32\ /y
 						Optimization="0"
 						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;GM0_EXPORTS;_WIN32_DCOM;$(NoInherit)"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\gm0.def">
 			</File>
 			<File
 				RelativePath="gm0_comms.c">
