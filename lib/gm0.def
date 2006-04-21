@@ -1,0 +1,37 @@
+
+LIBRARY    gm0.dll
+EXPORTS
+    gm0_newgm					@1
+    gm0_startconnect			@2
+    gm0_killgm					@3
+    gm0_getconnect	            @4
+    gm0_setrange                @5
+    gm0_getrange                @6
+    gm0_setmode					@7
+    gm0_getmode					@8
+    gm0_setunits                @9
+    gm0_getunits                @10
+    gm0_setlanguage             @11
+    gm0_getlanguage             @12
+    gm0_getvalue		        @13
+    gm0_resetpeak               @14
+    gm0_donull					@15
+    gm0_doaz					@16
+    gm0_resetnull               @17
+    gm0_sendtime				@18
+    gm0_settime					@19
+	gm0_gettime					@20
+    gm0_getstore				@21
+    gm0_setcallback				@22
+    gm0_setconnectcallback		@23
+    gm0_setdisconnectcallback	@24
+    gm0_setnullcallback			@25
+    gm0_simkey					@26
+    gm0_setinterval				@27
+    gm0_getgmserial				@28
+    gm0_getprobetype			@29
+    gm0_getprobecaldate			@30
+    gm0_startcmd				@31
+    gm0_endcmd					@32
+    gm0_setcallback2			@33
+    gm0_settime2				@34
