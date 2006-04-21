@@ -73,8 +73,7 @@ int main(int argv, char * argvc[])
 
   	printf("Which comm port would you like to use (COMn or /dev/ttySn) ?\n=");
   	scanf("%d",&port);
- 
-  	if(port<0 || port >255)
+	if(port<1 || port>254) 
   	{
 		printf("\nDon't be silly, comport %d is out of range!\n",port);
 		return 0;
@@ -382,7 +381,7 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 void loadallfunctions()
 {
 	HMODULE lib;
-	lib=LoadLibrary("gm0.dll");
+	lib=LoadLibrary("gm0D.dll");
 	
 	if(lib==NULL)
 	{
@@ -390,42 +389,42 @@ void loadallfunctions()
 	exit(-1);
 	}
 	
-	loadfunction(lib,&gm0_newgm,"_gm0_newgm@4");
-	loadfunction(lib,&gm0_killgm,"_gm0_killgm@4");
-	loadfunction(lib,&gm0_getrange,"_gm0_getrange@4");
-	loadfunction(lib,&gm0_getunits,"_gm0_getunits@4");
-	loadfunction(lib,&gm0_getvalue,"_gm0_getvalue@4"); 
-	loadfunction(lib,&gm0_getmode,"_gm0_getmode@4"); 
+	loadfunction(lib,&gm0_newgm,"gm0_newgm");
+	loadfunction(lib,&gm0_killgm,"gm0_killgm");
+	loadfunction(lib,&gm0_getrange,"gm0_getrange");
+	loadfunction(lib,&gm0_getunits,"gm0_getunits");
+	loadfunction(lib,&gm0_getvalue,"gm0_getvalue"); 
+	loadfunction(lib,&gm0_getmode,"gm0_getmode"); 
 
-	loadfunction(lib,&gm0_startconnect,"_gm0_startconnect@4");
-	loadfunction(lib,&gm0_getconnect,"_gm0_getconnect@4");
+	loadfunction(lib,&gm0_startconnect,"gm0_startconnect");
+	loadfunction(lib,&gm0_getconnect,"gm0_getconnect");
 
-	loadfunction(lib,&gm0_setrange,"_gm0_setrange@8");
-	loadfunction(lib,&gm0_setunits,"_gm0_setunits@8");
-	loadfunction(lib,&gm0_setmode,"_gm0_setmode@8"); 
-	loadfunction(lib,&gm0_setlanguage,"_gm0_setlanguage@8"); 
+	loadfunction(lib,&gm0_setrange,"gm0_setrange");
+	loadfunction(lib,&gm0_setunits,"gm0_setunits");
+	loadfunction(lib,&gm0_setmode,"gm0_setmode"); 
+	loadfunction(lib,&gm0_setlanguage,"gm0_setlanguage"); 
 
-	loadfunction(lib,&gm0_doaz,"_gm0_doaz@4"); 
-	loadfunction(lib,&gm0_resetnull,"_gm0_resetnull@4"); 
+	loadfunction(lib,&gm0_doaz,"gm0_doaz"); 
+	loadfunction(lib,&gm0_resetnull,"gm0_resetnull"); 
 
-	loadfunction(lib,&gm0_setcallback,"_gm0_setcallback@8"); 
+	loadfunction(lib,&gm0_setcallback,"gm0_setcallback"); 
 
-	loadfunction(lib,&gm0_setinterval,"_gm0_setinterval@8"); 
-	loadfunction(lib,&gm0_resetpeak,"_gm0_resetpeak@4"); 
-	loadfunction(lib,&gm0_sendtime,"_gm0_sendtime@8"); 
+	loadfunction(lib,&gm0_setinterval,"gm0_setinterval"); 
+	loadfunction(lib,&gm0_resetpeak,"gm0_resetpeak"); 
+	loadfunction(lib,&gm0_sendtime,"gm0_sendtime"); 
 
-	loadfunction(lib,&gm0_startcmd,"_gm0_startcmd@4"); 
-	loadfunction(lib,&gm0_endcmd,"_gm0_endcmd@4"); 
-	loadfunction(lib,&gm0_getstore,"_gm0_getstore@8"); 
+	loadfunction(lib,&gm0_startcmd,"gm0_startcmd"); 
+	loadfunction(lib,&gm0_endcmd,"gm0_endcmd"); 
+	loadfunction(lib,&gm0_getstore,"gm0_getstore"); 
 
 
-	loadfunction(lib,&gm0_gettime,"_gm0_gettime@4"); 
-	loadfunction(lib,&gm0_settime,"_gm0_settime@12"); 
+	loadfunction(lib,&gm0_gettime,"gm0_gettime"); 
+	loadfunction(lib,&gm0_settime,"gm0_settime"); 
 
-	loadfunction(lib,&gm0_getprobeserial,"_gm0_getprobeserial@4"); 
-	loadfunction(lib,&gm0_getgmserial,"_gm0_getgmserial@4"); 
-	loadfunction(lib,&gm0_getprobetype,"_gm0_getprobetype@4"); 
-	loadfunction(lib,&gm0_getprobecaldate,"_gm0_getprobecaldate@4"); 
+	loadfunction(lib,&gm0_getprobeserial,"gm0_getprobeserial"); 
+	loadfunction(lib,&gm0_getgmserial,"gm0_getgmserial"); 
+	loadfunction(lib,&gm0_getprobetype,"gm0_getprobetype"); 
+	loadfunction(lib,&gm0_getprobecaldate,"gm0_getprobecaldate"); 
 
 }
 
@@ -437,7 +436,7 @@ void loadfunction (HANDLE lib,void ** functionpointer,char * functionname)
   printf("Error loading function %s \n",functionname);
   exit(-1);
  }
- printf("Function %s loaded @ %d OK\n",functionname,functionpointer);
+ printf("Function %s loaded @ %x OK\n",functionname,functionpointer);
  return;
 }
 #endif
