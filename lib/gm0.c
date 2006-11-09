@@ -82,7 +82,7 @@ int gm0_dothestar(HANDLEGM hand)
 	int status;
 	char flushdata;
 	char star;
-	int ret;
+	int ret=-1;
 
 	pGMS[hand]->gm0_usereadthread=false;
 

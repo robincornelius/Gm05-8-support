@@ -1,4 +1,3 @@
-
 LIBRARY    gm0.dll
 EXPORTS
     gm0_newgm					@1
@@ -35,3 +34,10 @@ EXPORTS
     gm0_endcmd					@32
     gm0_setcallback2			@33
     gm0_settime2				@34
+    gm0_getprobeserial			@35
+    gm0_getgmserial				@36
+    gm0_getprobetype			@37
+    gm0_getprobecaldate			@38
+    
+    
+    
