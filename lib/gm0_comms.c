@@ -24,6 +24,7 @@
 
 */
 
+
 #define debug_flag 0
 
 
@@ -32,6 +33,7 @@
 	#include <process.h>
 	#include "windows.h"
 	#include <locale.h>
+	#include "ntusb.h"
 #else
 	#include <pthread.h>
 #endif
@@ -50,6 +52,9 @@
 #include "gm0_private.h"
 #include "gm0.h"
 
+
+int gm0_openport232(HANDLEGM hand);
+int gm0_openportUSB(HANDLEGM hand);
 
 int processcount=0;
 int handcount;
@@ -99,7 +104,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 int gm0_openport(HANDLEGM hand)
 {
-	char * pportstring; 
+
 
 	#ifndef _LINUX
 		/* Set the locale for this instance */
@@ -110,6 +115,21 @@ int gm0_openport(HANDLEGM hand)
 		decimal point, this was fixed on windows with above setlocale() code */
 	#endif
 
+	if(pGMS[hand]->m_Iportno>0)
+		gm0_openport232(hand);
+
+	if(pGMS[hand]->m_Iportno<0)
+		gm0_openportUSB(hand);
+
+	return 0;
+}
+
+
+int gm0_openport232(HANDLEGM hand)
+{	
+	char * pportstring; 
+
+	
 	pportstring=(char *)malloc(sizeof(char)*5);
 	if(pportstring==NULL)
 		return GM_MEMORY_ERROR;
@@ -124,6 +144,15 @@ int gm0_openport(HANDLEGM hand)
 	pGMS[hand]->port_open=true;
 
 	free(pportstring); 
+
+	return 0;
+
+}
+
+int gm0_openportUSB(HANDLEGM hand)
+{
+	
+	//FindTheHID(hand);
 
 	return 0;
 }
@@ -152,6 +181,61 @@ int gm0_closeport(HANDLEGM hand)
 	free(pportstring);	
 
 	return 0;
+}
+
+
+void __cdecl pollthread(void * pParam)
+{
+
+	HANDLEGM hand;
+
+	#ifndef _LINUX
+		CoInitializeEx(NULL,COINIT_MULTITHREADED);
+	#endif
+
+	hand = (int)pParam;
+
+	pGMS[hand]->threadlockcount++;
+
+	OutputDebugString("Poll thread beginning\n");
+
+	while(pGMS[hand]->gm0_threadrun==true)
+	{
+
+		if(pGMS[hand]->disablepoll==FALSE)
+		{
+			pGMS[hand]->polldisabled=FALSE;
+			polldata(hand);
+
+			// signal data has been collected
+			pGMS[hand]->datasignal=true;
+	
+			if(pGMS[hand]->pCallback!=NULL && pGMS[hand]->gm0_threadrun==true)
+			{
+				pGMS[hand]->pCallback(hand,pGMS[hand]->store);
+			}
+
+			if(pGMS[hand]->pCallback2!=NULL && pGMS[hand]->gm0_threadrun==true)
+			{
+				pGMS[hand]->pCallback2(hand);
+			}
+
+		}
+		else
+		{
+			pGMS[hand]->polldisabled=TRUE;
+			OutputDebugString("Poll thread skipping beat\n");
+		}
+
+		Sleep(333);
+	}
+
+	pGMS[hand]->threadlockcount--;
+
+	#ifndef _LINUX
+		CoUninitialize();
+	#endif
+
 }
 
 
@@ -230,6 +314,26 @@ char packetbyte(HANDLEGM hand, char dataout)
 	return(retdata);
 }
 
+
+char AMpacket(HANDLEGM hand,char cmd,char data)
+{
+
+	char ret;
+
+	if(pGMS[hand]->m_Iportno>0)
+	{
+		ret=packetbyte(hand,cmd);
+		pGMS[hand]->cmdstatus=packetbyte(hand,data);
+	}
+
+	if(pGMS[hand]->m_Iportno<0)
+	{
+		ret=WritepacketToDevice(hand,cmd,data);
+		//pGMS[hand]->cmdstatus=0;
+	}
+
+	return ret;
+}
 
 
 void processgmcomms(HANDLEGM hand)
@@ -364,6 +468,10 @@ GM0_API HANDLEGM gm0_newgm(int port)
 	*(pGMS[newhand]->ptime_hour+2)='\0';
 
 
+	pGMS[newhand]->disablepoll=FALSE;
+	pGMS[newhand]->polldisabled=FALSE;
+	pGMS[newhand]->faultyfirmware=FALSE;
+	
 	pGMS[newhand]->threadlockcount=0;
 
 	pGMS[newhand]->samplecount=0;
@@ -436,7 +544,7 @@ GM0_API HANDLEGM gm0_startconnect(HANDLEGM hand)
 
 	sprintf(msg,"Hand is %d\n",hand);
 
-	debugprint("Start Connect Activated ");
+	debugprint("Start Connect Activated");
 	debugprint(msg);
 
 #ifndef _LINUX
@@ -492,7 +600,16 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 		Sleep(20);
 	}
 
-	gm0_closeport(hand);
+	
+	if(pGMS[hand]->m_Iportno>0)
+	{
+		gm0_closeport(hand);
+	}
+	else
+	{
+		// USB Shut down ?
+	}
+
 	free(pGMS[hand]->pIncomming);
 	free(pGMS[hand]->pvalue);
 	free(pGMS[hand]->punits);
@@ -527,15 +644,23 @@ void __cdecl connectthread(void * pParam)
 
 	pGMS[hand]->gm0_usereadthread=false; // if this shoudn't be true then this function shoudn't have been started!
 
-	#ifndef _LINUX
-		_beginthread(readthread,0,(void*)hand);
-	#else
-	{
-		pthread_t  p_thread; 
-		pthread_create(&p_thread, NULL, readthread, (void*)hand);
-	}
-	#endif
-
+	
+		#ifndef _LINUX
+			if(pGMS[hand]->m_Iportno>0)
+			{
+				_beginthread(readthread,0,(void*)hand);
+			}
+			else
+			{
+				pGMS[hand]->disablepoll=TRUE;
+				_beginthread(pollthread,0,(void*)hand);
+			}
+		#else
+		{
+			pthread_t  p_thread; 
+			pthread_create(&p_thread, NULL, readthread, (void*)hand);
+		}
+		#endif
 
 #ifndef _LINUX
 	CoInitializeEx(NULL,COINIT_MULTITHREADED);
@@ -547,9 +672,14 @@ void __cdecl connectthread(void * pParam)
 	{
 		ret=-1; // default to allow entry below
 
+		if(pGMS[hand]->m_Iportno<0)
+		{
+			FindTheHID(hand);
+		}
+
 		while(ret!=0 && pGMS[hand]->gm0_threadrun==true)
 		{
-			ret=gm0_dothestar(hand); // this does not need threadlock counting 
+			ret=gm0_gmstar(hand); // this does not need threadlock counting 
 		}
 
 		if(pGMS[hand]->gm0_threadrun==false)
@@ -562,14 +692,27 @@ void __cdecl connectthread(void * pParam)
 		}
 
 		gm0_setdata(hand,0xABCD);
-		
+
+		pGMS[hand]->faultyfirmware=false;
 		retdata=gm0_getdata(hand);
 
 		if(retdata==0xABCD)
 		{
 			connected=true;	
+			OutputDebugString("******* NORMAL COM DETECTED *******\n");
+		
 		}
-		else
+
+		pGMS[hand]->faultyfirmware=true;
+		retdata=gm0_getdata(hand);
+	
+		if(retdata==0xABCD)
+		{
+			connected=true;	
+			OutputDebugString("******* FAULT COM DETECTED *******\n");
+		}
+
+		if(connected!=true)
 		{
 			#ifndef _LINUX
 				CoUninitialize();
@@ -605,5 +748,8 @@ void __cdecl connectthread(void * pParam)
 	#endif
 
 	pGMS[hand]->threadlockcount--;
+
+	pGMS[hand]->disablepoll=FALSE;
+
 
 }

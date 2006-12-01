@@ -37,6 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="m:\winddk\hid.lib m:\winddk\setupapi.lib"
 				OutputFile=".\Debug/gm0D.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -103,6 +104,7 @@ copy .\Debug\gm0D.dll c:\windows\system32 /y
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="m:\winddk\hid.lib m:\winddk\setupapi.lib"
 				OutputFile=".\Release/gm0.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -224,6 +226,9 @@ copy .\Release\gm0.dll c:\windows\system32\ /y
 						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;GM0_EXPORTS;_WIN32_DCOM;$(NoInherit)"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\NTUSB.c">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -236,6 +241,9 @@ copy .\Release\gm0.dll c:\windows\system32\ /y
 			</File>
 			<File
 				RelativePath="gm0_private.h">
+			</File>
+			<File
+				RelativePath=".\NTUSB.h">
 			</File>
 			<File
 				RelativePath="resource.h">

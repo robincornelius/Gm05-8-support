@@ -73,14 +73,14 @@ int main(int argv, char * argvc[])
 
   	printf("Which comm port would you like to use (COMn or /dev/ttySn) ?\n=");
   	scanf("%d",&port);
-	if(port<1 || port>254) 
+	if(port<-5 || port>254) 
   	{
 		printf("\nDon't be silly, comport %d is out of range!\n",port);
 		return 0;
 	}
 	
 
-	mygm=gm0_newgm(1); 
+	mygm=gm0_newgm(port); 
 	if(mygm>=0 || mygm<255)
 	{
 		printf(" SUCCESS, handle %d\n",mygm);
@@ -270,7 +270,7 @@ int main(int argv, char * argvc[])
 					tempbuffer[1]=dbuffer[7];
 					time.year=strtol(tempbuffer,&stop,10);
 
-					printf("%d:%d:%d %d/%d/%d \n",time.hour,time.min,time.sec,time.day,time.month,time.year);
+					printf("Setting GM time to %d:%d:%d %d/%d/%d \n",time.hour,time.min,time.sec,time.day,time.month,time.year);
 					gm0_settime(mygm,time);
 								
 				}
@@ -381,7 +381,7 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 void loadallfunctions()
 {
 	HMODULE lib;
-	lib=LoadLibrary("gm0.dll");
+	lib=LoadLibrary("gm0D.dll");
 	
 	if(lib==NULL)
 	{

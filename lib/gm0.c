@@ -36,6 +36,7 @@
 #include "gm0_private.h"
 #include "gm0.h"
 
+
 	/* The DP position indexed by [units][range] */
 	int DP_position[4][4] = {
 	 {4, 2, 3, 4},
@@ -53,18 +54,38 @@
 GM0_API int gm0_gmcmd(HANDLEGM hand,unsigned char cmd,unsigned char data)
 {
 	int retdata;
+	int oldstatus;
 
 	if(pGMS[hand]->doingnull==true)
 		return 0;
 
-	retdata=packetbyte(hand,cmd);
-	pGMS[hand]->cmdstatus=packetbyte(hand,data); 
+	pGMS[hand]->disablepoll=TRUE;
+
+	while(pGMS[hand]->polldisabled==FALSE)
+		Sleep(1);
+
+	retdata=AMpacket(hand,cmd,data);
+
+	pGMS[hand]->disablepoll=FALSE;
+
+	if(pGMS[hand]->faultyfirmware==true)
+	{
+		if( cmd==GMC_GETDATALO || cmd==GMC_GETDATAHI || ( cmd>=GMC_TIME0 && cmd <=GMC_TIME7))
+		{
+			oldstatus=pGMS[hand]->cmdstatus;
+			pGMS[hand]->cmdstatus=retdata;
+			retdata=oldstatus;
+		}
+	}
 
 	return retdata;
 }
 
 int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 {
+	if(pGMS[hand]->m_Iportno<0)
+		return 0;
+
 	packetbyte(hand,GMC_MODE1);
 	packetbyte(hand,GMC_NULL);
 	pGMS[hand]->gm0_usereadthread=true;
@@ -74,7 +95,15 @@ int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 
 int gm0_gmstar(HANDLEGM hand) // ENTER COMMAND MODE
 {
-	return gm0_dothestar(hand);
+	if(pGMS[hand]->m_Iportno<0)
+	{
+		AMpacket(hand,'*','*');
+	}
+	else
+	{
+		return gm0_dothestar(hand);
+	}
+
 }
 
 int gm0_dothestar(HANDLEGM hand)
@@ -136,11 +165,13 @@ GM0_API int gm0_getrange(HANDLEGM hand)
 
 GM0_API int gm0_getmode(HANDLEGM hand)
 {
+
 	return pGMS[hand]->store.mode;
 }
 
 GM0_API int gm0_getunits(HANDLEGM hand)
 {
+
 	return pGMS[hand]->store.units;
 }
 
@@ -260,9 +291,9 @@ GM0_API int gm0_resetnull(HANDLEGM hand)
 
 
 
-
 GM0_API double gm0_getvalue(HANDLEGM hand)
 {
+
 	if(!checkhand(hand))
 	{
 		printf("CHECK FAILED\n");
@@ -418,8 +449,32 @@ GM0_API unsigned __int16 gm0_getdata(HANDLEGM hand)
 	unsigned __int16 data;
 	unsigned __int8 lo,hi;
 
+//	if(pGMS[hand]->faultyfirmware==true)
+//	{
+//		return(gm0_getdatafaulty(hand));
+//	}
+
 	lo=gm0_getdatalo(hand);
 	hi=gm0_getdatahi(hand);
+
+	data=hi;
+
+	data=data*256;
+	data=data+lo;
+
+	return data;
+}
+
+GM0_API unsigned __int16 gm0_getdatafaulty(HANDLEGM hand)
+{
+	unsigned __int16 data;
+	unsigned __int8 lo,hi;
+
+	gm0_getdatalo(hand);
+	lo=pGMS[hand]->cmdstatus;
+	
+	gm0_getdatahi(hand);
+	hi=pGMS[hand]->cmdstatus;
 
 	data=hi;
 
@@ -486,7 +541,6 @@ GM0_API int gm0_settime(HANDLEGM hand,struct gm_time time)
 
 	return 0;
 }
-
 
 
 GM0_API struct gm_time gm0_gettime(HANDLEGM hand)

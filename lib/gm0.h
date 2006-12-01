@@ -190,6 +190,7 @@ GM0_API int LIBTYPE gm0_setaddr BKET (HANDLEGM hand,unsigned __int16 data);
 GM0_API int LIBTYPE gm0_setdata BKET (HANDLEGM hand,unsigned __int16 data);
 GM0_API unsigned __int16 LIBTYPE gm0_getaddr BKET (HANDLEGM hand);
 GM0_API unsigned __int16 LIBTYPE gm0_getdata BKET (HANDLEGM hand);
+GM0_API unsigned __int16 LIBTYPE gm0_getdatafaulty BKET (HANDLEGM hand);
 
 
 GM0_API long LIBTYPE gm0_startcmd BKET (HANDLEGM hand);
