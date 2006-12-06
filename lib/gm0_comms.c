@@ -139,7 +139,7 @@ int gm0_openport232(HANDLEGM hand)
 #else
 	sprintf(pportstring,"/dev/ttyS%d",pGMS[hand]->m_Iportno);
 #endif
-	pGMS[hand]->com.fd=rs232_open(pportstring,4800,'N',8,1,0);
+	pGMS[hand]->com.fd=rs232_open(pportstring,9600,'N',8,1,0);
 
 	pGMS[hand]->port_open=true;
 
@@ -245,6 +245,7 @@ void __cdecl readthread(void * pParam)
 	HANDLEGM hand;
 	unsigned long length;
 	static readthreadstarted=false;
+	char * buffer[1024];
 	
 #ifndef _LINUX
 	CoInitializeEx(NULL,COINIT_MULTITHREADED);
@@ -270,6 +271,8 @@ void __cdecl readthread(void * pParam)
 			if(length!=-1) //read 1 char or timeout after 250ms
 			{
 				*(pGMS[hand]->pIncomming + pGMS[hand]->index)=data; // store data in buffer
+				//sprintf(buffer,"RX %d\n\0",data);
+				//OutputDebugString(buffer);
 				pGMS[hand]->index++;
 				if(pGMS[hand]->index>=12 /*&& *(pGMS[hand]->pIncomming+12)==13*/)
 				processgmcomms(hand);
@@ -318,7 +321,7 @@ char packetbyte(HANDLEGM hand, char dataout)
 char AMpacket(HANDLEGM hand,char cmd,char data)
 {
 
-	char ret;
+	unsigned char ret;
 
 	if(pGMS[hand]->m_Iportno>0)
 	{
@@ -643,7 +646,6 @@ void __cdecl connectthread(void * pParam)
 	pGMS[hand]->gm0_threadrun=true; // if this shoudn't be true then this function shoudn't have been started!
 
 	pGMS[hand]->gm0_usereadthread=false; // if this shoudn't be true then this function shoudn't have been started!
-
 	
 		#ifndef _LINUX
 			if(pGMS[hand]->m_Iportno>0)
@@ -676,6 +678,10 @@ void __cdecl connectthread(void * pParam)
 		{
 			FindTheHID(hand);
 		}
+		else
+		{
+			pGMS[hand]->polldisabled=TRUE;
+		}
 
 		while(ret!=0 && pGMS[hand]->gm0_threadrun==true)
 		{
@@ -702,16 +708,18 @@ void __cdecl connectthread(void * pParam)
 			OutputDebugString("******* NORMAL COM DETECTED *******\n");
 		
 		}
-
-		pGMS[hand]->faultyfirmware=true;
-		retdata=gm0_getdata(hand);
-	
-		if(retdata==0xABCD)
+		else
 		{
-			connected=true;	
-			OutputDebugString("******* FAULT COM DETECTED *******\n");
-		}
 
+			pGMS[hand]->faultyfirmware=true;
+			retdata=gm0_getdata(hand);
+		
+			if(retdata==0xABCD)
+			{
+				connected=true;	
+				OutputDebugString("******* FAULT COM DETECTED *******\n");
+			}
+		}
 		if(connected!=true)
 		{
 			#ifndef _LINUX

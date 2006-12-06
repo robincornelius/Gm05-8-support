@@ -529,7 +529,7 @@ DWORD WriteReport(HANDLEGM hand)
 
 unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned char data)
 {
-
+	unsigned char dataret;
 
 	DWORD Result = 0;
 	//Write a report to the device.
@@ -541,7 +541,7 @@ unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned 
 	if (Result != 0)
 	{
 		Result = ReadReport(hand);
-		pGMS[hand]->cmdstatus=InputReport[1];
+		dataret=InputReport[1];
 	}
 	else
 	{
@@ -569,7 +569,7 @@ unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned 
 	if (Result != 0 )
 	{
 			Result = ReadReport(hand);
-			data = InputReport[1];
+			pGMS[hand]->cmdstatus = InputReport[1];
 	}
 	else
 	{
@@ -584,7 +584,7 @@ unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned 
 		return(0);
 	}
 
-	return(data);
+	return(dataret);
 
 }
 

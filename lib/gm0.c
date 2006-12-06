@@ -547,6 +547,7 @@ GM0_API struct gm_time gm0_gettime(HANDLEGM hand)
 {
 	struct gm_time time;
 	gm0_gmstar(hand);	
+	gm0_gmcmd(hand,GMC_TIME,0); // read only);
 	gm0_gmcmd(hand,GMC_TIME,3); // Get time
 	
 	time.sec=gm0_gmcmd(hand,GMC_TIME1,0); 
