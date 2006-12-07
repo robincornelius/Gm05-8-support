@@ -133,6 +133,22 @@ struct gm_store{
  float value;
 };
 
+struct unit_range_struct {
+
+	float range_div;
+	char *formatter;
+	//char *unit_string;
+};
+
+struct	units_struct {
+
+	float global_mult;
+	struct unit_range_struct unit_range[4];
+
+};
+
+const struct units_struct units_range_conversion[4];
+
 // Thread and initaliseation fuctions
 GM0_API HANDLEGM LIBTYPE gm0_newgm BKET (int port);
 GM0_API HANDLEGM LIBTYPE gm0_startconnect BKET (HANDLEGM hand);

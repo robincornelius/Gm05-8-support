@@ -16,7 +16,7 @@
 
 #define	MAXREPORTSIZE 256
 CHAR	OutputReport[MAXREPORTSIZE];
-
+/*
 struct unit_range_struct {
 
 	float range_div;
@@ -30,7 +30,8 @@ struct	units_struct {
 	struct unit_range_struct unit_range[4];
 
 };
-
+*/
+/*
 const struct units_struct units[4]={
 
 						1.0,							
@@ -58,7 +59,7 @@ const struct units_struct units[4]={
 						100.0, 		"% 05.2f Oe "
 						
 };
-
+*/
 
 //Application global variables 
 
@@ -676,10 +677,40 @@ int GetReadingFromGM08(HANDLEGM hand)
 
 void polldata(HANDLEGM hand)
 {
+	const struct units_struct units_range_conversion_baseunits[4]={
+
+						1.0,							
+						1000.0, 	"% 05.3f  T ",	//was 10 000 think it was fudge for /10
+					 	10000.0, 		"% 05.4f  T ",
+					 	100000.0, 		"% 05.5f  T ",
+					 	1000000.0,		"% 05.6f  T ",
+
+						1.0,
+					 	0.1,		"% 06.0f  G ",
+						1.0,		"% 05.0f  G ",
+						10.0,		"% 05.1f  G ",
+						100.0,		"% 05.2f  G ",
+
+						0.7957747,
+						1.0,		"% 04.0f kA/m",
+						10.0,		"% 05.1f kA/m",
+						100.0,		"% 05.2f kA/m",
+						1000.0, 	"% 05.3f kA/m",
+
+						1.0,
+						0.1,		"% 05.2f Oe ",
+						1.0,		"% 05.3f Oe ",
+						10.0,		"% 05.4f Oe ",
+						100.0, 		"% 05.5f Oe "
+						
+};
+
 	double data;
 
 	if(pGMS[hand]->m_Iportno>0)
 		return;
+
+	WritepacketToDevice(hand,42, 42);
 
 	data = GetReadingFromGM08(hand);
 
@@ -689,7 +720,10 @@ void polldata(HANDLEGM hand)
 
 	pGMS[hand]->store.mode = WritepacketToDevice(hand,46, 0);
 
-	pGMS[hand]->store.value= ((float) data / (float) units[pGMS[hand]->store.units].unit_range[pGMS[hand]->store.range].range_div);
+	//pGMS[hand]->store.value= ((float) data / (float) units[pGMS[hand]->store.units].unit_range[pGMS[hand]->store.range].range_div);
+
+	pGMS[hand]->store.value =
+		(float) ((float) data * (float)units_range_conversion_baseunits[pGMS[hand]->store.units].global_mult/ (float) units_range_conversion_baseunits[pGMS[hand]->store.units].unit_range[pGMS[hand]->store.range].range_div);
 
 }
 

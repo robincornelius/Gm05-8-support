@@ -227,7 +227,7 @@ void __cdecl pollthread(void * pParam)
 			OutputDebugString("Poll thread skipping beat\n");
 		}
 
-		Sleep(333);
+		Sleep(500); //333
 	}
 
 	pGMS[hand]->threadlockcount--;
