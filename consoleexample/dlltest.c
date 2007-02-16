@@ -494,8 +494,8 @@ const struct units_struct units_range_conversion[4]={
 	//units_range_conversion[pGMS[hand]->store.units].unit_range[pGMS[hand]->store.range].formatter
 
 	printf("Reading is ");
-
-	printf(units_range_conversion_baseunits[store.units].unit_range[store.range].formatter
+	
+	printf(units_range_conversion_baseunits[store.units].unit_range[store.range&0x03].formatter
 			,store.value);
 
 	printf(" %s \n",mode_str[store.mode]);
