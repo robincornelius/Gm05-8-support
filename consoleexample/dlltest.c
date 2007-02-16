@@ -420,82 +420,9 @@ printf("\n\n");
 void __stdcall callback(HANDLEGM hand,struct gm_store store)
 {
 
-	/*
-struct unit_range_struct {
-
-	float range_div;
-	char *formatter;
-	//char *unit_string;
-};
-
-struct	units_struct {
-
-	float global_mult;
-	struct unit_range_struct unit_range[4];
-
-};
-*/
-/*
-const struct units_struct units_range_conversion[4]={
-
-						1.0,							
-						1000.0, 	"% 05.3f  T ",	//was 10 000 think it was fudge for /10
-					 	10.0, 		"% 05.1f mT ",
-					 	100.0, 		"% 05.2f mT ",
-					 	1000.0,		"% 05.3f mT ",
-
-						1.0,
-					 	100.0,		"% 05.2f kG ",
-						1000.0,		"% 05.3f kG ",
-						10.0,		"% 05.1f  G ",
-						100.0,		"% 05.2f  G ",
-
-						0.7957747,
-						1.0,		"% 04.0f kA/m",
-						10.0,		"% 05.1f kA/m",
-						100.0,		"% 05.2f kA/m",
-						1000.0, 	"% 05.3f kA/m",
-
-						1.0,
-						100.0,		"% 05.2f kOe ",
-						1000.0,		"% 05.3f kOe ",
-						10.0,		"% 05.1f Oe ",
-						100.0, 		"% 05.2f Oe "
-						
-};
-*/
-
-	char *units_str[4][4] =
-  {
-	  {" T  ", "mT  ", "mT  ", "mT  "},
-	  {"kG  ", "kG  ", "G   ", "G   "},
-	  {"kA/m", "kA/m", "kA/m", "kA/m"},
-	  {"kOe ", "kOe ", "Oe  ", "Oe  "}
-  };
-
-
-
-
-/* The DP position indexed by [units][range] */
-	int DP_position[4][4] =
-	{
-	  {4, 2, 3, 4},
-	  {3, 4, 2, 3},
-	  {1, 2, 3, 4},
-	  {3, 4, 2, 3}
-	 };
-
-	/* The divisor for each DP position */
-	int divisor[5] =
-	{
-		1, 1, 10, 100, 1000
-	};
-
-	//units_range_conversion[pGMS[hand]->store.units].unit_range[pGMS[hand]->store.range].formatter
-
 	printf("Reading is ");
 	
-	printf(units_range_conversion_baseunits[store.units].unit_range[store.range&0x03].formatter
+	printf(units_range_conversion_baseunits[store.units].unit_range[(store.range&0x03)].formatter
 			,store.value);
 
 	printf(" %s \n",mode_str[store.mode]);

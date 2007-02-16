@@ -136,7 +136,7 @@ struct gm_store{
 struct unit_range_struct {
 
 	float range_div;
-	char *formatter;
+	char formatter[11];
 	//char *unit_string;
 };
 
