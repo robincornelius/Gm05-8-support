@@ -55,62 +55,6 @@ void loadallfunctions();
 void showmenu();
 void __stdcall callback(HANDLEGM hand,struct gm_store store);
 
-const struct units_struct units_range_conversion[4]={
-
-						1.0,							
-						1000.0, 	"% 05.3f  T ",	//was 10 000 think it was fudge for /10
-					 	10.0, 		"% 05.1f mT ",
-					 	100.0, 		"% 05.2f mT ",
-					 	1000.0,		"% 05.3f mT ",
-
-						1.0,
-					 	100.0,		"% 05.2f kG ",
-						1000.0,		"% 05.3f kG ",
-						10.0,		"% 05.1f  G ",
-						100.0,		"% 05.2f  G ",
-
-						0.7957747,
-						1.0,		"% 04.0f kA/m",
-						10.0,		"% 05.1f kA/m",
-						100.0,		"% 05.2f kA/m",
-						1000.0, 	"% 05.3f kA/m",
-
-						1.0,
-						100.0,		"% 05.2f kOe ",
-						1000.0,		"% 05.3f kOe ",
-						10.0,		"% 05.1f Oe ",
-						100.0, 		"% 05.2f Oe "
-						
-};
-
-const struct units_struct units_range_conversion_baseunits[4]={
-
-						1.0,							
-						1000.0, 	"% 05.3f  T ",	//was 10 000 think it was fudge for /10
-					 	10000.0, 		"% 05.4f  T ",
-					 	100000.0, 		"% 05.5f  T ",
-					 	1000000.0,		"% 05.6f  T ",
-
-						1.0,
-					 	0.1,		"% 06.0f  G ",
-						1.0,		"% 05.0f  G ",
-						10.0,		"% 05.1f  G ",
-						100.0,		"% 05.2f  G ",
-
-						0.7957747,
-						1.0,		"% 04.0f kA/m",
-						10.0,		"% 05.1f kA/m",
-						100.0,		"% 05.2f kA/m",
-						1000.0, 	"% 05.3f kA/m",
-
-						1.0,
-						0.1,		"% 05.2f Oe ",
-						1.0,		"% 05.3f Oe ",
-						10.0,		"% 05.4f Oe ",
-						100.0, 		"% 05.5f Oe "
-						
-};
-
 	/* Descriptions of the display modes */
 	char *mode_str[5] =
     {
@@ -120,6 +64,27 @@ const struct units_struct units_range_conversion_baseunits[4]={
 		"AC MAX ",
 		"AC Peak"
     };
+
+	char *units_str[4] =
+    {
+		"T",
+		"G",
+		"A/m",
+		"Oe"
+    };
+
+	char *range_str[8] =
+    {
+		"Range 0",
+		"Range 1",
+		"Range 2",
+		"Range 3",
+		"Range 0 (auto range)",
+		"Range 1 (auto range)",
+		"Range 2 (auto range)",
+		"Range 3 (auto range)"
+	};
+
 
 
 
@@ -276,11 +241,13 @@ int main(int argv, char * argvc[])
 					scanf("%d",&reg);
 					mystore=gm0_getstore(mygm,reg);
 	
-					printf(units_range_conversion[mystore.units].unit_range[mystore.range].formatter
-						,mystore.value);
+					printf("%f"	,mystore.value);
 
-					printf(" %s \n",mode_str[mystore.mode]);
+					printf(" %s",units_str[mystore.units]);
 
+					printf(" %s",mode_str[mystore.mode]);
+
+					printf(" %s\n",range_str[mystore.range]);
 
 					//printf("Value is %lf %d %d %d\n",mystore.value,mystore.units,mystore.range,mystore.mode);
 					printf("Time stamp %d:%d:%d  %d/%d/%d\n",mystore.time.hour,mystore.time.min,mystore.time.sec,mystore.time.day,mystore.time.month,mystore.time.year);
@@ -307,11 +274,11 @@ int main(int argv, char * argvc[])
 
 					if (mystore.mode != 255) //255 invalid
 					{
-						//printf("Reg %d is %lf %d %d %d\n",reg,mystore.value,mystore.units,mystore.range,mystore.mode);
-						printf(units_range_conversion[mystore.units].unit_range[mystore.range].formatter
-								,mystore.value);
+						printf("%f",mystore.value);
 
-						printf(" %s \n",mode_str[mystore.mode]);
+						printf(" %s",units_str[mystore.units]);
+						printf(" %s",mode_str[mystore.mode]);
+						printf(" %s\n",range_str[mystore.range]);
 						printf("Time stamp %d:%d:%d  %d/%d/%d\n",mystore.time.hour,mystore.time.min,mystore.time.sec,mystore.time.day,mystore.time.month,mystore.time.year);
 					}	
 					
@@ -421,11 +388,13 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 {
 
 	printf("Reading is ");
-	
-	printf(units_range_conversion_baseunits[store.units].unit_range[(store.range&0x03)].formatter
-			,store.value);
 
-	printf(" %s \n",mode_str[store.mode]);
+	printf("%f",store.value);
+	
+	printf(" %s",units_str[store.units]);
+
+	printf(" %s ",mode_str[store.mode]);
+	printf(" %s\n",range_str[store.range]);
 
 }
 

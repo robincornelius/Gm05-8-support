@@ -32,25 +32,8 @@
 	#include <pthread.h>
 #endif
 
-
 #include "gm0_private.h"
 #include "gm0.h"
-
-/*
-struct unit_range_struct {
-
-	float range_div;
-	char *formatter;
-	//char *unit_string;
-};
-
-struct	units_struct {
-
-	float global_mult;
-	struct unit_range_struct unit_range[4];
-
-};
-*/
 
 struct mode_array
 {	
@@ -59,46 +42,50 @@ struct mode_array
 
 const struct mode_array mode_text[5] = {"DC   \0", "AC   \0", "DCPK \0", "ACPK \0", "ACMAX\0"};
 
-
 const struct units_struct units_range_conversion[4]={
 
-						1.0,							
-						1000.0, 	"% 05.3f  T ",	//was 10 000 think it was fudge for /10
-					 	10.0, 		"% 05.1f mT ",
-					 	100.0, 		"% 05.2f mT ",
-					 	1000.0,		"% 05.3f mT ",
+						1.0,		//tesla					
+						1000.0, 		//was 10 000 think it was fudge for /10
+					 	10.0, 		
+					 	100.0, 		
+					 	1000.0,		
 
-						1.0,
-					 	100.0,		"% 05.2f kG ",
-						1000.0,		"% 05.3f kG ",
-						10.0,		"% 05.1f  G ",
-						100.0,		"% 05.2f  G ",
+						1.0,	//gauss
+					 	0.1,		
+						1.0,		
+						10.0,		
+						100.0,		
 
-						0.7957747,
-						1.0,		"% 04.0f kA/m",
-						10.0,		"% 05.1f kA/m",
-						100.0,		"% 05.2f kA/m",
-						1000.0, 	"% 05.3f kA/m",
+						0.7957747, //a/m
+						0.001,		
+						0.01,		
+						0.1,		
+						1.0, 
 
-						1.0,
-						100.0,		"% 05.2f kOe ",
-						1000.0,		"% 05.3f kOe ",
-						10.0,		"% 05.1f Oe ",
-						100.0, 		"% 05.2f Oe "
+						1.0,	//oersted
+						0.1,		
+						1.0,		
+						10.0,		
+						100.0 
 						
 };
 
+int gm0_convertvalue(int range,int units,float value,float * newvalue)
+{
 
-	/* The DP position indexed by [units][range] */
-	int DP_position[4][4] = {
-	 {4, 2, 3, 4},
-	 {3, 4, 2, 3},
-	 {1, 2, 3, 4},
-	 {3, 4, 2, 3}};
+	if(newvalue==NULL)
+		return -1;
 
-	/* The divisor for each DP position */
-	int divisor[5] = {
-		1, 1, 10, 100, 1000 };
+	range&=0x03; //mask out autorange
+
+	value /= units_range_conversion[units].range_div[range];
+	value *= units_range_conversion[units].global_mult;
+	(*newvalue)=value;
+
+	return 0;
+
+
+}
 
 /******************** COMMAND WRAPPERS *******************/
 
@@ -778,18 +765,7 @@ GM0_API struct gm_store gm0_getstore(HANDLEGM hand,int pos)
 
 	/* Scale the value appropriately for the units and range */
 
-    if(store.units>=0 && store.range>=0 && store.units<5 && store.range<5)
-	{
-		//sprintf( text_box, units[units_set].unit_range[range].formatter, (float) ((float) data * (float)units[units_set].global_mult/ (float) units[units_set].unit_range[range].range_div));
-
-		store.value =(float) ((float) tempvalue * (float)units_range_conversion[store.units].global_mult/ (float) units_range_conversion[store.units].unit_range[store.range].range_div);
-
-		//store.value = ((float)tempvalue) / divisor[DP_position[store.units][store.range]];
-	}
-	else
-	{
-		printf("***Ilegal value***\n");
-	}
+	gm0_convertvalue(store.range,store.units,tempvalue,&store.value);
 
 	return(store);
 }

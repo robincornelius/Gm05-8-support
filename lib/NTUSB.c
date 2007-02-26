@@ -555,10 +555,6 @@ int GetReadingFromGM08(HANDLEGM hand)
 
 	__int16 intreading;
 
-	int real_reading;
-
-	float temp;
-
 	unsigned char *p_uchar;
 
 	unsigned char Reading[2];
@@ -633,35 +629,8 @@ int GetReadingFromGM08(HANDLEGM hand)
 
 void polldata(HANDLEGM hand)
 {
-	const struct units_struct units_range_conversion_baseunits[4]={
-
-						1.0,							
-						1000.0, 		"%4.3f T\0\0\0\0",	//was 10 000 think it was fudge for /10
-					 	10000.0, 		"%4.3f T\0\0\0\0",
-					 	100000.0, 		"%4.3f T\0\0\0\0",
-					 	1000000.0,		"%4.3f T\0\0\0\0",
-
-						1.0,
-					 	0.1,		"%6.0f G\0\0\0\0",
-						1.0,		"%5.0f G\0\0\0\0",
-						10.0,		"%5.1f G\0\0\0\0",
-						100.0,		"%5.2f G\0\0\0\0",
-
-						0.7957747,
-						1.0,		"%4.0f kA/m\0",
-						10.0,		"%5.1f kA/m\0",
-						100.0,		"%5.2f kA/m\0",
-						1000.0, 	"%5.3f kA/m\0",
-
-						1.0,
-						0.1,		"%5.2f Oe\0\0\0",
-						1.0,		"%5.3f Oe\0\0\0",
-						10.0,		"%5.4f Oe\0\0\0",
-						100.0, 		"%5.5f Oe\0\0\0"
-						
-};
-
 	double data;
+	int tempmode;
 
 	if(pGMS[hand]->m_Iportno>0)
 		return;
@@ -670,15 +639,16 @@ void polldata(HANDLEGM hand)
 
 	data = GetReadingFromGM08(hand);
 
-	pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0);
+	pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0)&0x07;
 
-	pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0);
+	pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0)&0x03;
 
-	pGMS[hand]->store.mode = WritepacketToDevice(hand,46, 0);
+	tempmode=WritepacketToDevice(hand,46, 0);
 
-	pGMS[hand]->store.value=data;
-	pGMS[hand]->store.value /= units_range_conversion_baseunits[pGMS[hand]->store.units].unit_range[(pGMS[hand]->store.range&0x03)].range_div;
-	pGMS[hand]->store.value *= units_range_conversion_baseunits[pGMS[hand]->store.units].global_mult;
+	pGMS[hand]->store.mode = tempmode>4 || tempmode <0 ? 0 : tempmode;
+
+	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,(float)data,&pGMS[hand]->store.value);
+
 }
 
 void closeUSB(HANDLEGM hand)

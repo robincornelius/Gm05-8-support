@@ -27,7 +27,17 @@ BOOL checkhand(int hand);
 
 void debugprint(char * msg);
 char AMpacket(HANDLEGM hand,char cmd,char data);
+int gm0_convertvalue(int range,int units,float value,float * newvalue);
 
+
+struct units_struct {
+
+	float global_mult;
+	float range_div[4];
+
+};
+
+const struct units_struct units_range_conversion[4];
 
 struct GM_STRUCT{
 

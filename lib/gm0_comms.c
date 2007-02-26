@@ -401,7 +401,9 @@ void processgmcomms(HANDLEGM hand)
 	pGMS[hand]->store.units=(unsigned char)strtol(pGMS[hand]->punits,&stop,10);
 	pGMS[hand]->store.range=(unsigned char)strtol(pGMS[hand]->prange,&stop,10)&0x03;
 	pGMS[hand]->store.mode=(unsigned char)strtol(pGMS[hand]->pmode,&stop,10);
-	pGMS[hand]->store.value=strtod(pGMS[hand]->pvalue,&stop);
+
+	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,strtod(pGMS[hand]->pvalue,&stop),&pGMS[hand]->store.value);
+
 	pGMS[hand]->store.time.day=(unsigned char)strtol(pGMS[hand]->ptime_day,&stop,10);
 	pGMS[hand]->store.time.month=(unsigned char)strtol(pGMS[hand]->ptime_month,&stop,10);
 	pGMS[hand]->store.time.year=(unsigned char)strtol(pGMS[hand]->ptime_year,&stop,10);
