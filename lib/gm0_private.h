@@ -28,6 +28,7 @@ BOOL checkhand(int hand);
 void debugprint(char * msg);
 char AMpacket(HANDLEGM hand,char cmd,char data);
 int gm0_convertvalue(int range,int units,float value,float * newvalue);
+void filtercallbackdata(struct gm_store * pdata);
 
 
 struct units_struct {

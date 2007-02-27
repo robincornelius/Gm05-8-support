@@ -317,37 +317,6 @@ void GetDeviceCapabilities(HANDLEGM hand)
 		&Capabilities);
 	OutputDebugString("HidP_GetCaps: \n");
 
-	//Display the capabilities
-
-//	ValueToDisplay.Format("%s%X", "Usage Page: ", Capabilities.UsagePage);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Input Report Byte Length: ", Capabilities.InputReportByteLength);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Output Report Byte Length: ", Capabilities.OutputReportByteLength);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Feature Report Byte Length: ", Capabilities.FeatureReportByteLength);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Link Collection Nodes: ", Capabilities.NumberLinkCollectionNodes);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Input Button Caps: ", Capabilities.NumberInputButtonCaps);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of InputValue Caps: ", Capabilities.NumberInputValueCaps);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of InputData Indices: ", Capabilities.NumberInputDataIndices);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Output Button Caps: ", Capabilities.NumberOutputButtonCaps);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Output Value Caps: ", Capabilities.NumberOutputValueCaps);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Output Data Indices: ", Capabilities.NumberOutputDataIndices);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Feature Button Caps: ", Capabilities.NumberFeatureButtonCaps);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Feature Value Caps: ", Capabilities.NumberFeatureValueCaps);
-//	DisplayData(ValueToDisplay);
-//	ValueToDisplay.Format("%s%d", "Number of Feature Data Indices: ", Capabilities.NumberFeatureDataIndices);
-//	DisplayData(ValueToDisplay);
-
 	//No need for PreparsedData any more, so free the memory it's using.
 	HidD_FreePreparsedData(PreparsedData);
 	OutputDebugString("HidD_FreePreparsedData: \n") ;

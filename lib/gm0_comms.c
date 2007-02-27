@@ -209,6 +209,8 @@ void __cdecl pollthread(void * pParam)
 			// signal data has been collected
 			pGMS[hand]->datasignal=true;
 	
+			filtercallbackdata(&pGMS[hand]->store);
+
 			if(pGMS[hand]->pCallback!=NULL && pGMS[hand]->gm0_threadrun==true)
 			{
 				pGMS[hand]->pCallback(hand,pGMS[hand]->store);
@@ -245,7 +247,6 @@ void __cdecl readthread(void * pParam)
 	HANDLEGM hand;
 	unsigned long length;
 	static readthreadstarted=false;
-	char * buffer[1024];
 	
 #ifndef _LINUX
 	CoInitializeEx(NULL,COINIT_MULTITHREADED);
@@ -329,10 +330,12 @@ char AMpacket(HANDLEGM hand,char cmd,char data)
 		pGMS[hand]->cmdstatus=packetbyte(hand,data);
 	}
 
+	// USB code
 	if(pGMS[hand]->m_Iportno<0)
 	{
 		ret=WritepacketToDevice(hand,cmd,data);
-		//pGMS[hand]->cmdstatus=0;
+
+		pGMS[hand]->disablepoll=FALSE;
 	}
 
 	return ret;
@@ -416,6 +419,8 @@ void processgmcomms(HANDLEGM hand)
 
 	// signal data has been collected
 	pGMS[hand]->datasignal=true;
+
+	filtercallbackdata(&pGMS[hand]->store);
 
 	if(pGMS[hand]->pCallback!=NULL && pGMS[hand]->gm0_threadrun==true)
 	{
@@ -764,5 +769,15 @@ void __cdecl connectthread(void * pParam)
 
 	pGMS[hand]->disablepoll=FALSE;
 
+
+}
+
+void filtercallbackdata(struct gm_store * pdata)
+{
+
+	pdata->range&=0x07; //including autorange
+	pdata->units&=0x03; 
+	if(pdata->mode>5)
+		pdata->mode=5;
 
 }
