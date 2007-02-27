@@ -206,7 +206,6 @@ void __cdecl pollthread(void * pParam)
 		{
 			pGMS[hand]->polldisabled=FALSE;
 			polldata(hand);
-
 			// signal data has been collected
 			pGMS[hand]->datasignal=true;
 	
@@ -226,6 +225,7 @@ void __cdecl pollthread(void * pParam)
 			pGMS[hand]->polldisabled=TRUE;
 			OutputDebugString("Poll thread skipping beat\n");
 		}
+
 
 		Sleep(500); //333
 	}
@@ -646,8 +646,7 @@ void __cdecl connectthread(void * pParam)
 	timeout=false;
 	connected=false;
 	pGMS[hand]->gm0_threadrun=true; // if this shoudn't be true then this function shoudn't have been started!
-
-	pGMS[hand]->gm0_usereadthread=false; // if this shoudn't be true then this function shoudn't have been started!
+	pGMS[hand]->gm0_usereadthread=false; 
 	
 		#ifndef _LINUX
 			if(pGMS[hand]->m_Iportno>0)
@@ -674,6 +673,7 @@ void __cdecl connectthread(void * pParam)
 	
 	while(connected==false && timeout==false && pGMS[hand]->gm0_threadrun==true)
 	{
+		Sleep(1);
 		ret=-1; // default to allow entry below
 
 		if(pGMS[hand]->m_Iportno<0)
@@ -687,7 +687,8 @@ void __cdecl connectthread(void * pParam)
 
 		while(ret!=0 && pGMS[hand]->gm0_threadrun==true)
 		{
-			ret=gm0_gmstar(hand); // this does not need threadlock counting 
+			ret=gm0_gmstar(hand); // this does not need threadlock counting	
+			Sleep(50);
 		}
 
 		if(pGMS[hand]->gm0_threadrun==false)
@@ -747,6 +748,8 @@ void __cdecl connectthread(void * pParam)
 	pGMS[hand]->connected=true;
  
 	gm0_setinterval(hand,1);
+
+
 
 	if(pGMS[hand]->pConnectCallback!=NULL)
 	{

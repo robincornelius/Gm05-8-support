@@ -46,9 +46,9 @@ const struct units_struct units_range_conversion[4]={
 
 						1.0,		//tesla					
 						1000.0, 		//was 10 000 think it was fudge for /10
-					 	10.0, 		
-					 	100.0, 		
-					 	1000.0,		
+					 	10000.0, 		
+					 	100000.0, 		
+					 	1000000.0,		
 
 						1.0,	//gauss
 					 	0.1,		
@@ -64,7 +64,7 @@ const struct units_struct units_range_conversion[4]={
 
 						1.0,	//oersted
 						0.1,		
-						1.0,		
+						1,		
 						10.0,		
 						100.0 
 						
