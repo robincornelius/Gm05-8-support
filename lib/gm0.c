@@ -364,7 +364,7 @@ GM0_API int gm0_doaz(HANDLEGM hand)
 	}
 	else
 	{
-		Sleep(83000);
+		Sleep(95000);
 	}
 	
 	gm0_gmmode1(hand);
@@ -823,7 +823,7 @@ GM0_API struct gm_store gm0_getstore(HANDLEGM hand,int pos)
 
 	/* Scale the value appropriately for the units and range */
 
-	gm0_convertvalue(store.range,store.units,tempvalue,&store.value,FALSE);
+	gm0_convertvalue(store.range,store.units,tempvalue,&store.value,TRUE);
 
 	return(store);
 }
