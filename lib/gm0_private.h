@@ -39,6 +39,7 @@ const struct units_struct units_range_conversion[4];
 
 struct GM_STRUCT{
 
+	int	 meter_mode; //gm05=0 gm08=1
 	BOOL disablepoll;
 	BOOL polldisabled;
 	BOOL faultyfirmware;

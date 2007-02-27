@@ -516,6 +516,12 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 
 	pGMS[newhand]->shutdownstarted=false;
 	
+	if(port<0)
+		mode=1; // force to GM08 if USB is selected
+				// else mode will ste com port speed anyway
+
+	pGMS[newhand]->meter_mode=mode;
+
 	portret= gm0_openport(newhand,mode);
 	
 	pGMS[newhand]->doingnull=false;

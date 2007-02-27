@@ -325,20 +325,48 @@ GM0_API int gm0_donull(HANDLEGM hand)
 	gm0_gmcmd(hand,GMC_DONULL,0);
 	Sleep(1000);
 	gm0_resetnull(hand);
-	Sleep(9000);
+
+	if(pGMS[hand]->meter_mode==1)
+	{
+		Sleep(1000);
+	}
+	else
+	{
+		Sleep(9000);
+	}
+	
 	gm0_gmmode1(hand);
 
 	return 0;
-
 }
 
 GM0_API int gm0_doaz(HANDLEGM hand)
 {
 	gm0_gmstar(hand);
 	gm0_gmcmd(hand,GMC_DOAZ,0);
-	Sleep(33000);
+	
+	if(pGMS[hand]->meter_mode==0)
+	{
+		Sleep(33000);
+	}
+	else
+	{
+		Sleep(3500);
+	}
+
 	gm0_resetnull(hand);
-	Sleep(33000);
+	
+	
+
+	if(pGMS[hand]->meter_mode==0)
+	{
+		Sleep(33000);
+	}
+	else
+	{
+		Sleep(83000);
+	}
+	
 	gm0_gmmode1(hand);
 
 	return 0;
@@ -811,6 +839,6 @@ GM0_API int gm0_getmetertype(HANDLEGM hand)
 	// At present we only have GM05 and GM08 to worry about
 	// IF we are using USB we are a GM08
 
-
+	return pGMS[hand]->meter_mode;
 
 }
