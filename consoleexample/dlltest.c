@@ -159,12 +159,14 @@ int main(int argv, char * argvc[])
 		{
 			case 'r':
 			case 'R':
+				printf(" ** Range ** \n 0 - Least sensitive \n 3 - Most sensitive \n4 - Auto range\n");
 				printf("Enter range 0-4 :");
 				scanf("%d",&data);
 				gm0_setrange(mygm,data);
 				break;
 			case 'U':
 			case 'u':
+				printf(" ** Units ** \n 0 - Tesla \n 1 - Gauss \n 2 - A/m \n 3 - Oersted\n");
 				printf("Select Units 0-3 :");
 				scanf("%d",&data);
 
@@ -172,7 +174,8 @@ int main(int argv, char * argvc[])
 				break;
 			case 'M':
 			case 'm':
-				printf("Select mode 0-5 :");
+				printf("** Modes ** \n 0 - DC\n 1 - DC Peak \n 2 - AC \n 3 - AC Peak \n 4 - AC MAX RMS \n");
+				printf("Select mode 0-4 :");
 				scanf("%d",&data);
 				gm0_setmode(mygm,data);
 				break;
@@ -350,12 +353,7 @@ int main(int argv, char * argvc[])
 				printf("Probe type %d\n",gm0_getprobetype(mygm));
 
 			}
-
-
-
-
 		}
-
 	}
 	
 	gm0_killgm(mygm);
@@ -397,8 +395,6 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 	printf(" %s\n",range_str[store.range]);
 
 }
-
-
 
 // WIN32 SPECIFIC DLL FUNCTION LOADED //
 // This avoids all the visual c macros that make the code platform specfic
