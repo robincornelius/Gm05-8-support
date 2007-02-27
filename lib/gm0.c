@@ -40,8 +40,6 @@ struct mode_array
 		char *pointer_text;
 };
 
-const struct mode_array mode_text[5] = {"DC   \0", "AC   \0", "DCPK \0", "ACPK \0", "ACMAX\0"};
-
 const struct units_struct units_range_conversion[4]={
 
 						//tesla					
