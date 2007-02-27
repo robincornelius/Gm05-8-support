@@ -17,9 +17,9 @@ COMPILELIB = $(CC) $(CLIBFLAGS) -c
 all: gm0lib dlltest
 
 clean:
-	rm *.o
-	rm dlltest
-	rm libgm.so.*
+	rm lib/*.o
+	rm consoleexample/dlltest
+	rm lib/libgm.so.*
 
 install: installlib installexample
 
@@ -28,8 +28,10 @@ uninstall: uninstalllib uninstallexample
 
 # ***********************************************************
 
-gm0lib: gm0.o gm0_comms.o linuxcomms.o
-	$(CC) -D_LINUX -shared -Wl,-soname,libgm.so.1 -lc -lm -lpthread -o libgm.so.1.0.0 gm0.o gm0_comms.o linuxcomms.o
+
+
+gm0lib: lib/gm0.o lib/gm0_comms.o lib/linuxcomms.o
+	$(CC) -D_LINUX -shared -Wl,-soname,libgm.so.1 -lc -lm -lpthread -o lib/libgm.so.1.0.0 lib/gm0.o lib/gm0_comms.o lib/linuxcomms.o
 
 gm0.o:
 	 $(COMPILELIB) gm0.c -o gm0.o
@@ -54,7 +56,7 @@ uninstalllib:
 # *************** DLL TEST ***************************
  
 dlltest:
-	$(COMPILE) -D_LINUX dlltest.c -lgm -o dlltest
+	$(COMPILE) -D_LINUX consoleexample/dlltest.c -lgm -o consoleexample/dlltest
 
 installexample:
 	install dlltest $(EXE_DIR)/dlltest
