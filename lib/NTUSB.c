@@ -616,7 +616,7 @@ void polldata(HANDLEGM hand)
 
 	pGMS[hand]->store.mode = tempmode>4 || tempmode <0 ? 0 : tempmode;
 
-	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,(float)data,&pGMS[hand]->store.value);
+	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,(float)data,&pGMS[hand]->store.value,TRUE);
 
 }
 

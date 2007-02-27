@@ -44,42 +44,68 @@ const struct mode_array mode_text[5] = {"DC   \0", "AC   \0", "DCPK \0", "ACPK \
 
 const struct units_struct units_range_conversion[4]={
 
-						1.0,		//tesla					
-						1000.0, 		//was 10 000 think it was fudge for /10
-					 	10000.0, 		
-					 	100000.0, 		
-					 	1000000.0,		
+						//tesla					
+						1.0, 		//was 10 000 think it was fudge for /10
+					 	1000.0, 		
+					 	1000.0, 		
+					 	1000.0,		
 
-						1.0,	//gauss
-					 	0.1,		
-						1.0,		
-						10.0,		
-						100.0,		
-
-						0.7957747, //a/m
+							//gauss
+					 	0.001,		
 						0.001,		
-						0.01,		
-						0.1,		
-						1.0, 
+						1.0,		
+						1.0,		
 
-						1.0,	//oersted
-						0.1,		
-						1,		
-						10.0,		
-						100.0 
+						 //a/m			
+						0.001,		
+						0.001,		
+						0.001,		
+						0.001, 
+
+						//oersted
+						0.001,		
+						0.001,		
+						1.0,		
+						1.0 
 						
 };
 
-int gm0_convertvalue(int range,int units,float value,float * newvalue)
+ 	/* The DP position indexed by [units][range] */
+ 	int DP_position[4][4] = {
+ 	 {4, 2, 3, 4},
+ 	 {3, 4, 2, 3},
+ 	 {1, 2, 3, 4},
+ 	 {3, 4, 2, 3}};
+ 
+ 	/* The divisor for each DP position */
+ 	int divisor[5] = {
+ 		1, 1, 10, 100, 1000 };
+
+int gm0_convertvalue(int range,int units,float value,float * newvalue,BOOL isusb)
 {
+	int dppos;
+	int scalar;
 
 	if(newvalue==NULL)
 		return -1;
 
 	range&=0x03; //mask out autorange
 
+	if(isusb==TRUE)
+	{
+		dppos=DP_position[units][range];
+		scalar=divisor[dppos];
+		value /= (float)scalar;
+	}
+
+
 	value /= units_range_conversion[units].range_div[range];
-	value *= units_range_conversion[units].global_mult;
+
+	if(units==2 && isusb==TRUE)
+	{
+		value *=0.7957747;
+	}
+
 	(*newvalue)=value;
 
 	return 0;
@@ -769,7 +795,7 @@ GM0_API struct gm_store gm0_getstore(HANDLEGM hand,int pos)
 
 	/* Scale the value appropriately for the units and range */
 
-	gm0_convertvalue(store.range,store.units,tempvalue,&store.value);
+	gm0_convertvalue(store.range,store.units,tempvalue,&store.value,FALSE);
 
 	return(store);
 }
@@ -779,3 +805,12 @@ void commerror(HANDLEGM hand)
 
 }
 
+
+GM0_API int gm0_getmetertype(HANDLEGM hand)
+{
+	// At present we only have GM05 and GM08 to worry about
+	// IF we are using USB we are a GM08
+
+
+
+}

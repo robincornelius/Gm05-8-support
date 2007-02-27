@@ -136,7 +136,7 @@ struct gm_store{
 
 
 // Thread and initaliseation fuctions
-GM0_API HANDLEGM LIBTYPE gm0_newgm BKET (int port);
+GM0_API HANDLEGM LIBTYPE gm0_newgm BKET (int port,int mode);
 GM0_API HANDLEGM LIBTYPE gm0_startconnect BKET (HANDLEGM hand);
 GM0_API int LIBTYPE gm0_killgm BKET (HANDLEGM hand);
 GM0_API BOOL LIBTYPE gm0_getconnect BKET (HANDLEGM hand);

@@ -34,6 +34,7 @@
 	#include "windows.h"
 	#include <locale.h>
 	#include "ntusb.h"
+
 #else
 	#include <pthread.h>
 #endif
@@ -49,11 +50,12 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 #include "gm0_private.h"
 #include "gm0.h"
 
 
-int gm0_openport232(HANDLEGM hand);
+int gm0_openport232(HANDLEGM hand,int mode);
 int gm0_openportUSB(HANDLEGM hand);
 
 int processcount=0;
@@ -102,9 +104,8 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     return TRUE;
 }
 
-int gm0_openport(HANDLEGM hand)
+int gm0_openport(HANDLEGM hand,int mode)
 {
-
 
 	#ifndef _LINUX
 		/* Set the locale for this instance */
@@ -116,7 +117,7 @@ int gm0_openport(HANDLEGM hand)
 	#endif
 
 	if(pGMS[hand]->m_Iportno>0)
-		gm0_openport232(hand);
+		gm0_openport232(hand,mode);
 
 	if(pGMS[hand]->m_Iportno<0)
 		gm0_openportUSB(hand);
@@ -125,7 +126,7 @@ int gm0_openport(HANDLEGM hand)
 }
 
 
-int gm0_openport232(HANDLEGM hand)
+int gm0_openport232(HANDLEGM hand,int mode)
 {	
 	char * pportstring; 
 
@@ -139,7 +140,15 @@ int gm0_openport232(HANDLEGM hand)
 #else
 	sprintf(pportstring,"/dev/ttyS%d",pGMS[hand]->m_Iportno);
 #endif
-	pGMS[hand]->com.fd=rs232_open(pportstring,9600,'N',8,1,0);
+
+	if(mode==0)
+	{
+		pGMS[hand]->com.fd=rs232_open(pportstring,4800,'N',8,1,0);
+	}
+	if(mode==1)
+	{
+		pGMS[hand]->com.fd=rs232_open(pportstring,9600,'N',8,1,0);
+	}
 
 	pGMS[hand]->port_open=true;
 
@@ -347,6 +356,10 @@ void processgmcomms(HANDLEGM hand)
 
 	int offset;
 	char *stop;
+	char * dotptr;
+	double value;
+	int dp;
+
 
 	if(pGMS[hand]->gm0_threadrun==false)
 		return;
@@ -402,11 +415,13 @@ void processgmcomms(HANDLEGM hand)
 	}
 
 	pGMS[hand]->store.units=(unsigned char)strtol(pGMS[hand]->punits,&stop,10);
-	pGMS[hand]->store.range=(unsigned char)strtol(pGMS[hand]->prange,&stop,10)&0x03;
+	pGMS[hand]->store.range=(unsigned char)strtol(pGMS[hand]->prange,&stop,10);
 	pGMS[hand]->store.mode=(unsigned char)strtol(pGMS[hand]->pmode,&stop,10);
 
-	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,strtod(pGMS[hand]->pvalue,&stop),&pGMS[hand]->store.value);
+	value=strtod(pGMS[hand]->pvalue,&stop);
 
+	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,value,&pGMS[hand]->store.value,FALSE);
+	
 	pGMS[hand]->store.time.day=(unsigned char)strtol(pGMS[hand]->ptime_day,&stop,10);
 	pGMS[hand]->store.time.month=(unsigned char)strtol(pGMS[hand]->ptime_month,&stop,10);
 	pGMS[hand]->store.time.year=(unsigned char)strtol(pGMS[hand]->ptime_year,&stop,10);
@@ -436,7 +451,7 @@ void processgmcomms(HANDLEGM hand)
 }
 
 
-GM0_API HANDLEGM gm0_newgm(int port)
+GM0_API HANDLEGM gm0_newgm(int port,int mode)
 {
 	HANDLEGM newhand=0;
 	int portret;
@@ -501,7 +516,7 @@ GM0_API HANDLEGM gm0_newgm(int port)
 
 	pGMS[newhand]->shutdownstarted=false;
 	
-	portret= gm0_openport(newhand);
+	portret= gm0_openport(newhand,mode);
 	
 	pGMS[newhand]->doingnull=false;
 

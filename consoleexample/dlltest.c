@@ -86,15 +86,15 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store);
 	};
 
 
-
+HANDLEGM mygm;
 
 int main(int argv, char * argvc[])
 {
-	HANDLEGM mygm;
+
 	double value;
 	struct gm_store store;	
 	int port;
-	int iconnectcount;
+	int opt;
 	char cmd,data;
 
 #ifndef _LINUX
@@ -104,46 +104,37 @@ int main(int argv, char * argvc[])
 	printf("\n");
 #endif
 
-  	printf("Which comm port would you like to use (COMn or /dev/ttySn) ?\n=");
-  	scanf("%d",&port);
-	if(port<-5 || port>254) 
-  	{
-		printf("\nDon't be silly, comport %d is out of range!\n",port);
+	printf("Connection options \n Would you like to connect with :-\n 0 - RS232 Port \n 1 - USB\n");
+	scanf("%d",&opt);
+	if(opt<0 || opt >1) {
+		printf("Invalid selection");
 		return 0;
 	}
-	
 
-	mygm=gm0_newgm(port); 
-	if(mygm>=0 || mygm<255)
+	if(opt==1)
 	{
-		printf(" SUCCESS, handle %d\n",mygm);
+		printf("Attempting connect, using USB (GM08)\n");
+		if(doconnect(-1,1)==-1)
+			exit(0);
 	}
-	else
+
+	if(opt==0)
 	{
-		printf(" ERROR, error value %d\n",mygm);
-		exit(-1);
-	}
-	
-	printf("Attempting to initalise communications\n");
-	gm0_startconnect(mygm);
-	
-  	iconnectcount=0;
-	while(gm0_getconnect(mygm)==FALSE && iconnectcount <10)
-  	{
-		printf("Attempt %d of 10 has FAILED\n",iconnectcount);
-		iconnectcount++;
-		Sleep(CLOCKS_PER_SEC*1);
-	}
-	
-	if(gm0_getconnect(mygm)==FALSE)
-	{
-		printf("\n ** Communications have failed ... aborting ** \n");
-		gm0_killgm(mygm);
-		exit(-1);
-	}
-	else
-	{
-		printf("\n** Communications have succeded **\n");
+  		printf("Which comm port would you like to use (COMn or /dev/ttySn) ?\n=");
+  		scanf("%d",&port);
+		if(port< 1 || port>254) 
+  		{
+			printf("\n Com port %d is out of range (1-254)\n",port);
+			return 0;
+		}
+		
+		printf("Attempting connect at 4800 Baud (GM05)\n");
+		if(doconnect(port,0)==-1)
+		{
+			printf("Attempting connect at 9600 Baud (GM08)\n");
+			if(doconnect(port,1)==-1)
+				exit(0);
+		}
 	}
 
 	showmenu();
@@ -465,3 +456,45 @@ void loadfunction (HANDLE lib,void ** functionpointer,char * functionname)
  return;
 }
 #endif
+
+
+int doconnect(int port,int mode)
+{
+	int iconnectcount;
+
+	mygm=gm0_newgm(port,mode); 
+	if(mygm>=0 || mygm<255)
+	{
+		printf(" SUCCESS, handle %d\n",mygm);
+	}
+	else
+	{
+		printf(" ERROR, error value %d\n",mygm);
+		exit(-1);
+	}
+	
+	printf("Attempting to initalise communications\n");
+	gm0_startconnect(mygm);
+	
+  	iconnectcount=0;
+	while(gm0_getconnect(mygm)==FALSE && iconnectcount <5)
+  	{
+		printf("Attempt %d of 10 has FAILED\n",iconnectcount);
+		iconnectcount++;
+		Sleep(CLOCKS_PER_SEC*1);
+	}
+	
+	if(gm0_getconnect(mygm)==FALSE)
+	{
+		printf("\n ** Communications have failed ... aborting ** \n");
+		gm0_killgm(mygm);
+		return -1;
+	}
+	else
+	{
+		printf("\n** Communications have succeded **\n");
+	}
+
+	return 0;
+	
+}

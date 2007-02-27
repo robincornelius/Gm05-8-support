@@ -38,6 +38,7 @@ EXPORTS
     gm0_getgmserial				@36
     gm0_getprobetype			@37
     gm0_getprobecaldate			@38
+    gm0_getmetertype			@39
     
     
     
