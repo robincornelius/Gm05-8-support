@@ -26,10 +26,6 @@
 
 
 #define debug_flag 0
-
-
-
-	#include "gm0.h"
     
 #ifndef _LINUX
 	#include <objbase.h>
