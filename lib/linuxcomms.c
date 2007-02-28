@@ -1,4 +1,3 @@
-
 /*
 
    This code was copied from the MIDAS project http://midas.psi.ch/ which has graciously 
@@ -43,7 +42,7 @@
 
 #define TRUE 1
 #define FALSE 0
-#define min(x,y) ((x) < (y) ? (x) : (y))  // this is not type safe and naughty etc but i don't care!
+#define min(x,y) ((x) < (y) ? (x) : (y))  /* this is not type safe and naughty etc but i don't care!*/
 
 #define debug_flag 0
 

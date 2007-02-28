@@ -30,13 +30,6 @@ char AMpacket(HANDLEGM hand,char cmd,char data);
 int gm0_convertvalue(int range,int units,float value,float * newvalue, BOOL isusb);
 void filtercallbackdata(struct gm_store * pdata);
 
-
-struct units_struct {
-	float range_div[4];
-};
-
-const struct units_struct units_range_conversion[4];
-
 struct GM_STRUCT{
 
 	int	 meter_mode; //gm05=0 gm08=1

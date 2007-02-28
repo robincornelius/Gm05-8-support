@@ -41,12 +41,17 @@ visual C extensions
 #ifdef _LINUX
 	#define HMODULE int
 	#define CLOCKS_PER_SEC 1
+	#include <unistd.h>
+	#define _strdate strdate
+	#define _strtime strtime
 #else
 	#include <windows.h>
 	#define CLOCKS_PER_SEC 1000
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "../lib/gm0.h"
 
@@ -54,6 +59,8 @@ void loadfunction (HANDLE lib,void ** functionpointer,char * functionname);
 void loadallfunctions();
 void showmenu();
 void __stdcall callback(HANDLEGM hand,struct gm_store store);
+int doconnect(int port,int mode);
+void setgmtime();
 
 	/* Descriptions of the display modes */
 	char *mode_str[5] =
@@ -91,8 +98,6 @@ HANDLEGM mygm;
 int main(int argv, char * argvc[])
 {
 
-	double value;
-	struct gm_store store;	
 	int port;
 	int opt;
 	char cmd,data;
@@ -108,14 +113,14 @@ int main(int argv, char * argvc[])
 	scanf("%d",&opt);
 	if(opt<0 || opt >1) {
 		printf("Invalid selection");
-		return 0;
+		return -1;
 	}
 
 	if(opt==1)
 	{
 		printf("Attempting connect, using USB (GM08)\n");
 		if(doconnect(-1,1)==-1)
-			exit(0);
+			return -1;
 	}
 
 	if(opt==0)
@@ -125,7 +130,7 @@ int main(int argv, char * argvc[])
 		if(port< 1 || port>254) 
   		{
 			printf("\n Com port %d is out of range (1-254)\n",port);
-			return 0;
+			return -1;
 		}
 		
 		printf("Attempting connect at 4800 Baud (GM05)\n");
@@ -133,7 +138,7 @@ int main(int argv, char * argvc[])
 		{
 			printf("Attempting connect at 9600 Baud (GM08)\n");
 			if(doconnect(port,1)==-1)
-				exit(0);
+				return -1;
 		}
 	}
 
@@ -152,14 +157,14 @@ int main(int argv, char * argvc[])
 			case 'R':
 				printf(" ** Range ** \n 0 - Least sensitive \n 3 - Most sensitive \n4 - Auto range\n");
 				printf("Enter range 0-4 :");
-				scanf("%d",&data);
+				scanf("%c",&data);
 				gm0_setrange(mygm,data);
 				break;
 			case 'U':
 			case 'u':
 				printf(" ** Units ** \n 0 - Tesla \n 1 - Gauss \n 2 - A/m \n 3 - Oersted\n");
 				printf("Select Units 0-3 :");
-				scanf("%d",&data);
+				scanf("%c",&data);
 
 				gm0_setunits(mygm,data);
 				break;
@@ -167,7 +172,7 @@ int main(int argv, char * argvc[])
 			case 'm':
 				printf("** Modes ** \n 0 - DC\n 1 - DC Peak \n 2 - AC \n 3 - AC Peak \n 4 - AC MAX RMS \n");
 				printf("Select mode 0-4 :");
-				scanf("%d",&data);
+				scanf("%c",&data);
 				gm0_setmode(mygm,data);
 				break;
 			case ' ':
@@ -176,7 +181,7 @@ int main(int argv, char * argvc[])
 			case 'L':
 			case 'l':
 				printf("Select language 0-5 :");
-				scanf("%d",&data);
+				scanf("%c",&data);
 				gm0_setlanguage(mygm,data);
 				break;
 			case 'V':
@@ -195,7 +200,7 @@ int main(int argv, char * argvc[])
 				printf("Doing Auto Zero \n");
 				gm0_doaz(mygm);
 				printf("Press enter to simulate enter key");
-				scanf("%d",&data);
+				scanf("%c",&data);
 				printf("Before reset\n");
 				gm0_resetnull(mygm);
 				printf("AZ Done");
@@ -209,7 +214,7 @@ int main(int argv, char * argvc[])
 
 			case 'i':
 				printf("Enter 232 interval 1 upwards :");
-				scanf("%d",&data);
+				scanf("%c",&data);
 				gm0_setinterval(mygm,data);
 				break;
 			case 'Q':
@@ -287,43 +292,7 @@ int main(int argv, char * argvc[])
 				case '.':
 			case '>':
 				{
-					char dbuffer [256];
-					char tbuffer [256];
-					char tempbuffer[3];
-					struct gm_time time;
-					char * stop;
-		
-					tempbuffer[2]='\0';
-				
-					_strdate( dbuffer );
-					printf( "The current date is %s (US Month Format)\n", dbuffer );
-					_strtime( tbuffer );
-					printf( "The current time is %s \n", tbuffer );
-					//settosystime
-				
-					tempbuffer[0]=tbuffer[0];
-					tempbuffer[1]=tbuffer[1];
-					time.hour=strtol(tempbuffer,&stop,10);
-					tempbuffer[0]=tbuffer[3];
-					tempbuffer[1]=tbuffer[4];
-					time.min=strtol(tempbuffer,&stop,10);
-					tempbuffer[0]=tbuffer[6];
-					tempbuffer[1]=tbuffer[7];
-					time.sec=strtol(tempbuffer,&stop,10);
-
-					tempbuffer[0]=dbuffer[3];
-					tempbuffer[1]=dbuffer[4];
-					time.day=strtol(tempbuffer,&stop,10);
-					tempbuffer[0]=dbuffer[0];
-					tempbuffer[1]=dbuffer[1];
-					time.month=strtol(tempbuffer,&stop,10);
-					tempbuffer[0]=dbuffer[6];
-					tempbuffer[1]=dbuffer[7];
-					time.year=strtol(tempbuffer,&stop,10);
-
-					printf("Setting GM time to %d:%d:%d %d/%d/%d \n",time.hour,time.min,time.sec,time.day,time.month,time.year);
-					gm0_settime(mygm,time);
-								
+					setgmtime();								
 				}
 			break;
 			case ',':
@@ -348,6 +317,7 @@ int main(int argv, char * argvc[])
 	}
 	
 	gm0_killgm(mygm);
+	return 0;
 }
 
 
@@ -497,4 +467,77 @@ int doconnect(int port,int mode)
 
 	return 0;
 	
+}
+
+
+#ifdef _LINUX
+
+void strdate(char * buffer)
+{
+
+    time_t curtime;
+    struct tm * loctime;
+
+    curtime= time(NULL);
+    
+    loctime=localtime(&curtime);
+    strftime(buffer,256,"%D",loctime);
+}
+
+
+void strtime(char * buffer)
+{
+
+    time_t curtime;
+    struct tm * loctime;
+
+    curtime= time(NULL);
+    
+    loctime=localtime(&curtime);
+    strftime(buffer,256,"%T",loctime);
+}
+        
+#endif
+
+void setgmtime()
+{
+
+    struct gm_time gaussmeter_time;
+			    
+    char dbuffer [256];
+    char tbuffer [256];
+    char tempbuffer[3];
+    char * stop;
+
+    tempbuffer[2]='\0';
+				
+    _strdate( dbuffer );
+    printf( "The current date is %s (US Month Format)\n", dbuffer );
+    _strtime( tbuffer );
+    printf( "The current time is %s \n", tbuffer );
+				
+    tempbuffer[0]=tbuffer[0];
+    tempbuffer[1]=tbuffer[1];
+    gaussmeter_time.hour=strtol(tempbuffer,&stop,10);
+    tempbuffer[0]=tbuffer[3];
+    tempbuffer[1]=tbuffer[4];
+    gaussmeter_time.min=strtol(tempbuffer,&stop,10);
+    tempbuffer[0]=tbuffer[6];
+    tempbuffer[1]=tbuffer[7];
+    gaussmeter_time.sec=strtol(tempbuffer,&stop,10);
+    tempbuffer[0]=dbuffer[3];
+    tempbuffer[1]=dbuffer[4];
+    gaussmeter_time.day=strtol(tempbuffer,&stop,10);
+    tempbuffer[0]=dbuffer[0];
+    tempbuffer[1]=dbuffer[1];
+    gaussmeter_time.month=strtol(tempbuffer,&stop,10);
+    tempbuffer[0]=dbuffer[6];
+    tempbuffer[1]=dbuffer[7];
+    gaussmeter_time.year=strtol(tempbuffer,&stop,10);
+
+
+    printf("Setting GM time to %d:%d:%d %d/%d/%d \n",gaussmeter_time.hour,gaussmeter_time.min,gaussmeter_time.sec,gaussmeter_time.day,gaussmeter_time.month,gaussmeter_time.year);
+    gm0_settime(mygm,gaussmeter_time);
+
+
 }

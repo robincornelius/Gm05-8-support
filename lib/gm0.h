@@ -35,6 +35,7 @@
  #define __int16 int
  #define HANDLE int
  #define __cdecl /*__cdecl*/
+ #define __stdcall /*__stdcall*/
  #define __int8 char
  #define APIENTRY /*APIENTRY*/
  #define DWORD int
@@ -43,7 +44,10 @@
  #define DLL_THREAD_ATTACH 2
  #define DLL_THREAD_DETACH 3
  #define DLL_PROCESS_DETACH 4
- #define OutputDebugString //printf
+ #include <stdio.h>
+ static inline void OutputDebugString(char * str) { fprintf(stderr,str); }
+ #include <unistd.h>
+ #define Sleep sleep
  #define BKET /**/
  #define LIBTYPE /*LIBTYPE*/
 #else

@@ -30,54 +30,40 @@
 	#include "windows.h"
 #else
 	#include <pthread.h>
+	#include <unistd.h>
+
 #endif
 
 #include "gm0_private.h"
 #include "gm0.h"
+
 
 struct mode_array
 {	
 		char *pointer_text;
 };
 
-const struct units_struct units_range_conversion[4]={
+const float units_range_conversion[4][4]={
 
-						//tesla					
-						1.0, 		//was 10 000 think it was fudge for /10
-					 	1000.0, 		
-					 	1000.0, 		
-					 	1000.0,		
-
-							//gauss
-					 	0.001,		
-						0.001,		
-						1.0,		
-						1.0,		
-
-						 //a/m			
-						0.001,		
-						0.001,		
-						0.001,		
-						0.001, 
-
-						//oersted
-						0.001,		
-						0.001,		
-						1.0,		
-						1.0 
-						
-};
-
- 	/* The DP position indexed by [units][range] */
- 	int DP_position[4][4] = {
- 	 {4, 2, 3, 4},
- 	 {3, 4, 2, 3},
- 	 {1, 2, 3, 4},
- 	 {3, 4, 2, 3}};
+    //tesla					
+    {1.0,1000.0,1000.0,	1000.0},		
+    //gauss
+    {0.001,0.001,1.0,1.0},		
+    //a/m			
+    {0.001,0.001,0.001,	0.001}, 
+    //oersted
+    {0.001,0.001,1.0,1.0}};
+					
+/* The DP position indexed by [units][range] */
+const int DP_position[4][4] = {
+ {4, 2, 3, 4},
+ {3, 4, 2, 3},
+ {1, 2, 3, 4},
+ {3, 4, 2, 3}};
  
- 	/* The divisor for each DP position */
- 	int divisor[5] = {
- 		1, 1, 10, 100, 1000 };
+/* The divisor for each DP position */
+int divisor[5] = {
+    1, 1, 10, 100, 1000 };
 
 int gm0_convertvalue(int range,int units,float value,float * newvalue,BOOL isusb)
 {
@@ -97,7 +83,7 @@ int gm0_convertvalue(int range,int units,float value,float * newvalue,BOOL isusb
 	}
 
 
-	value /= units_range_conversion[units].range_div[range];
+	value /= units_range_conversion[units][range];
 
 	if(units==2 && isusb==TRUE)
 	{
@@ -164,7 +150,7 @@ int gm0_gmstar(HANDLEGM hand) // ENTER COMMAND MODE
 
 	if(pGMS[hand]->m_Iportno<0)
 	{
-		AMpacket(hand,'*','*');
+		return AMpacket(hand,'*','*');
 	}
 	else
 	{
@@ -247,7 +233,7 @@ GM0_API int gm0_setunits(HANDLEGM hand,unsigned char units)
 
 	gm0_gmstar(hand);
 
-	if(units<0 || units >3)
+	if(units >3)
 		return GM_DATAERROR;
 
 	gm0_gmcmd(hand,GMC_UNITS,units+128);
@@ -283,7 +269,7 @@ GM0_API int gm0_setmode(HANDLEGM hand,unsigned char mode)
 {
 	gm0_gmstar(hand);
 
-	if(mode<0 || mode >5)
+	if(mode >5)
 		return GM_DATAERROR;
 
 	gm0_gmcmd(hand,GMC_FUNCTION,mode+128);
@@ -296,7 +282,7 @@ GM0_API int gm0_setlanguage(HANDLEGM hand,unsigned char lan)
 {
 	gm0_gmstar(hand);
 
-	if(lan<0 || lan >5)
+	if(lan >5)
 		return GM_DATAERROR;
 
 	gm0_gmcmd(hand,GMC_LANGUAGE,lan+128);
@@ -431,7 +417,7 @@ GM0_API int gm0_setdisconnectcallback(HANDLEGM hand,void ( * pCallback)(HANDLEGM
 
 GM0_API int gm0_setnullcallback(HANDLEGM hand,void ( * pCallback)(void))
 {
-	pGMS[hand]->pNullCallback=pCallback;
+	pGMS[hand]->pNullCallback=(void*)pCallback;
 	return (0);
 }
 
@@ -840,3 +826,4 @@ GM0_API int gm0_getmetertype(HANDLEGM hand)
 	return pGMS[hand]->meter_mode;
 
 }
+

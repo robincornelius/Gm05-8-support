@@ -28,25 +28,22 @@
 #define debug_flag 0
 
 
+
+	#include "gm0.h"
+    
 #ifndef _LINUX
 	#include <objbase.h>
 	#include <process.h>
 	#include "windows.h"
 	#include <locale.h>
 	#include "ntusb.h"
-
 #else
+	#include "linuxusb.h"
 	#include <pthread.h>
+	#include "malloc.h"
+	#include <stdlib.h>
 #endif
 
-#ifdef _LINUX
-
- Sleep(int dwMs) // wrapper for sleep function 
- {
-	sleep(dwMs);
- }
-
-#endif
 
 #include <stdio.h>
 #include <time.h>
@@ -255,7 +252,7 @@ void __cdecl readthread(void * pParam)
 
 	HANDLEGM hand;
 	unsigned long length;
-	static readthreadstarted=false;
+	static int readthreadstarted=false;
 	
 #ifndef _LINUX
 	CoInitializeEx(NULL,COINIT_MULTITHREADED);
@@ -309,15 +306,13 @@ char packetbyte(HANDLEGM hand, char dataout)
 	int length;
 	int oldindex;
 	int target;
-	char msg []="          \0";
-
 
 	oldindex=pGMS[hand]->index;
 	target=oldindex+1;
 
 	rs232_write(&pGMS[hand]->com, &dataout, 1);
 
-    length = rs232_read(&pGMS[hand]->com, &retdata,1,500);
+	length = rs232_read(&pGMS[hand]->com, &retdata,1,500);
 
 	if (length != 1)
 	{
@@ -338,9 +333,7 @@ char AMpacket(HANDLEGM hand,char cmd,char data)
 		ret=packetbyte(hand,cmd);
 		pGMS[hand]->cmdstatus=packetbyte(hand,data);
 	}
-
-	// USB code
-	if(pGMS[hand]->m_Iportno<0)
+	else
 	{
 		ret=WritepacketToDevice(hand,cmd,data);
 
@@ -356,10 +349,7 @@ void processgmcomms(HANDLEGM hand)
 
 	int offset;
 	char *stop;
-	char * dotptr;
 	double value;
-	int dp;
-
 
 	if(pGMS[hand]->gm0_threadrun==false)
 		return;
@@ -583,7 +573,7 @@ GM0_API HANDLEGM gm0_startconnect(HANDLEGM hand)
 #else
 	{
 		pthread_t  p_thread; 
-		pthread_create(&p_thread, NULL, connectthread, (void*)hand);
+		pthread_create(&p_thread, NULL, (void*)connectthread, (void*)hand);
 	}
 #endif
 	return 0;
@@ -687,7 +677,7 @@ void __cdecl connectthread(void * pParam)
 		#else
 		{
 			pthread_t  p_thread; 
-			pthread_create(&p_thread, NULL, readthread, (void*)hand);
+			pthread_create(&p_thread, NULL, (void*)readthread, (void*)hand);
 		}
 		#endif
 
@@ -802,3 +792,4 @@ void filtercallbackdata(struct gm_store * pdata)
 		pdata->mode=5;
 
 }
+
