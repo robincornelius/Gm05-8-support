@@ -47,7 +47,19 @@
  #include <stdio.h>
  static inline void OutputDebugString(char * str) { fprintf(stderr,str); }
  #include <unistd.h>
- #define Sleep sleep
+ static inline Sleep(int ms)
+ {
+    ms*=1000; // ms to us
+    
+    if(ms>1000000){
+	Sleep(ms/1000000);	
+    }
+    else
+    {
+	usleep(ms);    
+    }
+ }
+ 
  #define BKET /**/
  #define LIBTYPE /*LIBTYPE*/
 #else

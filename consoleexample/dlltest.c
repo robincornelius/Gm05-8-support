@@ -40,7 +40,7 @@ visual C extensions
 
 #ifdef _LINUX
 	#define HMODULE int
-	#define CLOCKS_PER_SEC 1
+	#define CLOCKS_PER_SEC 1000
 	#include <unistd.h>
 	#define _strdate strdate
 	#define _strtime strtime
