@@ -349,7 +349,7 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 	//verify callback data
 	if(store.units>3 || store.range>7 || store.mode>4)
 	{
-		printf("Invalid reading returned\n")
+		printf("Invalid reading returned\n");
 		return;
 	}
 
