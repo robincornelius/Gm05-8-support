@@ -62,7 +62,8 @@
  
  #define BKET /**/
  #define LIBTYPE /*LIBTYPE*/
-#else
+
+#else   // MUST BE WINDOWS THEN
  #ifdef NOVC
   #define GM0_API /**/
   #define LIBTYPE (WINAPI *
