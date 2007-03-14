@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,0,0
- PRODUCTVERSION 2,1,0,0
+ FILEVERSION 3,1,0,0
+ PRODUCTVERSION 3,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -72,12 +72,12 @@ BEGIN
             VALUE "Comments", "This DLL is provided as is and has NO WARANTEE of any kind, including but not limited to merchantability and fitness for a particular purpose"
             VALUE "CompanyName", "Hirst Magnetic Instruments"
             VALUE "FileDescription", "GM05 and GM08 control and function library"
-            VALUE "FileVersion", "2, 1, 0, 0"
+            VALUE "FileVersion", "3, 1, 0, 0"
             VALUE "InternalName", "gm0"
             VALUE "LegalCopyright", "Copyright © 2002 - 2006 Robin Cornelius & Hirst Magnetic Instruments Ltd"
             VALUE "OriginalFilename", "gm0.dll"
             VALUE "ProductName", "Hirst Magnetic Instruments gm0"
-            VALUE "ProductVersion", "2, 1, 0, 0"
+            VALUE "ProductVersion", "3, 1, 0, 0"
             VALUE "SpecialBuild", "Updated release for GM08 support"
         END
     END
