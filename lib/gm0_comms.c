@@ -428,6 +428,7 @@ void processgmcomms(HANDLEGM hand)
 		pGMS[hand]->pCallback(hand,pGMS[hand]->store);
 	}
 
+	//Beep(3000,50);
 	if(pGMS[hand]->pCallback2!=NULL && pGMS[hand]->gm0_threadrun==true)
 	{
 		pGMS[hand]->pCallback2(hand);
@@ -685,6 +686,8 @@ void __cdecl connectthread(void * pParam)
 	
 	while(connected==false && timeout==false && pGMS[hand]->gm0_threadrun==true)
 	{
+		haveanothego:
+
 		Sleep(1);
 		ret=-1; // default to allow entry below
 
@@ -699,9 +702,12 @@ void __cdecl connectthread(void * pParam)
 
 		while(ret!=0 && pGMS[hand]->gm0_threadrun==true)
 		{
+			Beep(1000,25);
 			ret=gm0_gmstar(hand); // this does not need threadlock counting	
 			Sleep(50);
 		}
+
+		Beep(1000,100);
 
 		if(pGMS[hand]->gm0_threadrun==false)
 		{
@@ -737,16 +743,19 @@ void __cdecl connectthread(void * pParam)
 		}
 		if(connected!=true)
 		{
+
+			Beep(500,100);
+			goto haveanothego;
+
 			#ifndef _LINUX
 				CoUninitialize();
 			#endif
 			pGMS[hand]->threadlockcount--;
+			
 			return;
 		}
 	}
 	
-	gm0_gmmode1(hand);
-
 	if(pGMS[hand]->gm0_threadrun==false)
 	{
 	#ifndef _LINUX
@@ -757,11 +766,16 @@ void __cdecl connectthread(void * pParam)
 		return;
 	}
 
+	Beep(2000,100);
 	pGMS[hand]->connected=true;
- 
+
+	Sleep(1000);
+
+	gm0_gmmode1(hand);
+
+	Sleep(1000);
+
 	gm0_setinterval(hand,1);
-
-
 
 	if(pGMS[hand]->pConnectCallback!=NULL)
 	{
