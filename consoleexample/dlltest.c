@@ -374,12 +374,18 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 void loadallfunctions()
 {
 	HMODULE lib;
-	lib=LoadLibrary("gm0D.dll");
+
+	lib=LoadLibrary("gm0.dll");
 	
 	if(lib==NULL)
 	{
-	printf("\nCould not load gm0.dll, Exiting\n");
-	exit(-1);
+		printf("\nCould not load gm0.dll going to try to find debug version\n");
+		lib=LoadLibrary("gm0D.dll");
+		if(lib==NULL)
+		{
+			printf("Sorry neither gm0.dll or gm0D.dll was found in DLL search path\n");
+			exit (-1);
+		}
 	}
 	
 	loadfunction(lib,&gm0_newgm,"gm0_newgm");
