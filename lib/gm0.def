@@ -35,10 +35,9 @@ EXPORTS
     gm0_setcallback2			@33
     gm0_settime2				@34
     gm0_getprobeserial			@35
-    gm0_getgmserial				@36
-    gm0_getprobetype			@37
-    gm0_getprobecaldate			@38
-    gm0_getmetertype			@39
+    gm0_getmetertype			@36
+    gm0_get_next_buffer			@37
+    gm0_getnobuffersamples		@38
     
     
     

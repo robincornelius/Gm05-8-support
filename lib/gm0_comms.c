@@ -418,6 +418,38 @@ void processgmcomms(HANDLEGM hand)
 	pGMS[hand]->samplecount++;
 	pGMS[hand]->index=0; // reset the readthread buffer to zero
 
+	if(pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]==BUFFER_OWNER_INSTRUMENT)
+	{	
+		//yay we hit an empty spot!
+		pGMS[hand]->store_buffer[pGMS[hand]->buffer_end]=pGMS[hand]->store;
+		pGMS[hand]->samples_avaiable++;
+		pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]=BUFFER_OWNER_USER;
+	}
+	else
+	{
+		pGMS[hand]->buffer_end++;
+		if(pGMS[hand]->buffer_end>MAX_BUFFER)
+			pGMS[hand]->buffer_end=0;
+
+		if(pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]==BUFFER_OWNER_INSTRUMENT)
+		{	
+			//yay we hit an empty spot!
+			pGMS[hand]->store_buffer[pGMS[hand]->buffer_end]=pGMS[hand]->store;
+			pGMS[hand]->samples_avaiable++;
+			pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]=BUFFER_OWNER_USER;
+		}
+		else
+		{
+			//next location is not ours must be full
+			pGMS[hand]->buffer_end--;
+			if(pGMS[hand]->buffer_end<0)
+			pGMS[hand]->buffer_end=(MAX_BUFFER-1);
+		}
+		
+	}
+
+
+
 	// signal data has been collected
 	pGMS[hand]->datasignal=true;
 
@@ -442,6 +474,7 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 {
 	HANDLEGM newhand=0;
 	int portret;
+	int x=0;
 
 	while(pGMS[newhand]!=NULL && newhand<255)
 	{
@@ -503,6 +536,15 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 
 	pGMS[newhand]->shutdownstarted=false;
 	
+	for(x=0;x<MAX_BUFFER;x++)
+	{
+		pGMS[newhand]->buffer_ringflag[x]=BUFFER_OWNER_INSTRUMENT;
+	}
+
+	pGMS[newhand]->samples_avaiable=0;
+	pGMS[newhand]->buffer_start=0;
+	pGMS[newhand]->buffer_end=0;
+
 	if(port<0)
 		mode=1; // force to GM08 if USB is selected
 				// else mode will ste com port speed anyway

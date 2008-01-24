@@ -30,6 +30,10 @@ char AMpacket(HANDLEGM hand,char cmd,char data);
 int gm0_convertvalue(int range,int units,float value,float * newvalue, BOOL isusb);
 void filtercallbackdata(struct gm_store * pdata);
 
+#define BUFFER_OWNER_INSTRUMENT 0x1
+#define BUFFER_OWNER_USER 0x2
+#define MAX_BUFFER 50
+
 struct GM_STRUCT{
 
 	int	 meter_mode; //gm05=0 gm08=1
@@ -83,7 +87,16 @@ struct GM_STRUCT{
 
 	BOOL datasignal;
 
+	// the buffer will store in ring buffer format 
+	struct gm_store store_buffer[MAX_BUFFER]; // a crude ring buffer
+	int buffer_ringflag[MAX_BUFFER]; // a crude ring buffer
+	int buffer_start;
+	int buffer_end;
+	int samples_avaiable;
+
 }; 
+
+
 
 
 

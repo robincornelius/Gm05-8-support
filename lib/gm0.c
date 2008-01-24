@@ -688,6 +688,39 @@ GM0_API int gm0_sendtime(HANDLEGM hand,BOOL extended)
 	return 0;
 }
 
+GM0_API int gm0_getnobuffersamples(HANDLEGM hand)
+{
+	return pGMS[hand]->samples_avaiable;
+
+}
+
+GM0_API struct gm_store gm0_get_next_buffer(HANDLEGM hand)
+{
+
+	if (pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_start]==BUFFER_OWNER_USER)
+	{
+		int oldindex=pGMS[hand]->buffer_start;
+		pGMS[hand]->buffer_start++;
+		if(pGMS[hand]->buffer_start>=MAX_BUFFER)
+		{
+			pGMS[hand]->buffer_start=0;
+		}
+
+		pGMS[hand]->buffer_ringflag[oldindex]=BUFFER_OWNER_INSTRUMENT;
+
+		pGMS[hand]->samples_avaiable--;
+
+		return pGMS[hand]->store_buffer[oldindex];
+
+	}
+	else
+	{
+		// we need to return *something* and have no error system
+		return pGMS[hand]->store_buffer[pGMS[hand]->buffer_start];
+	}
+}
+
+
 //******************* E2 FUNCTIONS *************//
 // DO NOT ATTEMPT TO WRITE TO THE E2 YOU WILL KILL YOUR METER
 // NO WRITING FUNCTIONS ARE EXPOSED HERE FOR THAT VERY REASON.
