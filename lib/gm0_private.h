@@ -1,6 +1,6 @@
 /*
 	gm0.dll/gm0.so shared gaussmeter function driver library for Hirst Gaussmeters
-    Copyright (C) 2004-2008  Robin Cornelius/Hirst Magnetic Instruments Ltd
+    Copyright © 2004-2008  Robin Cornelius/Hirst Magnetic Instruments Ltd
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public

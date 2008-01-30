@@ -1,6 +1,6 @@
 
 /*
-   Copyright © 2004 Hirst Magnetic Instruments Ltd and Robin Cornelius.
+   Copyright © 2004-2008 Hirst Magnetic Instruments Ltd and Robin Cornelius.
 
    The GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 
