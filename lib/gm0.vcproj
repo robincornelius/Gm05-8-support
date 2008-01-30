@@ -110,6 +110,8 @@ copy .\Debug\gm0D.dll c:\windows\system32 /y
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				ModuleDefinitionFile="gm0.def"
+				GenerateDebugInformation="TRUE"
+				AssemblyDebug="1"
 				ProgramDatabaseFile=".\Release/gm0.pdb"
 				ImportLibrary=".\Release/gm0.lib"
 				TargetMachine="1"/>

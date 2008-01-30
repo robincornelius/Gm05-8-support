@@ -24,9 +24,8 @@
 
 */
 
+extern int debug_flag
 
-#define debug_flag 0
-    
 #ifndef _LINUX
 	#include <objbase.h>
 	#include <process.h>
@@ -57,11 +56,12 @@ int handcount;
 void debugwrite(char * msg)
 {
 
+
 if (debug_flag)
     {
     FILE *f;
 
-    f = fopen("c:\\rs232.log", "a");
+    f = fopen("c:\\rs232.log", "a+");
     fprintf(f, "MSG: %s\n",msg);
     fclose(f);
     }
@@ -346,6 +346,9 @@ void processgmcomms(HANDLEGM hand)
 	int offset;
 	char *stop;
 	double value;
+	char msg[1024];
+
+	Beep(2000,20);
 
 	if(pGMS[hand]->gm0_threadrun==false)
 		return;
@@ -418,37 +421,23 @@ void processgmcomms(HANDLEGM hand)
 	pGMS[hand]->samplecount++;
 	pGMS[hand]->index=0; // reset the readthread buffer to zero
 
+	//sprintf(msg,"write_buffer() BEFORE aval %d, start %d, end %d \n\0",pGMS[hand]->samples_avaiable,pGMS[hand]->buffer_start,pGMS[hand]->buffer_end);
+	//debugwrite(msg);
+
 	if(pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]==BUFFER_OWNER_INSTRUMENT)
 	{	
 		//yay we hit an empty spot!
 		pGMS[hand]->store_buffer[pGMS[hand]->buffer_end]=pGMS[hand]->store;
 		pGMS[hand]->samples_avaiable++;
 		pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]=BUFFER_OWNER_USER;
-	}
-	else
-	{
+
 		pGMS[hand]->buffer_end++;
-		if(pGMS[hand]->buffer_end>MAX_BUFFER)
+		if(pGMS[hand]->buffer_end>=MAX_BUFFER)
 			pGMS[hand]->buffer_end=0;
-
-		if(pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]==BUFFER_OWNER_INSTRUMENT)
-		{	
-			//yay we hit an empty spot!
-			pGMS[hand]->store_buffer[pGMS[hand]->buffer_end]=pGMS[hand]->store;
-			pGMS[hand]->samples_avaiable++;
-			pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]=BUFFER_OWNER_USER;
-		}
-		else
-		{
-			//next location is not ours must be full
-			pGMS[hand]->buffer_end--;
-			if(pGMS[hand]->buffer_end<0)
-			pGMS[hand]->buffer_end=(MAX_BUFFER-1);
-		}
-		
 	}
 
-
+	//sprintf(msg,"write_buffer() AFTER aval %d, start %d, end %d \n\0",pGMS[hand]->samples_avaiable,pGMS[hand]->buffer_start,pGMS[hand]->buffer_end);
+	//debugwrite(msg);
 
 	// signal data has been collected
 	pGMS[hand]->datasignal=true;

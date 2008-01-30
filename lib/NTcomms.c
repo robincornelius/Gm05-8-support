@@ -31,7 +31,7 @@
 
 #include <stdio.h>
 #include "comms.h"
-#define debug_flag 0
+static int debug_flag
 
 
 int rs232_open(char *port, int baud, char parity, int data_bit, int stop_bit, int flow_control)
@@ -116,7 +116,7 @@ DWORD written, i;
     {
     FILE *f;
 
-    f = fopen("rs232.log", "a");
+	f = fopen("c:\\rs232.log", "a");
     fprintf(f, "write: ");
     for (i=0 ; (int)i<size ; i++)
       fprintf(f, "%X ", data[i]);
@@ -154,11 +154,11 @@ COMMTIMEOUTS  CommTimeOuts;
   if (!status || i==0)
 	  return -1;
   
-  if (debug_flag && l>0)
+  if (debug_flag)
     {
     FILE *f;
 
-    f = fopen("rs232.log", "a");
+	f = fopen("c:\\rs232.log", "a");
     fprintf(f, "read: ");
     for (i=0 ; i<size ; i++)
       fprintf(f, "%X ", data[i]);

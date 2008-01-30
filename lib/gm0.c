@@ -691,11 +691,14 @@ GM0_API int gm0_sendtime(HANDLEGM hand,BOOL extended)
 GM0_API int gm0_getnobuffersamples(HANDLEGM hand)
 {
 	return pGMS[hand]->samples_avaiable;
-
 }
 
 GM0_API struct gm_store gm0_get_next_buffer(HANDLEGM hand)
 {
+	char msg[1024];
+
+	//sprintf(msg,"get_buffer() aval %d, start %d, end %d \n\0",pGMS[hand]->samples_avaiable,pGMS[hand]->buffer_start,pGMS[hand]->buffer_end);
+	//debugwrite(msg);
 
 	if (pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_start]==BUFFER_OWNER_USER)
 	{
@@ -704,17 +707,23 @@ GM0_API struct gm_store gm0_get_next_buffer(HANDLEGM hand)
 		if(pGMS[hand]->buffer_start>=MAX_BUFFER)
 		{
 			pGMS[hand]->buffer_start=0;
+			//sprintf(msg,"get_buffer() read wrap\n\0");
+			//debugwrite(msg);
 		}
 
 		pGMS[hand]->buffer_ringflag[oldindex]=BUFFER_OWNER_INSTRUMENT;
 
 		pGMS[hand]->samples_avaiable--;
+		//sprintf(msg,"get_buffer() sent one reading\n\0");
+		//debugwrite(msg);
 
 		return pGMS[hand]->store_buffer[oldindex];
 
 	}
 	else
 	{
+		//sprintf(msg,"get_buffer() NOTHING TO DO!\n\0");
+		//debugwrite(msg);
 		// we need to return *something* and have no error system
 		return pGMS[hand]->store_buffer[pGMS[hand]->buffer_start];
 	}
