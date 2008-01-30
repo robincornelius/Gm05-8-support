@@ -66,3 +66,5 @@ int rs232_read(RS232_INFO *info, char *data, int size, int timeout);
 int rs232_puts(RS232_INFO *info, char *str);
 int rs232_gets(RS232_INFO *info, char *str, int size, char *pattern, int timeout);
 
+void rs232_enable_debug(void);
+void rs232_disable_debug(void);

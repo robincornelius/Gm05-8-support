@@ -688,6 +688,43 @@ GM0_API int gm0_sendtime(HANDLEGM hand,BOOL extended)
 	return 0;
 }
 
+GM0_API void gm0_enabledebug()
+{
+	rs232_enable_debug();
+}
+
+GM0_API void gm0_disabledebug()
+{
+		rs232_disable_debug();
+}
+
+GM0_API void gm0_stopbuffersamples(HANDLEGM hand)
+{
+		pGMS[hand]->buffer_enabled=0;
+}
+
+GM0_API void gm0_startbuffersamples(HANDLEGM hand)
+{
+	pGMS[hand]->buffer_enabled=1;
+}
+
+
+GM0_API int gm0_resetbuffersamples(HANDLEGM hand)
+{
+	int counter=0;
+
+	gm0_stopbuffersamples(hand);
+
+	for (counter=0;counter<MAX_BUFFER;counter++)
+	{
+		pGMS[hand]->buffer_ringflag[counter]=BUFFER_OWNER_INSTRUMENT;
+	}
+	pGMS[hand]->samples_avaiable=0;
+
+	gm0_startbuffersamples(hand);
+}
+
+
 GM0_API int gm0_getnobuffersamples(HANDLEGM hand)
 {
 	return pGMS[hand]->samples_avaiable;

@@ -38,6 +38,12 @@ EXPORTS
     gm0_getmetertype			@36
     gm0_get_next_buffer			@37
     gm0_getnobuffersamples		@38
+    gm0_resetbuffersamples		@39
+    gm0_stopbuffersamples		@40
+    gm0_startbuffersamples		@41
+    gm0_enabledebug				@42
+	gm0_disabledebug			@43
+	
     
     
     

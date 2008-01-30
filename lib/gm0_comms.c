@@ -20,11 +20,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
    MA 02111-1307 USA
 
-
-
 */
-
-extern int debug_flag
 
 #ifndef _LINUX
 	#include <objbase.h>
@@ -52,23 +48,6 @@ int gm0_openportUSB(HANDLEGM hand);
 
 int processcount=0;
 int handcount;
-
-void debugwrite(char * msg)
-{
-
-
-if (debug_flag)
-    {
-    FILE *f;
-
-    f = fopen("c:\\rs232.log", "a+");
-    fprintf(f, "MSG: %s\n",msg);
-    fclose(f);
-    }
-
-}
-
-
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                     DWORD  ul_reason_for_call, 
@@ -421,23 +400,21 @@ void processgmcomms(HANDLEGM hand)
 	pGMS[hand]->samplecount++;
 	pGMS[hand]->index=0; // reset the readthread buffer to zero
 
-	//sprintf(msg,"write_buffer() BEFORE aval %d, start %d, end %d \n\0",pGMS[hand]->samples_avaiable,pGMS[hand]->buffer_start,pGMS[hand]->buffer_end);
-	//debugwrite(msg);
+	if(pGMS[hand]->buffer_enabled==1)
+	{
 
-	if(pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]==BUFFER_OWNER_INSTRUMENT)
-	{	
-		//yay we hit an empty spot!
-		pGMS[hand]->store_buffer[pGMS[hand]->buffer_end]=pGMS[hand]->store;
-		pGMS[hand]->samples_avaiable++;
-		pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]=BUFFER_OWNER_USER;
+		if(pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]==BUFFER_OWNER_INSTRUMENT)
+		{	
+			//yay we hit an empty spot!
+			pGMS[hand]->store_buffer[pGMS[hand]->buffer_end]=pGMS[hand]->store;
+			pGMS[hand]->samples_avaiable++;
+			pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_end]=BUFFER_OWNER_USER;
 
-		pGMS[hand]->buffer_end++;
-		if(pGMS[hand]->buffer_end>=MAX_BUFFER)
-			pGMS[hand]->buffer_end=0;
+			pGMS[hand]->buffer_end++;
+			if(pGMS[hand]->buffer_end>=MAX_BUFFER)
+				pGMS[hand]->buffer_end=0;
+		}
 	}
-
-	//sprintf(msg,"write_buffer() AFTER aval %d, start %d, end %d \n\0",pGMS[hand]->samples_avaiable,pGMS[hand]->buffer_start,pGMS[hand]->buffer_end);
-	//debugwrite(msg);
 
 	// signal data has been collected
 	pGMS[hand]->datasignal=true;
@@ -464,7 +441,6 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 	HANDLEGM newhand=0;
 	int portret;
 	int x=0;
-
 	while(pGMS[newhand]!=NULL && newhand<255)
 	{
 		if(pGMS[newhand]->m_Iportno==port)
@@ -473,6 +449,8 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 	}
 
 	debugprint("Creating a new GM\n");
+
+	rs232_disable_debug();
 
 	if(newhand==255)
 		return GM_MEMORY_ERROR;
@@ -543,7 +521,7 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 	portret= gm0_openport(newhand,mode);
 	
 	pGMS[newhand]->doingnull=false;
-
+	gm0_startbuffersamples(newhand);
 
 	if(portret!=0)
 	{

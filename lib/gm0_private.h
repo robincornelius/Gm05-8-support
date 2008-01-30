@@ -93,6 +93,7 @@ struct GM_STRUCT{
 	int buffer_start;
 	int buffer_end;
 	int samples_avaiable;
+	int buffer_enabled;
 
 }; 
 

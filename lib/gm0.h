@@ -215,4 +215,13 @@ GM0_API unsigned __int16 LIBTYPE gm0_getdatafaulty BKET (HANDLEGM hand);
 GM0_API long LIBTYPE gm0_startcmd BKET (HANDLEGM hand);
 GM0_API long LIBTYPE gm0_endcmd BKET (HANDLEGM hand);
 
+GM0_API void gm0_stopbuffersamples(HANDLEGM hand);
+GM0_API void gm0_startbuffersamples(HANDLEGM hand);
+GM0_API int gm0_resetbuffersamples(HANDLEGM hand);
+GM0_API int gm0_getnobuffersamples(HANDLEGM hand);
+
+GM0_API void gm0_enabledebug();
+GM0_API void gm0_disabledebug();
+
+
 #endif

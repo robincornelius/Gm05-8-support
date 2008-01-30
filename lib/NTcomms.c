@@ -31,7 +31,17 @@
 
 #include <stdio.h>
 #include "comms.h"
-static int debug_flag
+static int debug_flag;
+
+void rs232_enable_debug(void)
+{
+	debug_flag=1;
+}
+
+void rs232_disable_debug(void)
+{
+	debug_flag=0;
+}
 
 
 int rs232_open(char *port, int baud, char parity, int data_bit, int stop_bit, int flow_control)
