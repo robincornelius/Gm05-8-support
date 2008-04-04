@@ -127,7 +127,7 @@ int main(int argv, char * argvc[])
 	{
   		printf("Which comm port would you like to use (COMn or /dev/ttySn) ?\n=");
   		scanf("%d",&port);
-		if(port< 1 || port>254) 
+		if(port< 0 || port>254) 
   		{
 			printf("\n Com port %d is out of range (1-254)\n",port);
 			return -1;

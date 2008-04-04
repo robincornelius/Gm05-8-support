@@ -33,6 +33,11 @@
 	#include <pthread.h>
 	#include "malloc.h"
 	#include <stdlib.h>
+
+static inline void Beep(int frequency, int duration)
+{
+}
+
 #endif
 
 
@@ -449,8 +454,6 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 	}
 
 	debugprint("Creating a new GM\n");
-
-	rs232_disable_debug();
 
 	if(newhand==255)
 		return GM_MEMORY_ERROR;

@@ -690,12 +690,12 @@ GM0_API int gm0_sendtime(HANDLEGM hand,BOOL extended)
 
 GM0_API void gm0_enabledebug()
 {
-	rs232_enable_debug();
+	//rs232_enable_debug();
 }
 
 GM0_API void gm0_disabledebug()
 {
-		rs232_disable_debug();
+	//rs232_disable_debug();
 }
 
 GM0_API void gm0_stopbuffersamples(HANDLEGM hand)
