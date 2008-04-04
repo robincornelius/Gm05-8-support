@@ -1,5 +1,5 @@
 #!/bin/sh
-libtoolize --force
-aclocal
-autoconf
-automake -a
+libtoolize -c --force
+autoconf -f
+aclocal -I m4 --install --force
+automake -a-c
