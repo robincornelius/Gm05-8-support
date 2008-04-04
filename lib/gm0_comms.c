@@ -93,7 +93,7 @@ int gm0_openport(HANDLEGM hand,int mode)
 		decimal point, this was fixed on windows with above setlocale() code */
 	#endif
 
-	if(pGMS[hand]->m_Iportno>0)
+	if(pGMS[hand]->m_Iportno>=0)
 		gm0_openport232(hand,mode);
 
 	if(pGMS[hand]->m_Iportno<0)

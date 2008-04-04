@@ -129,7 +129,7 @@ int main(int argv, char * argvc[])
   		scanf("%d",&port);
 		if(port< 0 || port>254) 
   		{
-			printf("\n Com port %d is out of range (1-254)\n",port);
+			printf("\n Com port %d is out of range (0-254)\n",port);
 			return -1;
 		}
 		
