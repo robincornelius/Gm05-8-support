@@ -460,7 +460,7 @@ int doconnect(int port,int mode)
 	gm0_startconnect(mygm);
 	
   	iconnectcount=0;
-	while(gm0_getconnect(mygm)==FALSE && iconnectcount <5)
+	while(gm0_getconnect(mygm)==FALSE && iconnectcount <10)
   	{
 		printf("Attempt %d of 10 has FAILED\n",iconnectcount);
 		iconnectcount++;

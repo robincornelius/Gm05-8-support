@@ -133,6 +133,8 @@ int rs232_write(RS232_INFO *info, char *data, int size)
 {
 int i;
  
+  //printf("write: %x\n",data[0]);
+
   if (debug_flag)
     {
     FILE *f;
@@ -162,7 +164,7 @@ double fstart, fnow;
   fstart = start.time+start.millitm/1000.0;
   
   memset(str, 0, size);
-  for (l=0 ; l<size-1 ;)
+  for (l=0 ; l<=size-1 ;)
     {
     ioctl(info->fd, FIONREAD, &i);
     if (i > 0)
@@ -196,8 +198,15 @@ double fstart, fnow;
     fprintf(f, "\n");
     fclose(f);
     }
- 
-  return l;
+
+  if(i==0)
+  {
+	return -1;  
+  }
+  else
+  //printf("read: %x\n",str[0]);
+  
+  return i;
 }
 
 /*----------------------------------------------------------------------------*/

@@ -296,7 +296,7 @@ char packetbyte(HANDLEGM hand, char dataout)
 
 	if (length != 1)
 	{
-		printf("timeout recieve\n");
+		//printf("timeout recieve\n");
 	}
 
 	return(retdata);
@@ -308,7 +308,7 @@ char AMpacket(HANDLEGM hand,char cmd,char data)
 
 	unsigned char ret;
 
-	if(pGMS[hand]->m_Iportno>0)
+	if(pGMS[hand]->m_Iportno>=0)
 	{
 		ret=packetbyte(hand,cmd);
 		pGMS[hand]->cmdstatus=packetbyte(hand,data);
@@ -701,7 +701,7 @@ void __cdecl connectthread(void * pParam)
 		haveanothego:
 
 		Sleep(1);
-		ret=-1; // default to allow entry below
+		
 
 		if(pGMS[hand]->m_Iportno<0)
 		{
@@ -711,6 +711,8 @@ void __cdecl connectthread(void * pParam)
 		{
 			pGMS[hand]->polldisabled=TRUE;
 		}
+		
+		ret=-1; // default to allow entry below
 
 		while(ret!=0 && pGMS[hand]->gm0_threadrun==true)
 		{
@@ -729,6 +731,7 @@ void __cdecl connectthread(void * pParam)
 			pGMS[hand]->threadlockcount--;
 			return;
 		}
+
 
 		gm0_setdata(hand,0xABCD);
 

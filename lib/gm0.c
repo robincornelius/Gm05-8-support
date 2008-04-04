@@ -168,10 +168,9 @@ int gm0_dothestar(HANDLEGM hand)
 	pGMS[hand]->gm0_usereadthread=false;
 
 	Sleep(50);
-
-	OutputDebugString("Attempt Connect\n");
 	star=42;
 	rs232_write(&pGMS[hand]->com,&star,1);
+
 	Sleep(250);
 	status=0;
 	while(status!=-1)
