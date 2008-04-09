@@ -796,6 +796,7 @@ void __cdecl connectthread(void * pParam)
 
 	Sleep(1000);
 
+	// BUG in GM08 RS232,need to do interval commands as below
 	gm0_setinterval(hand,2);
 	gm0_setinterval(hand,1);
 
