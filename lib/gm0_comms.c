@@ -329,7 +329,7 @@ void processgmcomms(HANDLEGM hand)
 	double value;
 	char msg[1024];
 
-	Beep(2000,20);
+	//Beep(2000,20);
 
 	if(pGMS[hand]->gm0_threadrun==FALSE)
 		return;
