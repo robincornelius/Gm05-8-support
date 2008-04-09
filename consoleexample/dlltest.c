@@ -474,10 +474,11 @@ int doconnect(int port,int mode)
 	gm0_startconnect(mygm);
 	
   	iconnectcount=0;
-	while(gm0_getconnect(mygm)==FALSE && iconnectcount <10)
+	while(gm0_getconnect(mygm)==FALSE && iconnectcount <5)
   	{
-		printf("Attempt %d of 10 has FAILED\n",iconnectcount);
+		printf("Attempt %d of 5 has FAILED\n",iconnectcount);
 		iconnectcount++;
+		Sleep(CLOCKS_PER_SEC*1);
 		Sleep(CLOCKS_PER_SEC*1);
 	}
 	

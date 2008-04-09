@@ -37,7 +37,7 @@ int writereport(unsigned char data)
 	//printf("TX: %x:%x:%x:%x:%x:%x:%x:%x ",rdata[0],rdata[1],rdata[2],rdata[3],rdata[4],rdata[5],rdata[6],rdata[7]);
 
 
-	status=usb_interrupt_write(thedev, 1, &rdata[0], 8,1000);
+	status=usb_interrupt_write(thedev, 1, &rdata[0], 8,200);
 	//status=usb_bulk_write(thedev, 0, &rdata[0], 8, 1000);
 
 	if(status<0)
@@ -58,7 +58,7 @@ unsigned char readreport()
 
 	//printf("RX -> ");
 
-	status=usb_interrupt_read(thedev, 1, &rdata[0], 8, 1000);
+	status=usb_interrupt_read(thedev, 1, &rdata[0], 8, 200);
 
 	if(status<0)
 	{
@@ -79,16 +79,13 @@ void polldata(HANDLEGM hand)
 	double data;
 	int tempmode;
 
-	//printf("***** POLL *******\n");
-
+	
 	if(pGMS[hand]->m_Iportno>0)
 		return;
 
 	//WritepacketToDevice(hand,42, 42,NULL);
 
 	data = GetReadingFromGM08(hand);
-
-	//printf("Data is %lf\n",data);
 
 	pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0,NULL)&0x07;
 
@@ -105,19 +102,18 @@ void polldata(HANDLEGM hand)
 int GetReadingFromGM08(HANDLEGM hand)
 {
 
-	unsigned char Reading[3];
+	unsigned char Reading[2];
 	char * stop;
-	__int16 intreading;
+	signed __int16 intreading;
 	unsigned char *p_uchar;
 
 	Reading[0]=WritepacketToDevice(hand,49,0,&Reading[1]);
 
 	intreading=0;	
-	p_uchar = (unsigned char *) &intreading;
-	*p_uchar = (unsigned char) Reading[0];
-	*(p_uchar+1) = (unsigned char) Reading[1];
+	
+	intreading=(256*Reading[1])+Reading[0];
 
-	return (int)intreading;
+	return ((int)intreading);
 
 }
 
@@ -128,8 +124,8 @@ unsigned char WritepacketToDevice(HANDLEGM hand, unsigned char cmd, unsigned cha
 
 	writereport(cmd);
 	rdata=readreport();
-	rdata2=writereport(data);
-	readreport();
+	writereport(data);
+	rdata2=readreport();
 
 	if(statdata!=NULL)
 		*statdata=rdata2;
@@ -187,6 +183,14 @@ for (bus = usb_busses; bus; bus = bus->next)
     dev=NULL;
     printf("DID NOT FIND GAUSSMETER\n");
     return FALSE;
+}
+
+void closeUSB(HANDLEGM hand)
+{
+
+	usb_close(thedev);
+
+
 }
 
 

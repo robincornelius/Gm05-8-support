@@ -104,14 +104,14 @@ GM0_API int gm0_gmcmd(HANDLEGM hand,unsigned char cmd,unsigned char data)
 	int retdata;
 	int oldstatus;
 
-	if(pGMS[hand]->doingnull==true)
+	if(pGMS[hand]->doingnull==TRUE)
 		return 0;
 
 	pGMS[hand]->disablepoll=TRUE;
 
 	retdata=AMpacket(hand,cmd,data);
 
-	if(pGMS[hand]->faultyfirmware==true)
+	if(pGMS[hand]->faultyfirmware==TRUE)
 	{
 		if( cmd==GMC_GETDATALO || cmd==GMC_GETDATAHI || ( cmd>=GMC_TIME0 && cmd <=GMC_TIME7))
 		{
@@ -131,7 +131,7 @@ int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 
 	packetbyte(hand,GMC_MODE1);
 	packetbyte(hand,GMC_NULL);
-	pGMS[hand]->gm0_usereadthread=true;
+	pGMS[hand]->gm0_usereadthread=TRUE;
 	pGMS[hand]->disablepoll=FALSE;
 	return 0;
 }
@@ -165,7 +165,7 @@ int gm0_dothestar(HANDLEGM hand)
 	char star;
 	int ret=-1;
 
-	pGMS[hand]->gm0_usereadthread=false;
+	pGMS[hand]->gm0_usereadthread=FALSE;
 
 	Sleep(50);
 	star=42;
@@ -191,12 +191,12 @@ BOOL checkhand(int hand)
 {
 
 	if(hand<0 || hand > 255)
-		return false;
+		return FALSE;
 	
 	if(pGMS[hand]==NULL)
-		return false;
+		return FALSE;
 
-	return true;
+	return TRUE;
 
 }
 
@@ -491,7 +491,7 @@ GM0_API BOOL gm0_getconnect(HANDLEGM hand)
 {
 
 	if(!checkhand(hand))
-		return false;
+		return FALSE;
 
 	return(pGMS[hand]->connected); 
 }
@@ -538,7 +538,7 @@ GM0_API unsigned __int16 gm0_getdata(HANDLEGM hand)
 	unsigned __int16 data;
 	unsigned __int8 lo,hi;
 
-//	if(pGMS[hand]->faultyfirmware==true)
+//	if(pGMS[hand]->faultyfirmware==TRUE)
 //	{
 //		return(gm0_getdatafaulty(hand));
 //	}
@@ -576,7 +576,7 @@ GM0_API unsigned __int16 gm0_getdatafaulty(HANDLEGM hand)
 
 GM0_API int gm0_unlock(HANDLEGM hand,BOOL lockon)
 {
-	if(lockon==true)
+	if(lockon==TRUE)
 	{
 		gm0_setaddrlo(hand,0);
 		gm0_setaddrhi(hand,0);
@@ -776,7 +776,7 @@ GM0_API unsigned __int16 gm0_readprobee2word(HANDLEGM hand,char pos)
 	unsigned char hi,lo;
 
 	gm0_gmstar(hand);
-	gm0_unlock(hand,false); //unlock gm0
+	gm0_unlock(hand,FALSE); //unlock gm0
 
 	gm0_setaddrlo(hand,pos);
 	gm0_setaddrhi(hand,1);
@@ -785,7 +785,7 @@ GM0_API unsigned __int16 gm0_readprobee2word(HANDLEGM hand,char pos)
 	hi=gm0_getdatahi(hand);
 	temp=hi*256+lo;
 
-	gm0_unlock(hand,true); // lock gm0
+	gm0_unlock(hand,TRUE); // lock gm0
 	gm0_gmmode1(hand);
 
 	return (temp);
@@ -797,7 +797,7 @@ GM0_API unsigned __int16 gm0_readgme2word(HANDLEGM hand,char pos)
 	unsigned char hi,lo;
 
 	gm0_gmstar(hand);
-	gm0_unlock(hand,false); //unlock gm0
+	gm0_unlock(hand,FALSE); //unlock gm0
 
 	gm0_setaddrlo(hand,pos);
 	gm0_setaddrhi(hand,0);
@@ -806,7 +806,7 @@ GM0_API unsigned __int16 gm0_readgme2word(HANDLEGM hand,char pos)
 	hi=gm0_getdatahi(hand);
 	temp=hi*256+lo;
 
-	gm0_unlock(hand,true); // lock gm0
+	gm0_unlock(hand,TRUE); // lock gm0
 	gm0_gmmode1(hand);
 
 	return (temp);
