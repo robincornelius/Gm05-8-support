@@ -231,13 +231,15 @@ GM0_API int gm0_getunits(HANDLEGM hand)
 GM0_API int gm0_setunits(HANDLEGM hand,unsigned char units)
 {
 
-	gm0_gmstar(hand);
+	
 
 	if(units >3)
 		return GM_DATAERROR;
 
 	if(pGMS[hand]->store.units==units) // no need to worry the comms
 		return GM_OK;
+
+	gm0_gmstar(hand);
 
 	gm0_gmcmd(hand,GMC_UNITS,units+128);
 	gm0_gmmode1(hand);
@@ -274,14 +276,16 @@ GM0_API int gm0_setrange(HANDLEGM hand,unsigned char range)
 
 GM0_API int gm0_setmode(HANDLEGM hand,unsigned char mode)
 {
-	gm0_gmstar(hand);
+	
 
 	if(mode >5)
 		return GM_DATAERROR;
 
 	if(pGMS[hand]->store.mode==mode) // no need to worry the comms
 		return GM_OK;
-
+	
+	gm0_gmstar(hand);
+	
 	gm0_gmcmd(hand,GMC_FUNCTION,mode+128);
 	gm0_gmmode1(hand);
 
@@ -290,10 +294,12 @@ GM0_API int gm0_setmode(HANDLEGM hand,unsigned char mode)
 
 GM0_API int gm0_setlanguage(HANDLEGM hand,unsigned char lan)
 {
-	gm0_gmstar(hand);
+	
 
 	if(lan >5)
 		return GM_DATAERROR;
+
+	gm0_gmstar(hand);
 
 	gm0_gmcmd(hand,GMC_LANGUAGE,lan+128);
 	gm0_gmmode1(hand);
