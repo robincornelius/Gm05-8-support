@@ -100,7 +100,10 @@ int main(int argv, char * argvc[])
 
 	int port;
 	int opt;
-	char cmd,data;
+	unsigned char buffer[1024];
+	unsigned char cmd;
+	unsigned char data;
+	int  integer;
 
 #ifndef _LINUX
 
@@ -149,31 +152,35 @@ int main(int argv, char * argvc[])
 	while(cmd!='X' && cmd!='x')
 	{
 		printf("Enter option :");
-		scanf("%c",&cmd);
-		printf("\n");
+		scanf("%s",&buffer);
+		cmd=buffer[0];
+		fflush(stdin);
 		switch(cmd)
 		{
 			case 'r':
 			case 'R':
-				printf(" ** Range ** \n 0 - Least sensitive \n 3 - Most sensitive \n4 - Auto range\n");
+				printf(" ** Range ** \n 0 - Least sensitive \n 3 - Most sensitive \n 4 - Auto range\n");
 				printf("Enter range 0-4 :");
-				scanf("%c",&data);
-				gm0_setrange(mygm,data);
+				scanf("%s",&buffer);
+				data=buffer[0];
+				gm0_setrange(mygm,data-0x30);
 				break;
 			case 'U':
 			case 'u':
 				printf(" ** Units ** \n 0 - Tesla \n 1 - Gauss \n 2 - A/m \n 3 - Oersted\n");
 				printf("Select Units 0-3 :");
-				scanf("%c",&data);
+				scanf("%s",&buffer);
+				data=buffer[0];
 
-				gm0_setunits(mygm,data);
+				gm0_setunits(mygm,data-0x30);
 				break;
 			case 'M':
 			case 'm':
 				printf("** Modes ** \n 0 - DC\n 1 - DC Peak \n 2 - AC \n 3 - AC Peak \n 4 - AC MAX RMS \n");
 				printf("Select mode 0-4 :");
-				scanf("%c",&data);
-				gm0_setmode(mygm,data);
+				scanf("%s",&buffer);
+				data=buffer[0];
+				gm0_setmode(mygm,data-0x30);
 				break;
 			case ' ':
 				showmenu();	
@@ -181,8 +188,9 @@ int main(int argv, char * argvc[])
 			case 'L':
 			case 'l':
 				printf("Select language 0-5 :");
-				scanf("%c",&data);
-				gm0_setlanguage(mygm,data);
+				scanf("%s",&buffer);
+				data=buffer[0];
+				gm0_setlanguage(mygm,data-0x30);
 				break;
 			case 'V':
 			case 'v':
@@ -200,7 +208,8 @@ int main(int argv, char * argvc[])
 				printf("Doing Auto Zero \n");
 				gm0_doaz(mygm);
 				printf("Press enter to simulate enter key");
-				scanf("%c",&data);
+				scanf("%s",&buffer);
+				data=buffer[0];
 				printf("Before reset\n");
 				gm0_resetnull(mygm);
 				printf("AZ Done");
@@ -214,8 +223,9 @@ int main(int argv, char * argvc[])
 
 			case 'i':
 				printf("Enter 232 interval 1 upwards :");
-				scanf("%c",&data);
-				gm0_setinterval(mygm,data);
+				scanf("%s",&buffer);
+				data=buffer[0];
+				gm0_setinterval(mygm,data-0x30);
 				break;
 			case 'Q':
 			case 'q':
@@ -237,7 +247,8 @@ int main(int argv, char * argvc[])
 					int reg;
 					gm0_startcmd(mygm);
 					printf("Which register ?");
-					scanf("%d",&reg);
+					scanf("%s",&buffer);
+					reg=buffer[0]-0x30;
 					mystore=gm0_getstore(mygm,reg);
 	
 					printf("%f"	,mystore.value);
@@ -262,9 +273,12 @@ int main(int argv, char * argvc[])
 				struct gm_store mystore;
 				gm0_startcmd(mygm);
 				printf("\nStart register =");
-				scanf("%d",&startreg);
+				scanf("%s",&buffer);
+				startreg=buffer[0]-0x30;
+				
 				printf("\nEnd register =");
-				scanf("%d",&endreg);
+				scanf("%s",&buffer);
+				endreg=buffer[0]-0x30;
 				//for(reg=startreg;reg<=endreg;reg++)
 				reg = startreg;
 				do

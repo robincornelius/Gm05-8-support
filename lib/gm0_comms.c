@@ -211,7 +211,7 @@ void __cdecl pollthread(void * pParam)
 		else
 		{
 			pGMS[hand]->polldisabled=TRUE;
-			OutputDebugString("Poll thread skipping beat\n");
+			//OutputDebugString("Poll thread skipping beat\n");
 		}
 
 
@@ -315,7 +315,7 @@ char AMpacket(HANDLEGM hand,char cmd,char data)
 	}
 	else
 	{
-		ret=WritepacketToDevice(hand,cmd,data);
+		ret=WritepacketToDevice(hand,cmd,data,NULL);
 
 		pGMS[hand]->disablepoll=FALSE;
 	}
@@ -685,8 +685,18 @@ void __cdecl connectthread(void * pParam)
 			}
 		#else
 		{
-			pthread_t  p_thread; 
-			pthread_create(&p_thread, NULL, (void*)readthread, (void*)hand);
+			if(pGMS[hand]->m_Iportno>0)
+			{
+				pthread_t  p_thread; 
+				pthread_create(&p_thread, NULL, (void*)readthread, (void*)hand);
+			}
+			else
+			{
+				
+				pthread_t  p_thread; 
+				pGMS[hand]->disablepoll=TRUE;
+				pthread_create(&p_thread, NULL, (void*)pollthread, (void*)hand);
+			}		
 		}
 		#endif
 

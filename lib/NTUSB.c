@@ -453,7 +453,7 @@ DWORD WriteReport(HANDLEGM hand)
 	return(Result);
 }
 
-unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned char data)
+unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned char data,char * status)
 {
 	unsigned char dataret;
 
@@ -604,15 +604,15 @@ void polldata(HANDLEGM hand)
 	if(pGMS[hand]->m_Iportno>0)
 		return;
 
-	WritepacketToDevice(hand,42, 42);
+	WritepacketToDevice(hand,42, 42,NULL);
 
 	data = GetReadingFromGM08(hand);
 
-	pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0)&0x07;
+	pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0,NULL)&0x07;
 
-	pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0)&0x03;
+	pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0,NULL)&0x03;
 
-	tempmode=WritepacketToDevice(hand,46, 0);
+	tempmode=WritepacketToDevice(hand,46, 0,NULL);
 
 	pGMS[hand]->store.mode = tempmode>4 || tempmode <0 ? 0 : tempmode;
 
