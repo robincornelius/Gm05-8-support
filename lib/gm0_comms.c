@@ -213,7 +213,7 @@ void __cdecl pollthread(void * pParam)
 		}
 
 
-		Sleep(50); //333
+		Sleep(10); //333
 	}
 
 	pGMS[hand]->threadlockcount--;	
@@ -628,7 +628,7 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 	}
 
 	
-	if(pGMS[hand]->m_Iportno>0)
+	if(pGMS[hand]->m_Iportno>=0)
 	{
 		gm0_closeport(hand);
 	}
@@ -670,24 +670,24 @@ void __cdecl connectthread(void * pParam)
 	connected=FALSE;
 	pGMS[hand]->gm0_threadrun=TRUE; // if this shoudn't be TRUE then this function shoudn't have been started!
 	pGMS[hand]->gm0_usereadthread=FALSE; 
-	
+	pGMS[hand]->disablepoll=TRUE;
+	pGMS[hand]->polldisabled=TRUE;
+
 	printf("Starting a CONNECT THREAD\n");
 	
 
 		#ifndef _LINUX
-			if(pGMS[hand]->m_Iportno>0)
+			if(pGMS[hand]->m_Iportno>=0)
 			{
 				_beginthread(readthread,0,(void*)hand);
 			}
 			else
 			{
-				pGMS[hand]->disablepoll=TRUE;
-				pGMS[hand]->polldisabled=TRUE;
 				_beginthread(pollthread,0,(void*)hand);
 			}
 		#else
 		{
-			if(pGMS[hand]->m_Iportno>0)
+			if(pGMS[hand]->m_Iportno>=0)
 			{
 				pthread_t  p_thread; 
 				pthread_create(&p_thread, NULL, (void*)readthread, (void*)hand);
@@ -696,8 +696,6 @@ void __cdecl connectthread(void * pParam)
 			{
 				
 				pthread_t  p_thread; 
-				pGMS[hand]->disablepoll=TRUE;
-				pGMS[hand]->polldisabled=TRUE;
 				pthread_create(&p_thread, NULL, (void*)pollthread, (void*)hand);
 			}		
 		}
@@ -726,7 +724,8 @@ void __cdecl connectthread(void * pParam)
 		while(ret!=0 && pGMS[hand]->gm0_threadrun==TRUE)
 		{
 			Beep(1000,25);
-			ret=gm0_gmstar(hand); // this does not need threadlock counting	
+			printf("Seting star\n");
+			ret=gm0_gmstar(hand); // this does not need threadlock counting				
 			Sleep(50);
 		}
 
@@ -793,12 +792,11 @@ void __cdecl connectthread(void * pParam)
 	Beep(2000,100);
 	pGMS[hand]->connected=TRUE;
 
-	Sleep(1000);
-
 	gm0_gmmode1(hand);
 
 	Sleep(1000);
 
+	gm0_setinterval(hand,2);
 	gm0_setinterval(hand,1);
 
 	if(pGMS[hand]->pConnectCallback!=NULL)
@@ -812,10 +810,12 @@ void __cdecl connectthread(void * pParam)
 
 	pGMS[hand]->threadlockcount--;
 
-	printf("Connected,re-enable poll\n");
-
-	pGMS[hand]->disablepoll=FALSE;
-
+	if(pGMS[hand]->m_Iportno<0)
+	{
+		//printf("Connected,re-enable poll\n");
+		pGMS[hand]->disablepoll=FALSE;
+	}
+	
 
 }
 

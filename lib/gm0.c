@@ -127,12 +127,14 @@ GM0_API int gm0_gmcmd(HANDLEGM hand,unsigned char cmd,unsigned char data)
 int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 {
 	if(pGMS[hand]->m_Iportno<0)
+	{
+		pGMS[hand]->disablepoll=FALSE;
 		return 0;
+	}
 
 	packetbyte(hand,GMC_MODE1);
 	packetbyte(hand,GMC_NULL);
 	pGMS[hand]->gm0_usereadthread=TRUE;
-	pGMS[hand]->disablepoll=FALSE;
 	return 0;
 }
 

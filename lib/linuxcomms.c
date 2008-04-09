@@ -68,6 +68,8 @@ struct {
 };
 
 
+  printf("************************************\n");
+
   fd = open(port, O_RDWR);
   if (fd < 0)
     {
@@ -204,7 +206,7 @@ double fstart, fnow;
 	return -1;  
   }
   else
-  //printf("read: %x\n",str[0]);
+ // printf("read: %x\n",str[0]);
   
   return i;
 }

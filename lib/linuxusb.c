@@ -187,9 +187,8 @@ for (bus = usb_busses; bus; bus = bus->next)
 
 void closeUSB(HANDLEGM hand)
 {
-
-	usb_close(thedev);
-
+	if(thedev!=0)
+		usb_close(thedev);
 
 }
 

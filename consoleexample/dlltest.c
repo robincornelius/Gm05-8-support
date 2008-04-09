@@ -136,11 +136,11 @@ int main(int argv, char * argvc[])
 			return -1;
 		}
 		
-		printf("Attempting connect at 4800 Baud (GM05)\n");
-		if(doconnect(port,0)==-1)
+		printf("Attempting connect at 9600 Baud (GM08)\n");
+		if(doconnect(port,1)==-1)
 		{
-			printf("Attempting connect at 9600 Baud (GM08)\n");
-			if(doconnect(port,1)==-1)
+			printf("Attempting connect at 4800 Baud (GM05)\n");
+			if(doconnect(port,0)==-1)
 				return -1;
 		}
 	}
@@ -478,7 +478,6 @@ int doconnect(int port,int mode)
   	{
 		printf("Attempt %d of 5 has FAILED\n",iconnectcount);
 		iconnectcount++;
-		Sleep(CLOCKS_PER_SEC*1);
 		Sleep(CLOCKS_PER_SEC*1);
 	}
 	
