@@ -716,7 +716,12 @@ void __cdecl connectthread(void * pParam)
 
 		if(pGMS[hand]->m_Iportno<0)
 		{
-			FindTheHID(hand);
+			if(!FindTheHID(hand))
+			{
+				pGMS[hand]->connected=FALSE;
+				Sleep(1000);
+				continue;
+			}
 		}
 		
 		ret=-1; // default to allow entry below

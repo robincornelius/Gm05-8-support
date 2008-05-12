@@ -21,6 +21,10 @@
 #include "gm0.h"
 #include "comms.h"
 
+#ifdef _LINUX
+	#include <usb.h>
+#endif
+
 unsigned __int16 probee2buf[255];
 unsigned __int16 gme2buf[255];
 
@@ -36,6 +40,13 @@ void filtercallbackdata(struct gm_store * pdata);
 #define MAX_BUFFER 50
 
 struct GM_STRUCT{
+
+
+#ifdef _LINUX
+	// LINUX USB HANDLES and friends
+	usb_dev_handle * theusbdev;
+	//****
+#endif
 
 	int	 meter_mode; //gm05=0 gm08=1
 	BOOL disablepoll;

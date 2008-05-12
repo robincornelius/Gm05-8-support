@@ -7,19 +7,20 @@
 #include <sys/stat.h>
 #include <asm/types.h>
 #include <usb.h>
+#include <bits/types.h>
 
 #include "gm0_private.h"
 #include "gm0.h"
 
 struct usb_bus *bus; 
 struct usb_device *dev=NULL;
-usb_dev_handle * thedev=NULL;
+//usb_dev_handle * thedev=NULL;
 
 
 unsigned char WritepacketToDevice(HANDLEGM hand, unsigned char cmd, unsigned char data, unsigned char *statdata);
+__S16_TYPE GetReadingFromGM08(HANDLEGM hand);
 
-
-int writereport(unsigned char data)
+int writereport(HANDLEGM hand,unsigned char data)
 {
 	unsigned char rdata[8];
 	rdata[0]=data;
@@ -37,7 +38,7 @@ int writereport(unsigned char data)
 	//printf("TX: %x:%x:%x:%x:%x:%x:%x:%x ",rdata[0],rdata[1],rdata[2],rdata[3],rdata[4],rdata[5],rdata[6],rdata[7]);
 
 
-	status=usb_interrupt_write(thedev, 1, &rdata[0], 8,200);
+	status=usb_interrupt_write(pGMS[hand]->theusbdev, 1, &rdata[0], 8,200);
 	//status=usb_bulk_write(thedev, 0, &rdata[0], 8, 1000);
 
 	if(status<0)
@@ -51,14 +52,14 @@ int writereport(unsigned char data)
 	return status;
 }
 
-unsigned char readreport()
+unsigned char readreport(HANDLEGM hand)
 {
 	int status;
 	unsigned char rdata[8];
 
 	//printf("RX -> ");
 
-	status=usb_interrupt_read(thedev, 1, &rdata[0], 8, 200);
+	status=usb_interrupt_read(pGMS[hand]->theusbdev, 1, &rdata[0], 8, 200);
 
 	if(status<0)
 	{
@@ -99,21 +100,21 @@ void polldata(HANDLEGM hand)
 
 }
 
-int GetReadingFromGM08(HANDLEGM hand)
+__S16_TYPE GetReadingFromGM08(HANDLEGM hand)
 {
 
 	unsigned char Reading[2];
 	char * stop;
-	signed __int16 intreading;
+	__S16_TYPE intreading;
 	unsigned char *p_uchar;
 
 	Reading[0]=WritepacketToDevice(hand,49,0,&Reading[1]);
 
 	intreading=0;	
 	
-	intreading=(256*Reading[1])+Reading[0];
+	intreading=((256*Reading[1])+Reading[0]);
 
-	return ((int)intreading);
+	return (intreading);
 
 }
 
@@ -122,10 +123,10 @@ unsigned char WritepacketToDevice(HANDLEGM hand, unsigned char cmd, unsigned cha
 
 	unsigned char rdata,rdata2;
 
-	writereport(cmd);
-	rdata=readreport();
-	writereport(data);
-	rdata2=readreport();
+	writereport(hand,cmd);
+	rdata=readreport(hand);
+	writereport(hand,data);
+	rdata2=readreport(hand);
 
 	if(statdata!=NULL)
 		*statdata=rdata2;
@@ -152,6 +153,8 @@ usb_find_busses();
 usb_find_devices();
 bus = usb_get_busses();
 
+int founddevice=0;
+
 for (bus = usb_busses; bus; bus = bus->next) 
 { 
 	for (dev = bus->devices; dev; dev = dev->next) 
@@ -159,23 +162,26 @@ for (bus = usb_busses; bus; bus = bus->next)
 		if(dev->descriptor.idVendor==0x04d8 && dev->descriptor.idProduct==0x0002)
 		{
 			//printf("Found the gaussmeter\n");
+			founddevice++;
+			if(founddevice==(-1*pGMS[hand]->m_Iportno))
+			{		
+				pGMS[hand]->theusbdev = usb_open(dev);
 
-			thedev = usb_open(dev);
+				int stat=usb_detach_kernel_driver_np(pGMS[hand]->theusbdev, 0);
 
-			int stat=usb_detach_kernel_driver_np(thedev, 0);
+				//printf("Releasestatus is %d\n",stat);
 
-			//printf("Releasestatus is %d\n",stat);
+				usb_set_configuration(pGMS[hand]->theusbdev, 3);
 
-			usb_set_configuration(thedev, 3);
+				int status;
+				if((status=usb_claim_interface(pGMS[hand]->theusbdev, 0))<0)
+				{
+					printf("Could not claim interface, status %d\n",status);
+					exit(-1);
+				}
 
-			int status;
-			if((status=usb_claim_interface(thedev, 0))<0)
-			{
-				printf("Could not claim interface, status %d\n",status);
-				exit(-1);
-			}
-
-			return TRUE;
+				return TRUE;
+			}		
 		}
 	}
 }
@@ -187,8 +193,8 @@ for (bus = usb_busses; bus; bus = bus->next)
 
 void closeUSB(HANDLEGM hand)
 {
-	if(thedev!=0)
-		usb_close(thedev);
+	if(pGMS[hand]->theusbdev!=0)
+		usb_close(pGMS[hand]->theusbdev);
 
 }
 
