@@ -129,6 +129,8 @@ int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 	if(pGMS[hand]->m_Iportno<0)
 	{
 		pGMS[hand]->disablepoll=FALSE;
+		//printf("Enabling poll\n");
+
 		return 0;
 	}
 
@@ -144,10 +146,15 @@ int gm0_gmstar(HANDLEGM hand) // ENTER COMMAND MODE
 
 	pGMS[hand]->disablepoll=TRUE;
 
+	//printf("Disabling poll\n");
+
 	while(pGMS[hand]->polldisabled==FALSE)
 	{
 		Sleep(1);
 	}
+
+	//printf("Poll disabled\n");
+
 
 	if(pGMS[hand]->m_Iportno<0)
 	{
@@ -436,6 +443,18 @@ GM0_API int gm0_setnullcallback(HANDLEGM hand,void ( * pCallback)(void))
 	pGMS[hand]->pNullCallback=(void*)pCallback;
 	return (0);
 }
+
+GM0_API int gm0_fastUSBpoll(HANDLEGM hand,int enabled)
+{	
+	pGMS[hand]->needrangepoll=TRUE;
+
+	if(enabled)
+		pGMS[hand]->fastUSBcapture=TRUE;
+	else
+		pGMS[hand]->fastUSBcapture=FALSE;
+
+}
+
 
 GM0_API int gm0_setinterval(HANDLEGM hand,int interval)
 {
@@ -773,10 +792,55 @@ GM0_API struct gm_store gm0_get_next_buffer(HANDLEGM hand)
 	}
 }
 
+GM0_API void gm0_sampleondemand(HANDLEGM hand)
+{
+
+	pGMS[hand]->sampleondemand=TRUE;
+
+}
+
+GM0_API struct gm_store gm0_demandsample(HANDLEGM hand,int extra)
+{
+
+	// sanity checking here
+
+	if(extra==1)
+		pGMS[hand]->needrangepoll=TRUE;
+	else
+		pGMS[hand]->needrangepoll=FALSE;
+
+	polldata(hand);
+
+	return pGMS[hand]->store;
+
+
+}
+
 
 //******************* E2 FUNCTIONS *************//
 // DO NOT ATTEMPT TO WRITE TO THE E2 YOU WILL KILL YOUR METER
 // NO WRITING FUNCTIONS ARE EXPOSED HERE FOR THAT VERY REASON.
+
+
+GM0_API unsigned __int16 gm0_writeprobee2word(HANDLEGM hand,char pos,__int16 data)
+{
+	unsigned __int16 temp;
+	unsigned char hi,lo;
+
+	gm0_gmstar(hand);
+	gm0_unlock(hand,FALSE); //unlock gm0
+
+	gm0_setaddrlo(hand,pos);
+	gm0_setaddrhi(hand,1);
+	gm0_setdatalo(hand,data&0x00FF);
+	gm0_setdatahi(hand,0x00FF&((data&0xFF00)>>8));
+	gm0_gmcmd(hand,GMC_WRE2,0);
+	
+	gm0_unlock(hand,TRUE); // lock gm0
+	gm0_gmmode1(hand);
+
+	return (temp);
+}
 
 GM0_API unsigned __int16 gm0_readprobee2word(HANDLEGM hand,char pos)
 {
@@ -840,7 +904,6 @@ GM0_API unsigned __int16 gm0_getprobecaldate(HANDLEGM hand)
 {
 	return gm0_readprobee2word(hand,rCalibDate);
 }
-
 
 
 GM0_API int gm0_probebutton(HANDLEGM hand)

@@ -52,6 +52,9 @@ struct GM_STRUCT{
 	BOOL disablepoll;
 	BOOL polldisabled;
 	BOOL faultyfirmware;
+	BOOL fastUSBcapture;
+	BOOL needrangepoll;
+	BOOL sampleondemand;
 	
 	RS232_INFO com;
 

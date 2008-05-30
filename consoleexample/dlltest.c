@@ -121,8 +121,18 @@ int main(int argv, char * argvc[])
 
 	if(opt==1)
 	{
+
+		printf("Which meter would you like to use 1-1st 2-2nd etc ?\n=");
+  		scanf("%d",&port);
+		if(port< 1 || port>254) 
+  		{
+			printf("\n meter %d is out of range (0-254)\n",port);
+			return -1;
+		}
+		
+
 		printf("Attempting connect, using USB (GM08)\n");
-		if(doconnect(-1,1)==-1)
+		if(doconnect(port*-1,1)==-1)
 			return -1;
 	}
 

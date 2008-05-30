@@ -149,7 +149,6 @@ int gm0_closeport(HANDLEGM hand)
 
 	char * pportstring; 
 
-
 	if(pGMS[hand]->port_open!=TRUE)
 		return 0; // NOTHING TO CLOSE
 
@@ -170,6 +169,8 @@ int gm0_closeport(HANDLEGM hand)
 }
 
 
+
+
 void __cdecl pollthread(void * pParam)
 {
 
@@ -183,7 +184,7 @@ void __cdecl pollthread(void * pParam)
 
 	pGMS[hand]->threadlockcount++;
 
-	while(pGMS[hand]->gm0_threadrun==TRUE)
+	while(pGMS[hand]->gm0_threadrun==TRUE && pGMS[hand]->sampleondemand==FALSE)
 	{
 
 		if(pGMS[hand]->disablepoll==FALSE)
@@ -215,6 +216,8 @@ void __cdecl pollthread(void * pParam)
 
 		Sleep(10); //333
 	}
+
+	pGMS[hand]->polldisabled=TRUE;
 
 	pGMS[hand]->threadlockcount--;	
 
@@ -483,6 +486,9 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 	pGMS[newhand]->disablepoll=FALSE;
 	pGMS[newhand]->polldisabled=FALSE;
 	pGMS[newhand]->faultyfirmware=FALSE;
+	pGMS[newhand]->fastUSBcapture=FALSE;
+	pGMS[newhand]->needrangepoll=TRUE;
+	pGMS[newhand]->sampleondemand=FALSE;
 	
 	pGMS[newhand]->threadlockcount=0;
 
@@ -673,7 +679,7 @@ void __cdecl connectthread(void * pParam)
 	pGMS[hand]->disablepoll=TRUE;
 	pGMS[hand]->polldisabled=TRUE;
 
-	printf("Starting a CONNECT THREAD\n");
+	//printf("Starting a CONNECT THREAD\n");
 	
 
 		#ifndef _LINUX
@@ -729,7 +735,7 @@ void __cdecl connectthread(void * pParam)
 		while(ret!=0 && pGMS[hand]->gm0_threadrun==TRUE)
 		{
 			Beep(1000,25);
-			printf("Seting star\n");
+			//printf("Seting star\n");
 			ret=gm0_gmstar(hand); // this does not need threadlock counting				
 			Sleep(50);
 		}
@@ -794,9 +800,6 @@ void __cdecl connectthread(void * pParam)
 		return;
 	}
 
-	Beep(2000,100);
-	pGMS[hand]->connected=TRUE;
-
 	gm0_gmmode1(hand);
 
 	Sleep(1000);
@@ -821,6 +824,9 @@ void __cdecl connectthread(void * pParam)
 		//printf("Connected,re-enable poll\n");
 		pGMS[hand]->disablepoll=FALSE;
 	}
+
+	Beep(2000,100);
+	pGMS[hand]->connected=TRUE;
 	
 
 }

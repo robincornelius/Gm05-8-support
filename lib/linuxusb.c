@@ -35,7 +35,7 @@ int writereport(HANDLEGM hand,unsigned char data)
 	int status;
 
 	
-	//printf("TX: %x:%x:%x:%x:%x:%x:%x:%x ",rdata[0],rdata[1],rdata[2],rdata[3],rdata[4],rdata[5],rdata[6],rdata[7]);
+	//printf("\nTX: %x:%x:%x:%x:%x:%x:%x:%x ",rdata[0],rdata[1],rdata[2],rdata[3],rdata[4],rdata[5],rdata[6],rdata[7]);
 
 
 	status=usb_interrupt_write(pGMS[hand]->theusbdev, 1, &rdata[0], 8,200);
@@ -59,17 +59,17 @@ unsigned char readreport(HANDLEGM hand)
 
 	//printf("RX -> ");
 
-	status=usb_interrupt_read(pGMS[hand]->theusbdev, 1, &rdata[0], 8, 200);
+	status=usb_interrupt_read(pGMS[hand]->theusbdev, 1, &rdata[0], 8, 300);
 
 	if(status<0)
 	{
-		printf(" RX ERROR %d ",status);
+		printf(" RX ERROR %d (hand %d)\n",status,hand);
 		
 		if(status!=-110)
 			exit(-1);
 	}
 
-	//printf("RX: %x:%x:%x:%x:%x:%x:%x:%x\n",rdata[0],rdata[1],rdata[2],rdata[3],rdata[4],rdata[5],rdata[6],rdata[7]);
+	//printf("\nRX: %x:%x:%x:%x:%x:%x:%x:%x\n",rdata[0],rdata[1],rdata[2],rdata[3],rdata[4],rdata[5],rdata[6],rdata[7]);
 
 	return rdata[0];
 }
@@ -84,19 +84,27 @@ void polldata(HANDLEGM hand)
 	if(pGMS[hand]->m_Iportno>0)
 		return;
 
+	//printf("*** Getting data *** \n");
+
 	//WritepacketToDevice(hand,42, 42,NULL);
 
 	data = GetReadingFromGM08(hand);
 
-	pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0,NULL)&0x07;
+	if(!pGMS[hand]->fastUSBcapture && pGMS[hand]->needrangepoll)
+	{
+		pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0,NULL)&0x07;
 
-	pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0,NULL)&0x03;
+		pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0,NULL)&0x03;
 
-	tempmode=WritepacketToDevice(hand,46, 0,NULL);
+		tempmode=WritepacketToDevice(hand,46, 0,NULL);
 
-	pGMS[hand]->store.mode = tempmode>4 || tempmode <0 ? 0 : tempmode;
+		pGMS[hand]->store.mode = tempmode>4 || tempmode <0 ? 0 : tempmode;
+		pGMS[hand]->needrangepoll=FALSE;
+	}
 
 	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,(float)data,&pGMS[hand]->store.value,TRUE);
+
+	//printf("*** Getting data DONE *** \n");
 
 }
 
