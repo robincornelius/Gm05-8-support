@@ -67,6 +67,10 @@ unsigned char readreport(HANDLEGM hand)
 		
 		if(status!=-110)
 			exit(-1);
+	
+	WritepacketToDevice(hand,'*', '*',NULL);
+	WritepacketToDevice(hand,'*', '*',NULL);
+
 	}
 
 	//printf("\nRX: %x:%x:%x:%x:%x:%x:%x:%x\n",rdata[0],rdata[1],rdata[2],rdata[3],rdata[4],rdata[5],rdata[6],rdata[7]);
@@ -88,9 +92,11 @@ void polldata(HANDLEGM hand)
 
 	//WritepacketToDevice(hand,42, 42,NULL);
 
+	
+
 	data = GetReadingFromGM08(hand);
 
-	if(!pGMS[hand]->fastUSBcapture && pGMS[hand]->needrangepoll)
+	if(!pGMS[hand]->fastUSBcapture)
 	{
 		pGMS[hand]->store.range = WritepacketToDevice(hand,48, 0,NULL)&0x07;
 
@@ -99,7 +105,6 @@ void polldata(HANDLEGM hand)
 		tempmode=WritepacketToDevice(hand,46, 0,NULL);
 
 		pGMS[hand]->store.mode = tempmode>4 || tempmode <0 ? 0 : tempmode;
-		pGMS[hand]->needrangepoll=FALSE;
 	}
 
 	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,(float)data,&pGMS[hand]->store.value,TRUE);
