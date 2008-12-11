@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gm0-sharp", "gm0-sharp\gm0-sharp.csproj", "{FA1B381A-FB73-4CBF-B103-F9C1B037EDBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gm0_sharp_console_test", "gm0_sharp_console_test\gm0_sharp_console_test.csproj", "{7CE12BC6-7F1C-483C-A6C9-6B67F4374E34}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA1B381A-FB73-4CBF-B103-F9C1B037EDBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA1B381A-FB73-4CBF-B103-F9C1B037EDBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA1B381A-FB73-4CBF-B103-F9C1B037EDBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1B381A-FB73-4CBF-B103-F9C1B037EDBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CE12BC6-7F1C-483C-A6C9-6B67F4374E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CE12BC6-7F1C-483C-A6C9-6B67F4374E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CE12BC6-7F1C-483C-A6C9-6B67F4374E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CE12BC6-7F1C-483C-A6C9-6B67F4374E34}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
