@@ -7,7 +7,8 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+//#include "afxres.h"
+#include "windows.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -69,12 +70,12 @@ BEGIN
     BEGIN
         BLOCK "080904b0"
         BEGIN
-            VALUE "Comments", "This DLL is provided as is and has NO WARANTEE of any kind, including but not limited to merchantability and fitness for a particular purpose"
+            VALUE "Comments", "This DLL is provided under the terms of the GNU GPL v2 or later"
             VALUE "CompanyName", "Hirst Magnetic Instruments"
             VALUE "FileDescription", "GM05 and GM08 control and function library"
             VALUE "FileVersion", "3, 1, 0, 0"
             VALUE "InternalName", "gm0"
-            VALUE "LegalCopyright", "Copyright © 2002 - 2006 Robin Cornelius & Hirst Magnetic Instruments Ltd"
+            VALUE "LegalCopyright", "Copyright © 2002 - 2008 Robin Cornelius & Hirst Magnetic Instruments Ltd"
             VALUE "OriginalFilename", "gm0.dll"
             VALUE "ProductName", "Hirst Magnetic Instruments gm0"
             VALUE "ProductVersion", "3, 1, 0, 0"
