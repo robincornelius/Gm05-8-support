@@ -330,17 +330,12 @@ GM0_API int gm0_donull(HANDLEGM hand)
 	gm0_gmstar(hand);
 
 	gm0_gmcmd(hand,GMC_DONULL,0);
-	Sleep(1000);
-	gm0_resetnull(hand);
+//	Sleep(5000);
+//	gm0_resetnull(hand);
+//	gm0_resetnull(hand);
 
-	if(pGMS[hand]->meter_mode==1)
-	{
-		Sleep(1000);
-	}
-	else
-	{
-		Sleep(9000);
-	}
+	Sleep(1000);
+
 	
 	gm0_gmmode1(hand);
 

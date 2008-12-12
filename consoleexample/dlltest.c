@@ -224,6 +224,11 @@ int main(int argv, char * argvc[])
 				gm0_resetnull(mygm);
 				printf("AZ Done");
 				break;
+			case 'n':
+			case 'N':
+
+				gm0_donull(mygm);
+				break;
 			case '1':
 				gm0_setcallback(mygm,&callback);
 				break;
@@ -488,7 +493,7 @@ int doconnect(int port,int mode)
   	{
 		printf("Attempt %d of 5 has FAILED\n",iconnectcount);
 		iconnectcount++;
-		Sleep(CLOCKS_PER_SEC*1);
+		Sleep(1000);
 	}
 	
 	if(gm0_getconnect(mygm)==FALSE)

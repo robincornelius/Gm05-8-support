@@ -52,12 +52,14 @@
     ms*=1000; // ms to us
     
     if(ms>1000000){
-	Sleep(ms/1000000);	
+	sleep(ms/1000000);
+	//printf("Sleeping for %d seconds\n",ms/1000000);	
     }
     else
     {
 	usleep(ms);    
-    }
+	//printf("Sleeping for %d us\n",ms/10);    
+	}
  }
  
  #define BKET /**/
