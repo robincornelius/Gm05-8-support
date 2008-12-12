@@ -70,7 +70,9 @@ namespace gm0_sharp_console_test
         static void mygm_onNewData(gmstore value)
         {
             Console.WriteLine("New data :" + value.ToString());
+            Console.WriteLine(value.value.ToString() + " " + value.getCurrentUnitsBaseDisp());
         }
+
 
         static void mygm_onConnectedCallback()
         {
@@ -182,7 +184,9 @@ namespace gm0_sharp_console_test
                     case 'V':
                     case 'v':
                         Console.WriteLine("Reading is " + mygm.lastreading.ToString());
-                        break;
+                        Console.WriteLine(mygm.lastreading.value.ToString() + " " + mygm.lastreading.getCurrentUnitsBaseDisp());
+  
+                      break;
 
                     case ' ':
                         showmenu();

@@ -25,7 +25,7 @@
 
 /*
  This code is compatable with win32 systems and POSIX systems (eg linux etc) 
- To run on linux make sure you compile with the _LINUX flag defined this will
+ To run on linux make sure you compile with the _LINUX flag defined eg -D_LINUX this will
  patch some of the gaps between win32 and linux, mainly a few defines and the 
  method of dynamic library loading.
 */

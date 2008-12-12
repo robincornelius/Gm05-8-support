@@ -4,7 +4,9 @@
    released its code under the GPL the original author is Stefan Ritt. The file has been 
    modified by Hirst Magnetic Instruments Ltd./*
 
-   Copyright © Stefan Ritt and Hirst Magnetic Instruments Ltd and Robin Cornelius.
+   Copyright © Stefan Ritt
+   Copyright © 2004 Hirst Magnetic Instruments Ltd
+   Copyright © 2004 Robin Cornelius.
 
    The GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 

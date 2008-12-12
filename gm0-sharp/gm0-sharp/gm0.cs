@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace gm0_sharp
 {
+
     public enum connectiontype
     {
         Connection_Serial_GM05,
@@ -148,6 +149,14 @@ namespace gm0_sharp
 
     public class gmstore
     {
+
+        string[] unitsdisp = new string[]{
+            "T",
+            "G",
+            "A/m",
+            "Oe"
+        };
+
         public gmstore(gm_store data)
         {
             range = data.range;
@@ -177,6 +186,16 @@ namespace gm0_sharp
         {
             return (new gmstore(i));
         }
+
+        public string getUnitsDisp( units units)
+        {
+            return unitsdisp[(int)units];
+        }
+
+        public string getCurrentUnitsBaseDisp()
+        {
+            return unitsdisp[(int)units];
+        }
     }
 
     public class gm0
@@ -193,6 +212,8 @@ namespace gm0_sharp
            
           
         }
+
+       
 
         [DllImport("gm0.dll")]
         static extern int gm0_newgm(int port, int mode);
