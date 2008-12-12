@@ -84,6 +84,8 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 int gm0_openport(HANDLEGM hand,int mode)
 {
 
+	int ret;
+
 	#ifndef _LINUX
 		/* Set the locale for this instance */
 		setlocale( LC_ALL , "English" );
@@ -94,12 +96,12 @@ int gm0_openport(HANDLEGM hand,int mode)
 	#endif
 
 	if(pGMS[hand]->m_Iportno>=0)
-		gm0_openport232(hand,mode);
+		ret=gm0_openport232(hand,mode);
 
 	if(pGMS[hand]->m_Iportno<0)
-		gm0_openportUSB(hand);
+		ret=gm0_openportUSB(hand);
 
-	return 0;
+	return ret;
 }
 
 
@@ -137,10 +139,9 @@ int gm0_openport232(HANDLEGM hand,int mode)
 
 int gm0_openportUSB(HANDLEGM hand)
 {
-	
-	//FindTheHID(hand);
+		
+	return FindTheHID(hand);
 
-	return 0;
 }
 
 
@@ -529,9 +530,12 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 	pGMS[newhand]->doingnull=FALSE;
 	gm0_startbuffersamples(newhand);
 
-	if(portret!=0)
+	printf("PORT RET is %d\n",portret);
+
+	if(portret==FALSE)
 	{
-		gm0_killgm(newhand); // clean memory up before exit
+		fprintf(stderr,"Open port failed\n");
+		//gm0_killgm(newhand); // clean memory up before exit
 		return (GM_PORTOPENERROR);
 	}
 
@@ -720,15 +724,19 @@ void __cdecl connectthread(void * pParam)
 		Sleep(1);
 		
 
-		if(pGMS[hand]->m_Iportno<0)
-		{
-			if(!FindTheHID(hand))
-			{
-				pGMS[hand]->connected=FALSE;
-				Sleep(1000);
-				continue;
-			}
-		}
+		//RC We should not try to find the HID in connect thread but rather
+		// in new/openport as this is parallel with how rs232 works
+		// and gives chance to balk if no meter is present.
+
+		//if(pGMS[hand]->m_Iportno<0)
+		//{
+		//	if(!FindTheHID(hand))
+		//	{
+		//		pGMS[hand]->connected=FALSE;
+		//		Sleep(1000);
+		//		continue;
+		//	}
+		//}
 		
 		ret=-1; // default to allow entry below
 
@@ -802,7 +810,7 @@ void __cdecl connectthread(void * pParam)
 
 	gm0_gmmode1(hand);
 
-	Sleep(1000);
+	//Sleep(1000);
 
 	// BUG in GM08 RS232,need to do interval commands as below
 	gm0_setinterval(hand,2);

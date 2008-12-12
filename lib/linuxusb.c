@@ -223,7 +223,7 @@ for (bus = usb_busses; bus; bus = bus->next)
 				if((status=usb_claim_interface(pGMS[hand]->theusbdev, 0))<0)
 				{
 					printf("Could not claim interface, status %d\n",status);
-					exit(-1);
+  					return FALSE;
 				}
 
 				return TRUE;
