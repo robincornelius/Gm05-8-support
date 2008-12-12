@@ -1,5 +1,7 @@
 
 
+#ifdef _LINUX
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
@@ -103,6 +105,13 @@ void polldata(HANDLEGM hand)
 		pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0,NULL)&0x03;
 
 		tempmode=WritepacketToDevice(hand,46, 0,NULL);
+
+	pGMS[hand]->store.time.hour=0;
+	pGMS[hand]->store.time.min=0;
+	pGMS[hand]->store.time.sec=0;
+	pGMS[hand]->store.time.year=0;
+	pGMS[hand]->store.time.month=0;
+	pGMS[hand]->store.time.day=0;
 
 		pGMS[hand]->store.mode = tempmode>4 || tempmode <0 ? 0 : tempmode;
 	}
@@ -212,3 +221,4 @@ void closeUSB(HANDLEGM hand)
 }
 
 
+#endif

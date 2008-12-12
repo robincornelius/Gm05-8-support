@@ -34,8 +34,55 @@ namespace gm0_sharp
 {
     public enum connectiontype
     {
-        Connection_Serial,
-        Connection_USB  
+        Connection_Serial_GM05,
+        Connection_Serial_GM08  
+    }
+
+    public enum ranges
+    {
+        RANGE_0=0,
+        RANGE_1=1,
+        RANGE_2=2,
+        RANGE_3=3,
+        RANGE_AUTO=4
+    }
+
+    public enum meter_keys
+    {
+        ENTER='E',
+        MENU='X',
+        OFF='O',
+        NEXT='N',
+        RANGE='R',
+        RESET='0'
+    }
+
+    public enum units
+    {
+        TESLA=0,
+        GAUSS=1,
+        KAm=2,
+        Oe=3
+    }
+
+    public enum modes
+    {
+         DC=0,
+         DCPEAK=1,
+         AC=2,
+         ACMAX=3,
+         ACPEAK=4,
+         HOLD=5
+    }
+
+    public enum languages
+    {
+         ENGLISH=0,
+         FRENCH=1,
+         GERMAN=2,
+         ITALIAN=3,
+         SPANISH=4,
+         PORTUGUESE=5
     }
 
    // A struct for looking after gm_time responses
@@ -57,27 +104,106 @@ namespace gm0_sharp
      public float value;
     };
 
+    public class gmtime
+    {
+        public gmtime(gm_time data)
+        {
+            sec = data.sec;
+            min=data.min;
+            hour = data.hour;
+            day = data.day;
+            month = data.month;
+            year = data.year;
+        }
+
+        public gmtime()
+        {
+
+        }
+
+        public byte sec;
+        public byte min;
+        public byte hour;
+        public byte day;
+        public byte month;
+        public byte year;
+
+        public string ToString()
+        {
+            if (year == 0)
+            {
+                return "";
+            }
+            else
+            {
+                return day.ToString() + "/" + month.ToString() + "/" + year.ToString() + " " + hour.ToString() + ":" + min.ToString() + ":" + sec.ToString();
+            }
+       }
+
+        public static implicit operator gmtime(gm_time i)
+        {
+            return(new gmtime(i));
+        }
+    };
+
+    public class gmstore
+    {
+        public gmstore(gm_store data)
+        {
+            range = data.range;
+            mode = (modes)Enum.Parse(typeof(modes),data.mode.ToString());
+            units = (units)Enum.Parse(typeof(units), data.units.ToString());
+            value = data.value;
+            time = new gmtime(data.time);
+        }
+
+        public gmstore()
+        {
+            time = new gmtime();
+        }
+
+        public gmtime time;
+        public byte range;
+        public modes mode;
+        public units units;
+        public float value;
+
+        public string ToString()
+        {
+            return value.ToString() + " " + range.ToString() + " " + mode.ToString() + " " + units.ToString() + " " + time.ToString();
+        }
+
+        public static implicit operator gmstore(gm_store i)
+        {
+            return (new gmstore(i));
+        }
+    }
+
     public class gm0
     {
         connectiontype contype;
         int connectionport;
         int hand=-1;
 
-        public gm_store lastreading;
-
+        public gmstore currentreading;
+        public gmstore lastreading;
+        
         static void Main()
         {
            
+          
         }
 
         [DllImport("gm0.dll")]
         static extern int gm0_newgm(int port, int mode);
         public gm0(connectiontype contype,int port)
         {
+            lastreading = new gmstore();
+
             contype = contype;
             connectionport = port;
-            
-            hand=gm0_newgm(port,contype==connectiontype.Connection_Serial?0:1);
+
+            hand = gm0_newgm(port, (int)Enum.Parse(typeof(connectiontype), contype.ToString()));
             checkvalidhandorthrow();
 
             gm0_setconnectcallback(hand, connectedcallback);
@@ -113,9 +239,6 @@ namespace gm0_sharp
             return (status==1?true:false);
         }
 
-       
-
-
         delegate void dllConnectedCallBack();
         [DllImport("gm0.dll")]
         static extern int gm0_setconnectcallback(int hand, dllConnectedCallBack x);
@@ -136,6 +259,8 @@ namespace gm0_sharp
             }
         }
 
+        public delegate void NewDataCallback(gmstore value);
+        public event NewDataCallback onNewData;
 
         public delegate void NewValueCallback(float value);
         public event NewValueCallback onNewValue;
@@ -149,57 +274,59 @@ namespace gm0_sharp
         public delegate void NewUnitsCallback(int units);
         public event NewUnitsCallback onNewUnits;
 
-        public delegate void DataCallBack(int hand, gm_store data);
+        delegate void DataCallBack(int hand, gm_store data);
         [DllImport("gm0.dll")]
-        public static extern int gm0_setcallback(int hand, DataCallBack x);
+        static extern int gm0_setcallback(int hand, DataCallBack x);
 
         void datacallback(int hand, gm_store data)
         {
             // new data avaiable
 
-            lastreading.value = data.value;
+            currentreading = data;
+
             if (this.onNewValue != null)
                 onNewValue(data.value);
 
-            if (lastreading.range != data.range)
+            if (this.onNewData != null)
+                onNewData(new gmstore(data));
+
+            if (lastreading.range != currentreading.range)
             {
-                lastreading.range = data.range;
                 if (this.onNewRange != null)
                     onNewRange(data.range);
             }
 
-            if (lastreading.mode != data.mode)
+            if (lastreading.mode != currentreading.mode)
             {
-                lastreading.mode = data.mode;
                 if (this.onNewMode != null)
                     onNewMode(data.mode);
             }
 
-            if (lastreading.units != data.units)
+            if (lastreading.units != currentreading.units)
             {
-                lastreading.units = data.units;
                 if (this.onNewUnits != null)
                     onNewUnits(data.units);
             }
 
+            lastreading = data;
         }
 
         [DllImport("gm0.dll")]
         static extern int gm0_setlanguage(int hand, byte lan);
-        public void setMeterLanguage(byte lan)
+        public void setMeterLanguage(languages lan)
         {
             checkvalidhandorthrow();
-            gm0_setlanguage(hand, lan);
+            gm0_setlanguage(hand, (byte)(int)Enum.Parse(typeof(languages), lan.ToString()));
         }
 
         [DllImport("gm0.dll")]
         static extern int gm0_getlanguage(int hand);
-        public byte GetMeterLanguage()
+        public languages GetMeterLanguage()
         {
             checkvalidhandorthrow();
-            return (byte)gm0.gm0_getlanguage(hand);
+            int lan=gm0.gm0_getlanguage(hand);
+            return (languages) Enum.Parse(typeof(languages), lan.ToString());
         }
-
 
         [DllImport("gm0.dll")]
         static extern int gm0_setrange(int hand, byte range);
@@ -209,20 +336,26 @@ namespace gm0_sharp
             gm0_setrange(hand, range);
         }
 
-        [DllImport("gm0.dll")]
-        static extern int gm0_setmode(int hand, byte mode);
-        public void setmode(byte mode)
+        public void setrange(ranges range)
         {
             checkvalidhandorthrow();
-            gm0_setunits(hand, mode);
+            gm0_setrange(hand, (byte)(int)Enum.Parse(typeof(ranges), range.ToString()));
+        }
+
+        [DllImport("gm0.dll")]
+        static extern int gm0_setmode(int hand, byte mode);
+        public void setmode(modes mode)
+        {
+            checkvalidhandorthrow();
+            gm0_setmode(hand, (byte)(int)Enum.Parse(typeof(modes), mode.ToString()));
         }
 
         [DllImport("gm0.dll")]
         static extern int gm0_setunits(int hand, byte units);
-        public void setunits(byte range)
+        public void setunits(units units)
         {
             checkvalidhandorthrow();
-            gm0_setmode(hand, range);
+            gm0_setunits(hand, (byte)(int)Enum.Parse(typeof(units), units.ToString()));
         }
 
         [DllImport("gm0.dll")]
@@ -271,10 +404,10 @@ namespace gm0_sharp
 
         [DllImport("gm0.dll")]
         static extern int gm0_sendtime(int hand, bool extended);
-        public void send_time_with_value()
+        public void send_time_with_value(bool enabled)
         {
             checkvalidhandorthrow();
-
+            gm0_sendtime(hand, enabled);
         }
 
         [DllImport("gm0.dll")]
@@ -306,18 +439,19 @@ namespace gm0_sharp
 
         [DllImport("gm0.dll")]
         static extern gm_store gm0_getstore(int hand, int pos);
-        public gm_store get_saved_value(int pos)
+        public gmstore get_saved_value(int pos)
         {
             checkvalidhandorthrow();
-            return gm0_getstore(hand, pos);
+            gmstore data=new gmstore(gm0_getstore(hand, pos));
+            return (data);
         }
 
         [DllImport("gm0.dll")]
-        static extern int gm0_simkey(int hand, byte keycode);
-        public void simkey(byte key)
+        static extern int gm0_simkey(int hand, byte meterkey);
+        public void simkey(gm0_sharp.meter_keys key)
         {
             checkvalidhandorthrow();
-            gm0_simkey(hand, key);
+            gm0_simkey(hand, (byte)(int)Enum.Parse(typeof(meter_keys), key.ToString()));
         }
 
         [DllImport("gm0.dll")]
@@ -346,10 +480,11 @@ namespace gm0_sharp
 
         [DllImport("gm0.dll")]
         static extern gm_store gm0_demandsample(int hand, int extra);
-        public gm_store demand_sample(bool extended)
+        public gmstore demand_sample(bool extended)
         {
             checkvalidhandorthrow();
-            return(gm0_demandsample(hand,extended==true?1:0));
+            gmstore data = new gmstore(gm0_demandsample(hand,extended==true?1:0));
+            return (data);
         }
 
 

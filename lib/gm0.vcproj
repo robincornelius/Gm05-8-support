@@ -288,6 +288,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\linuxusb.c"
+				>
+			</File>
+			<File
 				RelativePath="NTcomms.c"
 				>
 				<FileConfiguration

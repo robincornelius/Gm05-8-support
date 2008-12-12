@@ -38,13 +38,18 @@ namespace gm0_sharp_console_test
         static void Main(string[] args)
         {
             Console.WriteLine("Creating a new gm0");
-            mygm = new gm0(connectiontype.Connection_USB, -1);
+            
+            // connectiontype is only important for RS232 comms;
+            // they use different baud rates
+
+            // the port should be -1 for the first USB device -2 for the 2nd etc
+            // 1 for com1 or /dev/ttyS0 etc..
+            mygm = new gm0(connectiontype.Connection_Serial_GM08, -1);
             Console.WriteLine("Registering callbacks");
 
             waitconnect.Reset();
-            
+ 
             mygm.onConnectedCallback += new gm0.ConnectedCallback(mygm_onConnectedCallback);
-            //mygm.onNewValue += new gm0.NewValueCallback(mygm_onNewValue);
 
             Console.WriteLine("Trying to connect to meter");
             mygm.StartConnect();
@@ -62,7 +67,7 @@ namespace gm0_sharp_console_test
 
         }
 
-        static void mygm_onNewValue(float value)
+        static void mygm_onNewData(gmstore value)
         {
             Console.WriteLine("New data :" + value.ToString());
         }
@@ -83,11 +88,11 @@ namespace gm0_sharp_console_test
             Console.WriteLine("\n");
             Console.WriteLine(" (R) - Set Range        (U) - Set Units             (M) - Mode   ");
             Console.WriteLine(" (L) - language         (V) - Get Value             ( ) - Show menu");	
-            Console.WriteLine(" (A) - Auto Zero        (N) - Null                  (T) - Enable Time");	
+            Console.WriteLine(" (A) - Auto Zero        (N) - Null                                  ");	
             Console.WriteLine(" (1) - Enable callback  (0) - Disable callback      (<) - Set GM Time");
             Console.WriteLine(" (I) - Set interval     (Q) - Reset peak            (>) - Get GM Time");	
             Console.WriteLine(" (W) - Power Off        (G) - Get reg               (H) - Get Reg(s)");
-            Console.WriteLine(" (B) - Reconnect        (X) - Exit                  (9) - Get E2");	
+            Console.WriteLine("                        (X) - Exit                  (9) - Get E2");	
             Console.WriteLine("\n\n");
 
         }
@@ -118,39 +123,65 @@ namespace gm0_sharp_console_test
 
                     case 'U':
                     case 'u':
-                        Console.Write("New units (0-3) :");
-                        input = Console.ReadLine();
-                        
-                        if (int.TryParse(input, out value))
+                        Console.Write("Select new units :-\n");
+                       
+                        foreach(string unit in Enum.GetNames(typeof(units)))
                         {
-                            mygm.setunits((byte)value);
+                            Console.WriteLine("Units: {0} - {1}", unit, (int)Enum.Parse(typeof(units), unit));
                         }
+                        try
+                        {
+                            mygm.setunits((units)Enum.Parse(typeof(units), Console.ReadLine()));
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+
                         break;
 
                     case 'M':
                     case 'm':
-                        Console.Write("New mode (0-4) :");
-                        input = Console.ReadLine();
-                        
-                        if (int.TryParse(input, out value))
+                       
+                        Console.Write("Select new mode :-\n");
+
+                        foreach (string mode in Enum.GetNames(typeof(modes)))
                         {
-                            mygm.setmode((byte)value);
+                            Console.WriteLine("Mode: {0} - {1}", mode, (int)Enum.Parse(typeof(modes), mode));
                         }
+                        try
+                        {
+                            mygm.setmode((modes)Enum.Parse(typeof(modes), Console.ReadLine()));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+
                         break;
 
                     case 'L':
                     case 'l':
-                        Console.Write("New language (0-4) :");
-                        input = Console.ReadLine();
 
-                        if (int.TryParse(input, out value))
+                        Console.Write("Select new meter language :-\n");
+
+                        foreach (string lan in Enum.GetNames(typeof(languages)))
                         {
-                            mygm.setMeterLanguage((byte)value);
+                            Console.WriteLine("Language: {0} - {1}", lan, (int)Enum.Parse(typeof(languages), lan));
                         }
+                        try
+                        {
+                            mygm.setMeterLanguage((languages)Enum.Parse(typeof(languages), Console.ReadLine()));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+
                         break;
                     case 'V':
                     case 'v':
-                        Console.WriteLine("Reading is " + mygm.lastreading.value.ToString());
+                        Console.WriteLine("Reading is " + mygm.lastreading.ToString());
                         break;
 
                     case ' ':
@@ -169,15 +200,15 @@ namespace gm0_sharp_console_test
 
                     case 'T':
                     case 't':
-                        mygm.send_time_with_value();
+                        mygm.send_time_with_value(true);
                         break;
 
                     case '1':
-                        mygm.onNewValue += new gm0.NewValueCallback(mygm_onNewValue);
+                        mygm.onNewData += new gm0.NewDataCallback(mygm_onNewData);
                         break;
 
                     case '0':
-                        mygm.onNewValue -= new gm0.NewValueCallback(mygm_onNewValue);
+                        mygm.onNewData -= new gm0.NewDataCallback(mygm_onNewData);
                         break;
 
                     case '<':
@@ -214,7 +245,7 @@ namespace gm0_sharp_console_test
 
                     case 'W':
                     case 'w':
-                        mygm.simkey(0);
+                        mygm.simkey(gm0_sharp.meter_keys.OFF);
                         break;
 
                     case 'G':
@@ -224,7 +255,7 @@ namespace gm0_sharp_console_test
                         
                         if (int.TryParse(input, out value))
                         {
-                            gm_store data=mygm.get_saved_value(value);
+                            gmstore data=mygm.get_saved_value(value);
                             Console.WriteLine(data.ToString());
                         }       
                         break;
@@ -241,7 +272,7 @@ namespace gm0_sharp_console_test
 
                         for(int x=start;x<=end;x++)
                         {
-                            gm_store data=mygm.get_saved_value(x);
+                            gmstore data=mygm.get_saved_value(x);
                             Console.WriteLine("Register "+x.ToString()+" is "+data.ToString());
                         }
 
