@@ -32,6 +32,14 @@ using System.Runtime.InteropServices;
 
 namespace gm0_sharp
 {
+    public enum faults
+    {
+        OK=0,
+        MEMORY_ERROR=-1,
+        PORT_OPEN_ERROR=-2,
+        DATA_ERROR=-3,
+        BLOCKED=-4
+    }
 
     public enum connectiontype
     {
@@ -546,9 +554,11 @@ namespace gm0_sharp
 
         public void checkvalidhandorthrow()
         {
-            if(hand==-1)
+            if(hand<0)
             {
-                Exception e=new Exception("Attempt to access a gm0 function with an invalid handle");
+                faults fault;
+                fault=(faults)hand;
+                Exception e=new Exception("Attempt to access a gm0 function with an invalid handle = "+fault.ToString());
                 throw(e);
              }
         }

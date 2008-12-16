@@ -94,3 +94,10 @@ DoInstall:
 
 
 SectionEnd ; end the section
+
+Section "Uninstall"
+  Delete $INSTDIR\Uninst.exe ; delete self (see explanation below why this works)
+  RMDir /r $INSTDIR
+  Delete /REBOOTOK $SYSDIR\gm0.dll
+SectionEnd
+
