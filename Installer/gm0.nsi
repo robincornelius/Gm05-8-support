@@ -11,6 +11,7 @@ CRCCheck on
 
 !define PRODUCT "gm0"
 !define VENDOR "Hirst Magnetic Instruments Ltd"
+!define VERSION "28072009"
 
 Name "Hirst Gaussmeter drivers"
 OutFile "gm0driver.exe"
@@ -35,6 +36,17 @@ Page instfiles
 
 ;--------------------------------
 
+Section "Microsoft redistributables"
+;${Unless} ${FileExists}   
+ ;    $TEMP\vcredist_x86.exe         
+ DetailPrint "Installing VC++ 9 runtime"         
+ File vcredist_x86.exe  
+ ExecWait "$TEMP\vcredist_x86.exe /q"         
+ DetailPrint "Cleaning up"         
+ Delete $TEMP\VS2008_SP1_vcredist_x86.exe     
+ ;${EndUnless}
+SectionEnd
+
 Section "System Wide Driver"
 
 ; Testing clause to Overwrite Existing Version - if exists
@@ -57,6 +69,7 @@ IfFileExists "$INSTDIR" 0 DoInstall
 	MessageBox MB_YESNO "Overwrite Existing Docs,Source and Examples" IDYES DoInstall
 	Abort "Quitting the install process"
 DoInstall:
+
 
  SetOutPath "$INSTDIR\lib"
  file "..\lib\Release\gm0.dll"
@@ -90,14 +103,20 @@ DoInstall:
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Headers.lnk" "$INSTDIR\include" "" "$INSTDIR\include" 0
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Lib.lnk" "$INSTDIR\lib" "" "$INSTDIR\lib" 0
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Source.lnk" "$INSTDIR\source" "" "$INSTDIR\source" 0
+ CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+ 
  SetShellVarContext current    ; reset to current user
 
+ WriteUninstaller $INSTDIR\Uninstall.exe
 
 SectionEnd ; end the section
 
+
+
 Section "Uninstall"
-  Delete $INSTDIR\Uninst.exe ; delete self (see explanation below why this works)
   RMDir /r $INSTDIR
+  RMDir /r "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter"
+  Delete "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter"
   Delete /REBOOTOK $SYSDIR\gm0.dll
 SectionEnd
 
