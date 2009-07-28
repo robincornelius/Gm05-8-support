@@ -43,6 +43,7 @@ EXPORTS
     gm0_startbuffersamples		@41
     gm0_enabledebug				@42
 	gm0_disabledebug			@43
+	gm0_isnewdata @44
 	
     
     

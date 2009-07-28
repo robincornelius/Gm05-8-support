@@ -93,8 +93,6 @@
 #define GM_DATAERROR -3
 #define GM_BLOCKED -4 
 
-
-
 // GM KEYS (YOU CAN'T PRESS THE ON KEY FROM SOFTWARE!)
 #define GM_KEY_ENTER 'E'
 #define GM_KEY_MENU 'X'
@@ -172,6 +170,9 @@ GM0_API int LIBTYPE gm0_getmode BKET (HANDLEGM hand);
 
 GM0_API int LIBTYPE gm0_setlanguage BKET (HANDLEGM hand,unsigned char lan);
 GM0_API int LIBTYPE gm0_getlanguage BKET (HANDLEGM hand);
+
+// Is there any new data?
+GM0_API int gm0_isnewdata(HANDLEGM hand);
 
 GM0_API double LIBTYPE gm0_getvalue BKET (HANDLEGM hand);
 

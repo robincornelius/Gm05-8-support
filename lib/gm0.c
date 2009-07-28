@@ -1,5 +1,5 @@
 /*
-   Copyright © 2004-2008 Hirst Magnetic Instruments Ltd and Robin Cornelius.
+   Copyright © 2004-2009 Hirst Magnetic Instruments Ltd and Robin Cornelius.
 
    The GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 
@@ -580,6 +580,19 @@ GM0_API unsigned __int16 gm0_getdata(HANDLEGM hand)
 	data=data+lo;
 
 	return data;
+}
+
+GM0_API int gm0_isnewdata(HANDLEGM hand)
+{
+
+	if(pGMS[hand]->datasignal)
+	{
+		pGMS[hand]->datasignal=0;
+		return 1;
+	}
+	else
+		return 0;
+
 }
 
 GM0_API unsigned __int16 gm0_getdatafaulty(HANDLEGM hand)

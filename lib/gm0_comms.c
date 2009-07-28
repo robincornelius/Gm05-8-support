@@ -532,13 +532,13 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 
 	printf("PORT RET is %d\n",portret);
 
-	if(portret==FALSE)
+	if(portret<0)
 	{
 		fprintf(stderr,"Open port failed\n");
 		//gm0_killgm(newhand); // clean memory up before exit
+		gm0_killgm(newhand);
 		return (GM_PORTOPENERROR);
 	}
-
 
 	return newhand;
 }
@@ -632,7 +632,6 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 			/* we timed out waiting for the read thread to terminate
 			 this is bad but what can we do about it now? */
 		}
-
 
 		Sleep(20);
 	}
