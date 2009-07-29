@@ -28,6 +28,7 @@
 	#include <objbase.h>
 	#include <process.h>
 	#include "windows.h"
+	#include "NTUSB.h"
 #else
 	#include <pthread.h>
 	#include <unistd.h>
@@ -35,6 +36,8 @@
 
 #include "gm0_private.h"
 #include "gm0.h"
+
+
 
 
 struct mode_array
@@ -45,13 +48,13 @@ struct mode_array
 const float units_range_conversion[4][4]={
 
     //tesla					
-    {1.0,1000.0,1000.0,	1000.0},		
+    {(const float)1.0,(const float)1000.0,(const float)1000.0,(const float)1000.0},		
     //gauss
-    {0.001,0.001,1.0,1.0},		
+    {(const float)0.001,(const float)0.001,(const float)1.0,(const float)1.0},		
     //a/m			
-    {0.001,0.001,0.001,	0.001}, 
+    {(const float)0.001,(const float)0.001,(const float)0.001,	(const float)0.001}, 
     //oersted
-    {0.001,0.001,1.0,1.0}};
+    {(const float)0.001,(const float)0.001,(const float)1.0,(const float)1.0}};
 					
 /* The DP position indexed by [units][range] */
 const int DP_position[4][4] = {
@@ -86,7 +89,7 @@ int gm0_convertvalue(int range,int units,float value,float * newvalue,BOOL isusb
 
 	if(units==2 && isusb==TRUE)
 	{
-		value *=0.7957747;
+		value *=(float)0.7957747;
 	}
 
 	(*newvalue)=value;
@@ -103,6 +106,9 @@ GM0_API int gm0_gmcmd(HANDLEGM hand,unsigned char cmd,unsigned char data)
 {
 	int retdata;
 	int oldstatus;
+
+	if(!checkhand(hand))
+		return -1;
 
 	if(pGMS[hand]->doingnull==TRUE)
 		return 0;
@@ -126,6 +132,9 @@ GM0_API int gm0_gmcmd(HANDLEGM hand,unsigned char cmd,unsigned char data)
 
 int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 {
+	if(!checkhand(hand))
+		return -1;
+
 	if(pGMS[hand]->m_Iportno<0)
 	{
 		pGMS[hand]->disablepoll=FALSE;
@@ -143,6 +152,9 @@ int gm0_gmmode1(HANDLEGM hand) //ENTER DATA MODE AND START A DATA CAPTURE THREAD
 
 int gm0_gmstar(HANDLEGM hand) // ENTER COMMAND MODE
 {
+
+	if(!checkhand(hand))
+		return -1;
 
 	pGMS[hand]->disablepoll=TRUE;
 
@@ -173,6 +185,9 @@ int gm0_dothestar(HANDLEGM hand)
 	char flushdata;
 	char star;
 	int ret=-1;
+
+	if(!checkhand(hand))
+		return -1;
 
 	pGMS[hand]->gm0_usereadthread=FALSE;
 
@@ -226,11 +241,16 @@ GM0_API int gm0_getrange(HANDLEGM hand)
 GM0_API int gm0_getmode(HANDLEGM hand)
 {
 
+	if(!checkhand(hand))
+		return -1;
+
 	return pGMS[hand]->store.mode;
 }
 
 GM0_API int gm0_getunits(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
 
 	return pGMS[hand]->store.units;
 }
@@ -238,6 +258,8 @@ GM0_API int gm0_getunits(HANDLEGM hand)
 GM0_API int gm0_setunits(HANDLEGM hand,unsigned char units)
 {
 
+	if(!checkhand(hand))
+		return -1;
 	
 
 	if(units >3)
@@ -256,6 +278,9 @@ GM0_API int gm0_setunits(HANDLEGM hand,unsigned char units)
 
 GM0_API int gm0_setrange(HANDLEGM hand,unsigned char range)
 {
+
+	if(!checkhand(hand))
+		return -1;
 
 	// if the range has been changed this function should not run for at least 2 sample periods
 
@@ -284,6 +309,8 @@ GM0_API int gm0_setrange(HANDLEGM hand,unsigned char range)
 GM0_API int gm0_setmode(HANDLEGM hand,unsigned char mode)
 {
 	
+	if(!checkhand(hand))
+		return -1;
 
 	if(mode >5)
 		return GM_DATAERROR;
@@ -302,6 +329,8 @@ GM0_API int gm0_setmode(HANDLEGM hand,unsigned char mode)
 GM0_API int gm0_setlanguage(HANDLEGM hand,unsigned char lan)
 {
 	
+	if(!checkhand(hand))
+		return -1;
 
 	if(lan >5)
 		return GM_DATAERROR;
@@ -317,6 +346,10 @@ GM0_API int gm0_setlanguage(HANDLEGM hand,unsigned char lan)
 
 GM0_API int gm0_resetpeak(HANDLEGM hand)
 {
+
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 
 	gm0_gmcmd(hand,GMC_RESPEAK,0);
@@ -327,6 +360,10 @@ GM0_API int gm0_resetpeak(HANDLEGM hand)
 
 GM0_API int gm0_donull(HANDLEGM hand)
 {
+
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 
 	gm0_gmcmd(hand,GMC_DONULL,0);
@@ -350,6 +387,10 @@ GM0_API int gm0_donull(HANDLEGM hand)
 
 GM0_API int gm0_doaz(HANDLEGM hand)
 {
+
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 	gm0_gmcmd(hand,GMC_DOAZ,0);
 	
@@ -382,6 +423,9 @@ GM0_API int gm0_doaz(HANDLEGM hand)
 
 GM0_API int gm0_simkey(HANDLEGM hand,char keycode)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmcmd(hand,GMC_SIMKEY,keycode);
 	return 0;
 }
@@ -389,6 +433,9 @@ GM0_API int gm0_simkey(HANDLEGM hand,char keycode)
 
 GM0_API int gm0_resetnull(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmcmd(hand,GMC_SIMKEY,'0');
 
 	return 0;
@@ -398,6 +445,9 @@ GM0_API int gm0_resetnull(HANDLEGM hand)
 
 GM0_API double gm0_getvalue(HANDLEGM hand)
 {
+
+	if(!checkhand(hand))
+		return -1;
 
 	if(!checkhand(hand))
 	{
@@ -412,41 +462,62 @@ GM0_API double gm0_getvalue(HANDLEGM hand)
 
 GM0_API long gm0_getsamplecount(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return pGMS[hand]->samplecount;
 }
 
 GM0_API int gm0_setcallback(HANDLEGM hand,	void (* pCallback)(int,struct gm_store))
 {
+	if(!checkhand(hand))
+		return -1;
+
 	pGMS[hand]->pCallback=pCallback;
 	return (0);
 }
 
 GM0_API int gm0_setcallback2(HANDLEGM hand,	void (* pCallback)(int))
 {
+	if(!checkhand(hand))
+		return -1;
+
 	pGMS[hand]->pCallback2=pCallback;
 	return (0);
 }
 
 GM0_API int gm0_setconnectcallback(HANDLEGM hand,void ( * pCallback)(void))
 {
+	if(!checkhand(hand))
+		return -1;
+
 	pGMS[hand]->pConnectCallback=pCallback;
 	return (0);
 }
 
 GM0_API int gm0_setdisconnectcallback(HANDLEGM hand,void ( * pCallback)(HANDLEGM hand))
 {
+	if(!checkhand(hand))
+		return -1;
+
 	pGMS[hand]->pDisConnectCallback=pCallback;
 	return (0);
 }
 
 GM0_API int gm0_setnullcallback(HANDLEGM hand,void ( * pCallback)(void))
 {
+	if(!checkhand(hand))
+		return -1;
+
 	pGMS[hand]->pNullCallback=(void*)pCallback;
 	return (0);
 }
 
 GM0_API int gm0_fastUSBpoll(HANDLEGM hand,int enabled)
 {	
+	if(!checkhand(hand))
+		return -1;
+
 	pGMS[hand]->needrangepoll=TRUE;
 
 	if(enabled)
@@ -454,11 +525,15 @@ GM0_API int gm0_fastUSBpoll(HANDLEGM hand,int enabled)
 	else
 		pGMS[hand]->fastUSBcapture=FALSE;
 
+	return 0;
 }
 
 
 GM0_API int gm0_setinterval(HANDLEGM hand,int interval)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 
 	gm0_gmcmd(hand,GMC_INTERVAL,interval);
@@ -470,6 +545,10 @@ GM0_API int gm0_setinterval(HANDLEGM hand,int interval)
 GM0_API int gm0_getlanguage(HANDLEGM hand)
 {
 	int lang;
+
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 	lang=gm0_gmcmd(hand,GMC_LANGUAGE,0);
 	gm0_gmmode1(hand);
@@ -479,6 +558,9 @@ GM0_API int gm0_getlanguage(HANDLEGM hand)
 
 GM0_API int gm0_off(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_simkey(hand,'O');
 	return 0;
 }
@@ -486,12 +568,18 @@ GM0_API int gm0_off(HANDLEGM hand)
 
 GM0_API int gm0_setaddrlo(HANDLEGM hand,unsigned __int8 data)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmcmd(hand,GMC_SETADDLO,data);
 	return 0;
 }
 
 GM0_API int gm0_setaddrhi(HANDLEGM hand,unsigned __int8 data)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmcmd(hand,GMC_SETADDHI,data);
 	return 0;
 }
@@ -499,6 +587,9 @@ GM0_API int gm0_setaddrhi(HANDLEGM hand,unsigned __int8 data)
 GM0_API int gm0_setaddr(HANDLEGM hand,unsigned __int16 data)
 {
 	unsigned __int8 lo,hi;
+
+	if(!checkhand(hand))
+		return -1;
 
 	hi = data/256;
 	lo=data&0x00FF;
@@ -511,12 +602,18 @@ GM0_API int gm0_setaddr(HANDLEGM hand,unsigned __int16 data)
 
 GM0_API int gm0_incaddr(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmcmd(hand,GMC_INCADDR,0);
 	return 0;
 }
 
 GM0_API BOOL gm0_getconnect(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 
 	if(!checkhand(hand))
 		return FALSE;
@@ -527,12 +624,18 @@ GM0_API BOOL gm0_getconnect(HANDLEGM hand)
 
 GM0_API int gm0_setdatalo(HANDLEGM hand,unsigned __int8 data)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmcmd(hand,GMC_SETDATALO,data);
 	return 0;
 }
 
 GM0_API int gm0_setdatahi(HANDLEGM hand,unsigned __int8 data)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmcmd(hand,GMC_SETDATAHI,data);
 	return 0;
 }
@@ -541,6 +644,9 @@ GM0_API int gm0_setdatahi(HANDLEGM hand,unsigned __int8 data)
 GM0_API int gm0_setdata(HANDLEGM hand,unsigned __int16 data)
 {
 	unsigned __int8 lo,hi;
+
+	if(!checkhand(hand))
+		return -1;
 
 	hi = data/256;
 	lo=data&0x00FF;
@@ -553,18 +659,28 @@ GM0_API int gm0_setdata(HANDLEGM hand,unsigned __int16 data)
 
 GM0_API unsigned __int8 gm0_getdatalo(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return(gm0_gmcmd(hand,GMC_GETDATALO,0));
 }
 
 GM0_API unsigned __int8 gm0_getdatahi(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return(gm0_gmcmd(hand,GMC_GETDATAHI,0));
 }
 
 GM0_API unsigned __int16 gm0_getdata(HANDLEGM hand)
 {
+
 	unsigned __int16 data;
 	unsigned __int8 lo,hi;
+
+	if(!checkhand(hand))
+		return -1;
 
 //	if(pGMS[hand]->faultyfirmware==TRUE)
 //	{
@@ -584,6 +700,8 @@ GM0_API unsigned __int16 gm0_getdata(HANDLEGM hand)
 
 GM0_API int gm0_isnewdata(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
 
 	if(pGMS[hand]->datasignal)
 	{
@@ -599,6 +717,9 @@ GM0_API unsigned __int16 gm0_getdatafaulty(HANDLEGM hand)
 {
 	unsigned __int16 data;
 	unsigned __int8 lo,hi;
+	
+	if(!checkhand(hand))
+		return -1;
 
 	gm0_getdatalo(hand);
 	lo=pGMS[hand]->cmdstatus;
@@ -617,6 +738,9 @@ GM0_API unsigned __int16 gm0_getdatafaulty(HANDLEGM hand)
 
 GM0_API int gm0_unlock(HANDLEGM hand,BOOL lockon)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	if(lockon==TRUE)
 	{
 		gm0_setaddrlo(hand,0);
@@ -637,6 +761,10 @@ GM0_API int gm0_unlock(HANDLEGM hand,BOOL lockon)
 GM0_API int gm0_settime2(HANDLEGM hand,struct gm_time *time)
 {
 	struct gm_time temp;
+	
+	if(!checkhand(hand))
+		return -1;
+
 	temp=*time;
 	gm0_settime(hand,temp);
 
@@ -645,6 +773,9 @@ GM0_API int gm0_settime2(HANDLEGM hand,struct gm_time *time)
 
 GM0_API int gm0_settime(HANDLEGM hand,struct gm_time time)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 	gm0_gmcmd(hand,GMC_TIME,1); // allow write to time reg
 
@@ -676,6 +807,11 @@ GM0_API int gm0_settime(HANDLEGM hand,struct gm_time time)
 GM0_API struct gm_time gm0_gettime(HANDLEGM hand)
 {
 	struct gm_time time;
+	memset(&time,0,sizeof(struct gm_time));
+
+	if(!checkhand(hand))
+		return time;
+
 	gm0_gmstar(hand);	
 	gm0_gmcmd(hand,GMC_TIME,0); // read only);
 	gm0_gmcmd(hand,GMC_TIME,3); // Get time
@@ -722,6 +858,9 @@ GM0_API struct gm_time gm0_gettime(HANDLEGM hand)
 
 GM0_API int gm0_sendtime(HANDLEGM hand,BOOL extended)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 	gm0_gmcmd(hand,GMC_COMMFLAG,extended);
 	gm0_gmmode1(hand);
@@ -740,11 +879,17 @@ GM0_API void gm0_disabledebug()
 
 GM0_API void gm0_stopbuffersamples(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return;
+
 		pGMS[hand]->buffer_enabled=0;
 }
 
 GM0_API void gm0_startbuffersamples(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return;
+
 	pGMS[hand]->buffer_enabled=1;
 }
 
@@ -752,6 +897,8 @@ GM0_API void gm0_startbuffersamples(HANDLEGM hand)
 GM0_API int gm0_resetbuffersamples(HANDLEGM hand)
 {
 	int counter=0;
+	if(!checkhand(hand))
+		return -1;
 
 	gm0_stopbuffersamples(hand);
 
@@ -762,20 +909,27 @@ GM0_API int gm0_resetbuffersamples(HANDLEGM hand)
 	pGMS[hand]->samples_avaiable=0;
 
 	gm0_startbuffersamples(hand);
+
+	return 0;
 }
 
 
 GM0_API int gm0_getnobuffersamples(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return pGMS[hand]->samples_avaiable;
 }
 
 GM0_API struct gm_store gm0_get_next_buffer(HANDLEGM hand)
 {
-	char msg[1024];
 
-	//sprintf(msg,"get_buffer() aval %d, start %d, end %d \n\0",pGMS[hand]->samples_avaiable,pGMS[hand]->buffer_start,pGMS[hand]->buffer_end);
-	//debugwrite(msg);
+	struct gm_store dummy;
+	memset(&dummy,0,sizeof(struct gm_store));
+
+	if(!checkhand(hand))
+		return dummy;
 
 	if (pGMS[hand]->buffer_ringflag[pGMS[hand]->buffer_start]==BUFFER_OWNER_USER)
 	{
@@ -808,6 +962,8 @@ GM0_API struct gm_store gm0_get_next_buffer(HANDLEGM hand)
 
 GM0_API void gm0_sampleondemand(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return;
 
 	pGMS[hand]->sampleondemand=TRUE;
 
@@ -815,6 +971,12 @@ GM0_API void gm0_sampleondemand(HANDLEGM hand)
 
 GM0_API struct gm_store gm0_demandsample(HANDLEGM hand,int extra)
 {
+
+	struct gm_store dummy;
+	memset(&dummy,0,sizeof(struct gm_store));
+
+	if(!checkhand(hand))
+		return dummy;
 
 	// sanity checking here
 
@@ -838,8 +1000,10 @@ GM0_API struct gm_store gm0_demandsample(HANDLEGM hand,int extra)
 
 GM0_API unsigned __int16 gm0_writeprobee2word(HANDLEGM hand,char pos,__int16 data)
 {
-	unsigned __int16 temp;
-	unsigned char hi,lo;
+	unsigned __int16 temp=0;
+
+	if(!checkhand(hand))
+		return -1;
 
 	gm0_gmstar(hand);
 	gm0_unlock(hand,FALSE); //unlock gm0
@@ -860,6 +1024,9 @@ GM0_API unsigned __int16 gm0_readprobee2word(HANDLEGM hand,char pos)
 {
 	unsigned __int16 temp;
 	unsigned char hi,lo;
+
+	if(!checkhand(hand))
+		return -1;
 
 	gm0_gmstar(hand);
 	gm0_unlock(hand,FALSE); //unlock gm0
@@ -882,6 +1049,9 @@ GM0_API unsigned __int16 gm0_readgme2word(HANDLEGM hand,char pos)
 	unsigned __int16 temp;
 	unsigned char hi,lo;
 
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 	gm0_unlock(hand,FALSE); //unlock gm0
 
@@ -901,27 +1071,43 @@ GM0_API unsigned __int16 gm0_readgme2word(HANDLEGM hand,char pos)
 
 GM0_API unsigned __int16 gm0_getgmserial(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return gm0_readgme2word(hand,rGM04SerNo);
 }
 
 GM0_API unsigned __int16 gm0_getprobeserial(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return gm0_readprobee2word(hand,rSerialNo);
 }
 
 GM0_API unsigned __int16 gm0_getprobetype(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return gm0_readprobee2word(hand,rProbeType);
 }
 
 GM0_API unsigned __int16 gm0_getprobecaldate(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	return gm0_readprobee2word(hand,rCalibDate);
 }
 
 
 GM0_API int gm0_probebutton(HANDLEGM hand)
 {
+
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_simkey(hand,'S');
 	gm0_gmmode1(hand);
 	return 0;
@@ -930,6 +1116,9 @@ GM0_API int gm0_probebutton(HANDLEGM hand)
 
 GM0_API	long gm0_startcmd(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmstar(hand);
 	Sleep(250);
 	return 0;
@@ -937,6 +1126,9 @@ GM0_API	long gm0_startcmd(HANDLEGM hand)
 
 GM0_API long gm0_endcmd(HANDLEGM hand)
 {
+	if(!checkhand(hand))
+		return -1;
+
 	gm0_gmmode1(hand);
 	return 0;
 }
@@ -948,6 +1140,11 @@ GM0_API struct gm_store gm0_getstore(HANDLEGM hand,int pos)
 	struct gm_store store;
 	unsigned __int8 reg[8];
 	signed __int16 tempvalue;
+
+	memset(&store,0,sizeof(struct gm_store));
+
+	if(!checkhand(hand))
+		return store;
 
 	gm0_gmcmd(hand,GMC_REGPTR,pos+128);
 	gm0_gmcmd(hand,GMC_GETREG,0);
@@ -994,6 +1191,9 @@ GM0_API int gm0_getmetertype(HANDLEGM hand)
 {
 	// At present we only have GM05 and GM08 to worry about
 	// IF we are using USB we are a GM08
+
+	if(!checkhand(hand))
+		return -1;
 
 	return pGMS[hand]->meter_mode;
 
