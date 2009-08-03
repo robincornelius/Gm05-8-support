@@ -177,6 +177,7 @@
 				OutputFile=".\Release/gm0.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				UACExecutionLevel="2"
 				ModuleDefinitionFile="gm0.def"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"

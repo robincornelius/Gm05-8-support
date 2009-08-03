@@ -37,14 +37,13 @@ Page instfiles
 ;--------------------------------
 
 Section "Microsoft redistributables"
-;${Unless} ${FileExists}   
- ;    $TEMP\vcredist_x86.exe         
+
+SetOutPath "$TEMP"
+ File vcredist_x86.exe          
  DetailPrint "Installing VC++ 9 runtime"         
- File vcredist_x86.exe  
  ExecWait "$TEMP\vcredist_x86.exe /q"         
  DetailPrint "Cleaning up"         
- Delete $TEMP\VS2008_SP1_vcredist_x86.exe     
- ;${EndUnless}
+ Delete $TEMP\vcredist_x86.exe     
 SectionEnd
 
 Section "System Wide Driver"
