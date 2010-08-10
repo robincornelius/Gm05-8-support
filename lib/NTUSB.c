@@ -254,16 +254,21 @@ BOOL FindTheHID(HANDLEGM hand)
 	} //do
 	while ((LastDevice == FALSE) && (pGMS[hand]->USBconnected == FALSE));
 
-	if (pGMS[hand]->USBconnected == FALSE)
-		OutputDebugString("Device not detected\n");
-	else
-		OutputDebugString("Device detected\n");
-
 	//Free the memory reserved for hDevInfo by SetupDiClassDevs.
 	SetupDiDestroyDeviceInfoList(hDevInfo);
 	OutputDebugString("SetupDiDestroyDeviceInfoList\n");
 
-	return pGMS[hand]->USBconnected;
+
+	if (pGMS[hand]->USBconnected == FALSE)
+	{
+		OutputDebugString("Device not detected\n");
+		return -1;
+	}
+	else
+	{	
+		OutputDebugString("Device detected\n");
+		return 0;
+	}
 }
 
 

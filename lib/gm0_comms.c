@@ -101,6 +101,8 @@ int gm0_openport(HANDLEGM hand,int mode)
 	if(pGMS[hand]->m_Iportno<0)
 		ret=gm0_openportUSB(hand);
 
+	OutputDebugString("Open port return");
+
 	return ret;
 }
 
@@ -454,7 +456,7 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 		newhand++;
 	}
 
-	debugprint("Creating a new GM\n");
+	OutputDebugString("Creating a new GM\n");
 
 	if(newhand==255)
 		return GM_MEMORY_ERROR;
@@ -525,20 +527,18 @@ GM0_API HANDLEGM gm0_newgm(int port,int mode)
 
 	pGMS[newhand]->meter_mode=mode;
 
-	portret= gm0_openport(newhand,mode);
+	portret=gm0_openport(newhand,mode);
 	
-	pGMS[newhand]->doingnull=FALSE;
-	gm0_startbuffersamples(newhand);
-
-	printf("PORT RET is %d\n",portret);
-
 	if(portret<0)
 	{
-		fprintf(stderr,"Open port failed\n");
-		//gm0_killgm(newhand); // clean memory up before exit
 		gm0_killgm(newhand);
+		OutputDebugString("KILL FINISHED\n");
 		return (GM_PORTOPENERROR);
 	}
+
+	pGMS[newhand]->doingnull=FALSE;
+	gm0_startbuffersamples(newhand);
+	
 
 	return newhand;
 }
@@ -598,9 +598,12 @@ GM0_API HANDLEGM gm0_startconnect(HANDLEGM hand)
 
 GM0_API int gm0_killgm(HANDLEGM hand)
 {
+
 	clock_t increment;
 	int timeout = 0;
 	
+	OutputDebugString("Killing GM0\n");
+
 	if(hand<0 || hand >255)
 		return 0;
 	
@@ -643,22 +646,54 @@ GM0_API int gm0_killgm(HANDLEGM hand)
 	}
 	else
 	{
-		// USB Shut down ?
-		closeUSB(hand);
+		if(pGMS[hand]->USBconnected == TRUE)
+		{
+			OutputDebugString("Shutting down USB\n");
+			closeUSB(hand);
+		}
 	}
 
-	free(pGMS[hand]->pIncomming);
-	free(pGMS[hand]->pvalue);
-	free(pGMS[hand]->punits);
-	free(pGMS[hand]->pmode);
-	free(pGMS[hand]->prange);
-	free(pGMS[hand]->ptime_sec);
-	free(pGMS[hand]->ptime_min);
-	free(pGMS[hand]->ptime_hour);
-	free(pGMS[hand]->ptime_day);
-	free(pGMS[hand]->ptime_year);
-	free(pGMS[hand]->ptime_month);
-	free(pGMS[hand]);
+	OutputDebugString("Starting free\n");
+
+	if(pGMS[hand]->pIncomming)
+		free(pGMS[hand]->pIncomming);
+
+	if(pGMS[hand]->pvalue)
+		free(pGMS[hand]->pvalue);
+
+	if(pGMS[hand]->punits)
+		free(pGMS[hand]->punits);
+
+	if(pGMS[hand]->pmode)
+		free(pGMS[hand]->pmode);
+
+	if(pGMS[hand]->prange)
+		free(pGMS[hand]->prange);
+
+	if(pGMS[hand]->ptime_sec)
+		free(pGMS[hand]->ptime_sec);
+
+	if(pGMS[hand]->ptime_min)
+		free(pGMS[hand]->ptime_min);
+
+	if(pGMS[hand]->ptime_hour)
+		free(pGMS[hand]->ptime_hour);
+
+	if(pGMS[hand]->ptime_day)
+		free(pGMS[hand]->ptime_day);
+
+	if(pGMS[hand]->ptime_year)
+		free(pGMS[hand]->ptime_year);
+
+	if(pGMS[hand]->ptime_month)
+		free(pGMS[hand]->ptime_month);
+
+	if(pGMS[hand])
+	{
+		free(pGMS[hand]);
+	}
+
+
 	pGMS[hand]=NULL;
 
 return 0;
@@ -682,6 +717,7 @@ void __cdecl connectthread(void * pParam)
 	pGMS[hand]->disablepoll=TRUE;
 	pGMS[hand]->polldisabled=TRUE;
 
+	OutputDebugString("Starting a CONNECT THREAD\n");
 	//printf("Starting a CONNECT THREAD\n");
 	
 
