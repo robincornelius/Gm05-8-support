@@ -31,7 +31,7 @@
 #include <setupapi.h>
 #include <stdio.h>
 #include <time.h>
-#include "m:/winddk/hidsdi.h"
+#include "hidsdi.h"
 #include "ntusb.h"
 #include "gm0_private.h"
 #include "gm0.h"
