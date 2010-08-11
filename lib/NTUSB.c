@@ -40,24 +40,9 @@
 #define HANDLEGM int
 
 #define	MAXREPORTSIZE 256
-CHAR	OutputReport[MAXREPORTSIZE];
+
 
 //Application global variables 
-
-	HIDP_CAPS		Capabilities;
-	PSP_DEVICE_INTERFACE_DETAIL_DATA	detailData;
-	HANDLE			DeviceHandle;
-	DWORD			dwError;
-	HANDLE			hEventObject;
-	HANDLE			hDevInfo;
-	GUID			HidGuid;
-	OVERLAPPED		HIDOverlapped;
-	char			InputReport[3];
-	ULONG			Length;
-	LPOVERLAPPED	lpOverLap;
-	DWORD			NumberOfBytesRead;
-	HANDLE			ReadHandle;
-	ULONG			Required;
 
 
 BOOL FindTheHID(HANDLEGM hand)
@@ -70,15 +55,19 @@ BOOL FindTheHID(HANDLEGM hand)
 	int									MemberIndex = 0;
 	LONG								Result;
 
+	int									no_devices=0;
+
 	//These are the vendor and product IDs to look for.
 	//Uses Lakeview Research's Vendor ID.
 	const unsigned int VendorID = 0x04d8;
 	const unsigned int ProductID = 0x0002;
 
-	Length = 0;
-	detailData = NULL;
-	DeviceHandle=-1;
-	ReadHandle=-1;
+	pGMS[hand]->Length = 0;
+	pGMS[hand]->detailData = NULL;
+	pGMS[hand]->DeviceHandle=-1;
+	pGMS[hand]->ReadHandle=-1;
+	pGMS[hand]->hEventObject=0;
+
 
 	/*
 	API function: HidD_GetHidGuid
@@ -86,7 +75,7 @@ BOOL FindTheHID(HANDLEGM hand)
 	Returns: the GUID in HidGuid.
 	*/
 
-	HidD_GetHidGuid(&HidGuid);	
+	HidD_GetHidGuid(&pGMS[hand]->HidGuid);	
 	
 	/*
 	API function: SetupDiGetClassDevs
@@ -94,8 +83,8 @@ BOOL FindTheHID(HANDLEGM hand)
 	Requires: the GUID returned by GetHidGuid.
 	*/
 	
-	hDevInfo=SetupDiGetClassDevs 
-		(&HidGuid, 
+	pGMS[hand]->hDevInfo=SetupDiGetClassDevs 
+		(&pGMS[hand]->HidGuid, 
 		NULL, 
 		NULL, 
 		DIGCF_PRESENT|DIGCF_INTERFACEDEVICE);
@@ -122,9 +111,9 @@ BOOL FindTheHID(HANDLEGM hand)
 		*/
 
 		Result=SetupDiEnumDeviceInterfaces 
-			(hDevInfo, 
+			(pGMS[hand]->hDevInfo, 
 			0, 
-			&HidGuid, 
+			&pGMS[hand]->HidGuid, 
 			MemberIndex, 
 			&devInfoData);
 
@@ -153,26 +142,26 @@ BOOL FindTheHID(HANDLEGM hand)
 			//Get the Length value.
 			//The call will return with a "buffer too small" error which can be ignored.
 			Result = SetupDiGetDeviceInterfaceDetail 
-				(hDevInfo, 
+				(pGMS[hand]->hDevInfo, 
 				&devInfoData, 
 				NULL, 
 				0, 
-				&Length, 
+				&pGMS[hand]->Length, 
 				NULL);
 
 			//Allocate memory for the hDevInfo structure, using the returned Length.
-			detailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)malloc(Length);
+			pGMS[hand]->detailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)malloc(pGMS[hand]->Length);
 			
 			//Set cbSize in the detailData structure.
-			detailData -> cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
+			pGMS[hand]->detailData -> cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
 
 			//Call the function again, this time passing it the returned buffer size.
 			Result = SetupDiGetDeviceInterfaceDetail 
-				(hDevInfo, 
+				(pGMS[hand]->hDevInfo, 
 				&devInfoData, 
-				detailData, 
-				Length, 
-				&Required, 
+				pGMS[hand]->detailData, 
+				pGMS[hand]->Length, 
+				&pGMS[hand]->Required, 
 				NULL);
 
 			//Open a handle to the device.
@@ -185,8 +174,8 @@ BOOL FindTheHID(HANDLEGM hand)
 			returned by SetupDiGetDeviceInterfaceDetail.
 			*/
 
-			DeviceHandle=CreateFile 
-				(detailData->DevicePath, 
+			pGMS[hand]->DeviceHandle=CreateFile 
+				(pGMS[hand]->detailData->DevicePath, 
 				GENERIC_READ|GENERIC_WRITE, 
 				FILE_SHARE_READ|FILE_SHARE_WRITE, 
 				(LPSECURITY_ATTRIBUTES)NULL,
@@ -194,8 +183,12 @@ BOOL FindTheHID(HANDLEGM hand)
 				0, 
 				NULL);
 
-			OutputDebugString("CreateFile: \n");
-
+			if(pGMS[hand]->DeviceHandle==-1)
+			{
+				free(pGMS[hand]->detailData);
+				MemberIndex++;			
+				continue;
+			}
 			/*
 			API function: HidD_GetAttributes
 			Requests information from the device.
@@ -210,7 +203,7 @@ BOOL FindTheHID(HANDLEGM hand)
 			Attributes.Size = sizeof(Attributes);
 
 			Result = HidD_GetAttributes 
-				(DeviceHandle, 
+				(pGMS[hand]->DeviceHandle, 
 				&Attributes);
 			
 			OutputDebugString("HidD_GetAttributes: \n");
@@ -222,25 +215,37 @@ BOOL FindTheHID(HANDLEGM hand)
 			{
 				if (Attributes.ProductID == ProductID)
 				{
-					//Both the Product and Vendor IDs match.
-					pGMS[hand]->USBconnected = TRUE;
+					
 					OutputDebugString("Device detected\n");
-					//Get the device's capablities.
-					GetDeviceCapabilities(hand);
-					PrepareForOverlappedTransfer(hand);
+
+					no_devices++;
+					if(pGMS[hand]->m_Iportno*-1==no_devices)
+					{
+						//Both the Product and Vendor IDs match.
+						pGMS[hand]->USBconnected = TRUE;
+						//Get the device's capablities.
+						GetDeviceCapabilities(hand);
+						PrepareForOverlappedTransfer(hand);
+					}
+					else
+					{
+						OutputDebugString("Not target device\n");
+					}
 				} //if (Attributes.ProductID == ProductID)
-
 				else
+				{
 					//The Product ID doesn't match.
-					safeclosehandle(&DeviceHandle);
+					safeclosehandle(&pGMS[hand]->DeviceHandle);
+				}
 			} //if (Attributes.VendorID == VendorID)
-
 			else
+			{
 				//The Vendor ID doesn't match.
-				safeclosehandle(&DeviceHandle);
+				safeclosehandle(&pGMS[hand]->DeviceHandle);
+			}
 
 		//Free the memory used by the detailData structure (no longer needed).
-		free(detailData);
+		free(pGMS[hand]->detailData);
 		}  //if (Result != 0)
 
 		else
@@ -255,7 +260,7 @@ BOOL FindTheHID(HANDLEGM hand)
 	while ((LastDevice == FALSE) && (pGMS[hand]->USBconnected == FALSE));
 
 	//Free the memory reserved for hDevInfo by SetupDiClassDevs.
-	SetupDiDestroyDeviceInfoList(hDevInfo);
+	SetupDiDestroyDeviceInfoList(pGMS[hand]->hDevInfo);
 	OutputDebugString("SetupDiDestroyDeviceInfoList\n");
 
 
@@ -275,8 +280,8 @@ BOOL FindTheHID(HANDLEGM hand)
 void PrepareForOverlappedTransfer(HANDLEGM hand)
 {
 	//Get another handle to the device for the overlapped ReadFiles.
-	ReadHandle=CreateFile 
-		(detailData->DevicePath, 
+	pGMS[hand]->ReadHandle=CreateFile 
+		(pGMS[hand]->detailData->DevicePath, 
 		GENERIC_READ|GENERIC_WRITE, 
 		FILE_SHARE_READ|FILE_SHARE_WRITE,
 		(LPSECURITY_ATTRIBUTES)NULL, 
@@ -296,9 +301,9 @@ void PrepareForOverlappedTransfer(HANDLEGM hand)
 	Returns: a handle to the event object
 	*/
 
-	if (hEventObject == 0)
+	if (pGMS[hand]->hEventObject == 0)
 	{
-		hEventObject = CreateEvent 
+		pGMS[hand]->hEventObject = CreateEvent 
 			(NULL, 
 			TRUE, 
 			TRUE, 
@@ -306,9 +311,9 @@ void PrepareForOverlappedTransfer(HANDLEGM hand)
 	OutputDebugString("CreateEvent: \n") ;
 
 	//Set the members of the overlapped structure.
-	HIDOverlapped.hEvent = hEventObject;
-	HIDOverlapped.Offset = 0;
-	HIDOverlapped.OffsetHigh = 0;
+	pGMS[hand]->HIDOverlapped.hEvent = pGMS[hand]->hEventObject;
+	pGMS[hand]->HIDOverlapped.Offset = 0;
+	pGMS[hand]->HIDOverlapped.OffsetHigh = 0;
 	}
 }
 
@@ -327,7 +332,7 @@ void GetDeviceCapabilities(HANDLEGM hand)
 	*/
 
 	HidD_GetPreparsedData 
-		(DeviceHandle, 
+		(pGMS[hand]->DeviceHandle, 
 		&PreparsedData);
 	OutputDebugString("HidD_GetPreparsedData: \n");
 
@@ -344,7 +349,7 @@ void GetDeviceCapabilities(HANDLEGM hand)
 	
 	HidP_GetCaps 
 		(PreparsedData, 
-		&Capabilities);
+		&pGMS[hand]->Capabilities);
 	OutputDebugString("HidP_GetCaps: \n");
 
 	//No need for PreparsedData any more, so free the memory it's using.
@@ -353,7 +358,7 @@ void GetDeviceCapabilities(HANDLEGM hand)
 }
 
 
-DWORD ReadReport(HANDLEGM hand)
+DWORD ReadReport(HANDLEGM hand,char	* InputReport)
 {
 //	CString	ByteToDisplay = "";
 //	CString	MessageToDisplay = "";
@@ -370,11 +375,11 @@ DWORD ReadReport(HANDLEGM hand)
 	*/
 
 	Result = ReadFile 
-		(ReadHandle, 
+		(pGMS[hand]->ReadHandle, 
 		InputReport, 
-		Capabilities.InputReportByteLength, 
-		&NumberOfBytesRead,
-		(LPOVERLAPPED) &HIDOverlapped); 
+		pGMS[hand]->Capabilities.InputReportByteLength, 
+		&pGMS[hand]->NumberOfBytesRead,
+		(LPOVERLAPPED) &pGMS[hand]->HIDOverlapped); 
  
 	//DisplayLastError("ReadFile: ") ;
 
@@ -386,7 +391,7 @@ DWORD ReadReport(HANDLEGM hand)
 	*/
 
 	Result = WaitForSingleObject 
-		(hEventObject, 
+		(pGMS[hand]->hEventObject, 
 		5000);
 	//DisplayLastError("WaitForSingleObject: ") ;
  
@@ -410,13 +415,13 @@ DWORD ReadReport(HANDLEGM hand)
         Returns non-zero on success.
 		*/
 		
-		Result = CancelIo(ReadHandle);
+		Result = CancelIo(pGMS[hand]->ReadHandle);
 		
 		//A timeout may mean that the device has been removed. 
 		//Close the device handles and set DeviceDetected = False 
 		//so the next access attempt will search for the device.
-		safeclosehandle(&ReadHandle);
-		safeclosehandle(&DeviceHandle);
+		safeclosehandle(&pGMS[hand]->ReadHandle);
+		safeclosehandle(&pGMS[hand]->DeviceHandle);
 		OutputDebugString("Can't read from device");
 		pGMS[hand]->USBconnected=FALSE;
 		break;
@@ -433,7 +438,7 @@ DWORD ReadReport(HANDLEGM hand)
 	Returns non-zero on success.
 	*/
 
-	ResetEvent(hEventObject);
+	ResetEvent(pGMS[hand]->hEventObject);
 
 	//Display the report data.
 	//DisplayInputReport();
@@ -441,13 +446,11 @@ DWORD ReadReport(HANDLEGM hand)
 	return(Result);
 }
 
-DWORD WriteReport(HANDLEGM hand)
+DWORD WriteReport(HANDLEGM hand,CHAR * OutputReport)
 {
 	//Send a report to the device.
-
 	DWORD	BytesWritten = 0;
 	INT		Index =0;
-
 	ULONG	Result;
 
 	//The first byte is the report number.
@@ -464,9 +467,9 @@ DWORD WriteReport(HANDLEGM hand)
 	*/
 
 	Result = WriteFile 
-		(DeviceHandle, 
+		(pGMS[hand]->DeviceHandle, 
 		OutputReport, 
-		Capabilities.OutputReportByteLength, 
+		pGMS[hand]->Capabilities.OutputReportByteLength, 
 		&BytesWritten, 
 		NULL);
 
@@ -474,8 +477,8 @@ DWORD WriteReport(HANDLEGM hand)
 	{
 		//The WriteFile failed, so close the handle, display a message,
 		//and set DeviceDetected to FALSE so the next attempt will look for the device.
-		safeclosehandle(&DeviceHandle);
-		safeclosehandle(&ReadHandle);
+		safeclosehandle(&pGMS[hand]->DeviceHandle);
+		safeclosehandle(&pGMS[hand]->ReadHandle);
 		OutputDebugString("Can't write to device\n");
 		pGMS[hand]->USBconnected=FALSE;
 	}
@@ -486,17 +489,23 @@ DWORD WriteReport(HANDLEGM hand)
 unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned char data,char * status)
 {
 	unsigned char dataret;
-
+	CHAR OutputReport[MAXREPORTSIZE];
+	CHAR InputReport[MAXREPORTSIZE];
 	DWORD Result = 0;
+
+	memset(OutputReport,0,MAXREPORTSIZE);
+	memset(InputReport,0,MAXREPORTSIZE);
+
 	//Write a report to the device.
 	//Get the values from the combo boxes.
 	OutputReport[1]=command;
-	Result = WriteReport(hand);
+	Result = WriteReport(hand,OutputReport);
+
 
 	//Read a report from the device.
 	if (Result != 0)
 	{
-		Result = ReadReport(hand);
+		Result = ReadReport(hand,InputReport);
 		dataret=InputReport[1];
 	}
 	else
@@ -512,7 +521,7 @@ unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned 
 		
 	if (Result != WAIT_TIMEOUT)
 	{
-		Result = WriteReport(hand);
+		Result = WriteReport(hand,OutputReport);
 	}
 	else
 	{
@@ -524,7 +533,7 @@ unsigned char WritepacketToDevice(HANDLEGM hand,unsigned char command, unsigned 
 	//Read a report from the device.
 	if (Result != 0 )
 	{
-			Result = ReadReport(hand);
+			Result = ReadReport(hand,InputReport);
 			pGMS[hand]->cmdstatus = InputReport[1];
 	}
 	else
@@ -560,13 +569,16 @@ int GetReadingFromGM08(HANDLEGM hand)
 	//Write a report to the device.
 	//Get the values from the combo boxes.
 
+	CHAR OutputReport[MAXREPORTSIZE];
+	CHAR InputReport[MAXREPORTSIZE];
+
 	OutputReport[1]=49;
-	Result = WriteReport(hand);
+	Result = WriteReport(hand,OutputReport);
 
 	//Read a report from the device.
 	if (Result != 0)
 	{
-			Result = ReadReport(hand);
+			Result = ReadReport(hand,InputReport);
 			Reading[0] = InputReport[1];
 	}
 	else
@@ -583,7 +595,7 @@ int GetReadingFromGM08(HANDLEGM hand)
 
 	if (Result != WAIT_TIMEOUT)
 	{
-		Result = WriteReport(hand);
+		Result = WriteReport(hand,OutputReport);
 	}
 	else
 	{
@@ -595,7 +607,7 @@ int GetReadingFromGM08(HANDLEGM hand)
 	if (Result != 0 )
 	{
 			
-			Result = ReadReport(hand);
+			Result = ReadReport(hand,InputReport);
 			Reading[1] = InputReport[1];
 	}
 	else
@@ -659,8 +671,8 @@ void polldata(HANDLEGM hand)
 
 void closeUSB(HANDLEGM hand)
 {
-	safeclosehandle(&DeviceHandle);
-	safeclosehandle(&ReadHandle);
+	safeclosehandle(&pGMS[hand]->DeviceHandle);
+	safeclosehandle(&pGMS[hand]->ReadHandle);
 }
 
 void safeclosehandle(HANDLE * hand)

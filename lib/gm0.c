@@ -614,10 +614,6 @@ GM0_API BOOL gm0_getconnect(HANDLEGM hand)
 	if(!checkhand(hand))
 		return -1;
 
-
-	if(!checkhand(hand))
-		return FALSE;
-
 	return(pGMS[hand]->connected); 
 }
 

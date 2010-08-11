@@ -21,6 +21,16 @@
 #include "gm0.h"
 #include "comms.h"
 
+#ifdef _WINDOWS
+#include <windows.h>
+#include <wtypes.h>
+#include <initguid.h>
+#include <setupapi.h>
+#include <stdio.h>
+#include <time.h>
+#include "hidsdi.h"
+#endif
+
 #ifdef _LINUX
 	#include <usb.h>
 #endif
@@ -109,6 +119,24 @@ struct GM_STRUCT{
 	int buffer_end;
 	int samples_avaiable;
 	int buffer_enabled;
+
+#ifdef _WINDOWS
+	HIDP_CAPS		Capabilities;
+	PSP_DEVICE_INTERFACE_DETAIL_DATA	detailData;
+	HANDLE			DeviceHandle;
+	DWORD			dwError;
+	HANDLE			hEventObject;
+	HANDLE			hDevInfo;
+	GUID			HidGuid;
+	OVERLAPPED		HIDOverlapped;
+	ULONG			Length;
+	LPOVERLAPPED	lpOverLap;
+	DWORD			NumberOfBytesRead;
+	HANDLE			ReadHandle;
+	ULONG			Required;
+
+#endif
+
 
 }; 
 
