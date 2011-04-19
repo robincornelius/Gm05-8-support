@@ -215,13 +215,8 @@ namespace gm0_sharp
         public gmstore currentreading;
         public gmstore lastreading;
         
-        static void Main()
-        {
-           
-          
-        }
-
-       
+        public dllConnectedCallBack meh;
+        public DataCallBack meh2;
 
         [DllImport("gm0.dll")]
         static extern int gm0_newgm(int port, int mode);
@@ -235,9 +230,12 @@ namespace gm0_sharp
             hand = gm0_newgm(port, (int)Enum.Parse(typeof(connectiontype), contype.ToString()));
             checkvalidhandorthrow();
 
-            gm0_setconnectcallback(hand, connectedcallback);
-            gm0_setcallback(hand, datacallback);
-            gm0_setnullcallback(hand, nullcallback);
+            meh = new dllConnectedCallBack(connectedcallback);
+            meh2 = new DataCallBack(datacallback);
+
+            gm0_setconnectcallback(hand, meh);
+            gm0_setcallback(hand, meh2);
+            //gm0_setnullcallback(hand, nullcallback);
         }
 
         [DllImport("gm0.dll")]
@@ -268,18 +266,19 @@ namespace gm0_sharp
             return (status==1?true:false);
         }
 
-        delegate void dllConnectedCallBack();
+        public delegate void dllConnectedCallBack();
         [DllImport("gm0.dll")]
         static extern int gm0_setconnectcallback(int hand, dllConnectedCallBack x);
         public delegate void ConnectedCallback();
         public event ConnectedCallback onConnectedCallback;
-        void connectedcallback()
+        public void connectedcallback()
         {
             if(onConnectedCallback!=null)
             {
                 try
                 {
                     onConnectedCallback();
+                    gm0_setconnectcallback(hand, null);
                 }
                 catch
                 {
@@ -303,7 +302,7 @@ namespace gm0_sharp
         public delegate void NewUnitsCallback(int units);
         public event NewUnitsCallback onNewUnits;
 
-        delegate void DataCallBack(int hand, gm_store data);
+        public delegate void DataCallBack(int hand, gm_store data);
         [DllImport("gm0.dll")]
         static extern int gm0_setcallback(int hand, DataCallBack x);
 
@@ -548,6 +547,38 @@ namespace gm0_sharp
         {
             checkvalidhandorthrow();
             return gm0_getprobecaldate(hand);
+        }
+
+        [DllImport("gm0.dll")]
+        static extern UInt16 gm0_readprobee2wordfast(int hand,byte pos);
+        public UInt16 GetProbeE2Word(byte location)
+        {
+             checkvalidhandorthrow();
+             return gm0_readprobee2wordfast(hand, location);
+        }
+
+        [DllImport("gm0.dll")]
+        static extern UInt16 gm0_writeprobee2word(int hand, byte pos,int data);
+        public UInt16 WriteProbeE2Word(byte location,ushort data)
+        {
+            checkvalidhandorthrow();
+            return gm0_writeprobee2word(hand, location,data);
+        }
+
+        [DllImport("gm0.dll")]
+        static extern UInt16 gm0_startproberead(int hand);
+        public UInt16 BeginProbeRead()
+        {
+            checkvalidhandorthrow();
+            return gm0_startproberead(hand);
+        }
+
+        [DllImport("gm0.dll")]
+        static extern UInt16 gm0_endproberead(int hand);
+        public UInt16 EndProbeRead()
+        {
+            checkvalidhandorthrow();
+            return gm0_endproberead(hand);
         }
 
 
