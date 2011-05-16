@@ -44,7 +44,9 @@ EXPORTS
     gm0_enabledebug				@42
 	gm0_disabledebug			@43
 	gm0_isnewdata @44
-	
+	gm0_getfirmware @45
+        gm0_getprobe_type @46
+        gm0_getprobeoffset @47
     
     
     

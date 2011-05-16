@@ -148,9 +148,10 @@ struct gm_store{
  unsigned char mode;
  unsigned char units;
  float value;
+ unsigned char probeoffset;
 };
 
-
+int	probe_offset;
 
 // Thread and initaliseation fuctions
 GM0_API HANDLEGM LIBTYPE gm0_newgm BKET (int port,int mode);
@@ -170,6 +171,9 @@ GM0_API int LIBTYPE gm0_getmode BKET (HANDLEGM hand);
 
 GM0_API int LIBTYPE gm0_setlanguage BKET (HANDLEGM hand,unsigned char lan);
 GM0_API int LIBTYPE gm0_getlanguage BKET (HANDLEGM hand);
+
+GM0_API int LIBTYPE gm0_getfirmware BKET (HANDLEGM hand);
+GM0_API int LIBTYPE gm0_getprobe_type BKET (HANDLEGM hand);
 
 // Is there any new data?
 GM0_API int gm0_isnewdata(HANDLEGM hand);
