@@ -475,7 +475,7 @@ int doconnect(int port,int mode)
 	int iconnectcount;
 
 	mygm=gm0_newgm(port,mode); 
-	if(mygm>=0 || mygm<255)
+	if(mygm>=0 && mygm<255)
 	{
 		printf(" SUCCESS, handle %d\n",mygm);
 	}
