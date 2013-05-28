@@ -1195,3 +1195,12 @@ GM0_API int gm0_getmetertype(HANDLEGM hand)
 
 }
 
+GM0_API int gm0_setfilterwidth(HANDLEGM hand,unsigned __int8 width)
+{
+	if(!checkhand(hand))
+		return -1;
+
+	gm0_gmcmd(hand,GMC_SETFILTER,width&0x7F);
+
+	return 0;
+}

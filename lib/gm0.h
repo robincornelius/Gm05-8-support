@@ -230,6 +230,8 @@ GM0_API void gm0_startbuffersamples(HANDLEGM hand);
 GM0_API int gm0_resetbuffersamples(HANDLEGM hand);
 GM0_API int gm0_getnobuffersamples(HANDLEGM hand);
 
+GM0_API int gm0_setfilterwidth(HANDLEGM hand,unsigned __int8 width);
+
 GM0_API void gm0_enabledebug();
 GM0_API void gm0_disabledebug();
 

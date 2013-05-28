@@ -263,7 +263,9 @@ int gm0_dothestar(HANDLEGM hand);
 
 #define GMC_INTERVAL 40
 
+// NB this gab contains some unimplemented GM08 commands
 
+#define GMC_SETFILTER 45
 
 
 
