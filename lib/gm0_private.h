@@ -263,9 +263,9 @@ int gm0_dothestar(HANDLEGM hand);
 
 #define GMC_INTERVAL 40
 
+#define GMC_GETPROBETYPE 41
 
-
-
+#define GMC_GETFIRMWARE 43
 
 //PlugE2 register assignments
 

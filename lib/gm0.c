@@ -45,27 +45,29 @@ struct mode_array
 		char *pointer_text;
 };
 
-const float units_range_conversion[4][4]={
+const float units_range_conversion[4][9]={
 
     //tesla					
-    {(const float)1.0,(const float)1000.0,(const float)1000.0,(const float)1000.0},		
+    {(const float)1.0,(const float)1000.0,(const float)1000.0,(const float)1000.0,    (const float)1000000.0,(const float)1000000.0,(const float)1000000.0  ,(const float)1000000000.0,(const float)1000000000.0 },		
     //gauss
-    {(const float)0.001,(const float)0.001,(const float)1.0,(const float)1.0},		
+    {(const float)0.001,(const float)0.001,(const float)1.0,(const float)1.0     ,(const float)1.0 ,(const float)1000.0 ,(const float)1000.0 ,(const float)1000.0    ,(const float)1000000.0    },		
     //a/m			
-    {(const float)0.001,(const float)0.001,(const float)0.001,	(const float)0.001}, 
+	{(const float)0.001,(const float)0.001,(const float)0.001,	(const float)0.001, (const float)1.0,(const float)1.0,(const float)1.0 ,(const float)1000.0  ,(const float)1000.0  },
     //oersted
-    {(const float)0.001,(const float)0.001,(const float)1.0,(const float)1.0}};
+    {(const float)0.001,(const float)0.001,(const float)1.0,(const float)1.0      ,(const float)1.0  ,(const float)1000.0,(const float)1000.0,(const float)1000.0      ,(const float)1000000.0            } };
 					
 /* The DP position indexed by [units][range] */
-const int DP_position[4][4] = {
- {4, 2, 3, 4},
- {3, 4, 2, 3},
- {1, 2, 3, 4},
- {3, 4, 2, 3}};
+const int DP_position[4][9] = {
+ {4, 2, 3, 4  ,2,3,4,2,3},
+ {3, 4, 2, 3,  4,2,3,4,2},
+ {1, 2, 3, 4,  2,3,4,2,3},
+ {3, 4, 2, 3,  4,2,3,4,2}};
  
 /* The divisor for each DP position */
 int divisor[5] = {
     1, 1, 10, 100, 1000 };
+
+int	probe_offset;
 
 int gm0_convertvalue(int range,int units,float value,float * newvalue,BOOL isusb)
 {
@@ -79,13 +81,13 @@ int gm0_convertvalue(int range,int units,float value,float * newvalue,BOOL isusb
 
 	if(isusb==TRUE)
 	{
-		dppos=DP_position[units][range];
+		dppos=DP_position[units][range + probe_offset];
 		scalar=divisor[dppos];
 		value /= (float)scalar;
 	}
 
 
-	value /= units_range_conversion[units][range];
+	value /= units_range_conversion[units][range + probe_offset];
 
 	if(units==2 && isusb==TRUE)
 	{
@@ -227,6 +229,15 @@ BOOL checkhand(int hand)
 
 // ****************** COMMANDS START HERE ********************************
 
+GM0_API int gm0_getprobeoffset(HANDLEGM hand)
+{
+//	Sleep(1);
+	if(!checkhand(hand))
+		return -1;
+
+	return pGMS[hand]->store.probeoffset;
+
+}
 
 GM0_API int gm0_getrange(HANDLEGM hand)
 {
@@ -652,6 +663,44 @@ GM0_API int gm0_setdata(HANDLEGM hand,unsigned __int16 data)
 	return 0;
 }
 
+GM0_API int gm0_getprobe_type(HANDLEGM hand)
+{
+	unsigned char ret, ret2;
+	int result;
+	if(!checkhand(hand))
+		return -1;
+
+	gm0_gmstar(hand);
+
+	ret = gm0_gmcmd(hand,GMC_GETPROBETYPE,0);
+	ret2 = pGMS[hand]->cmdstatus;
+
+	result = ret + ret2 * 256;
+
+	gm0_gmmode1(hand);
+
+	return(result);
+}
+
+GM0_API int gm0_getfirmware(HANDLEGM hand)
+{
+	unsigned char ret, ret2;
+	int result;
+	if(!checkhand(hand))
+		return -1;
+
+	gm0_gmstar(hand);
+
+	ret = gm0_gmcmd(hand,GMC_GETFIRMWARE,0);
+	ret2 = pGMS[hand]->cmdstatus;
+
+	result = ret + ret2 * 256;
+
+
+	gm0_gmmode1(hand);
+
+	return(result);
+}
 
 GM0_API unsigned __int8 gm0_getdatalo(HANDLEGM hand)
 {

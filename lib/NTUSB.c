@@ -654,6 +654,8 @@ void polldata(HANDLEGM hand)
 
 	pGMS[hand]->store.units = WritepacketToDevice(hand,47, 0,NULL)&0x03;
 
+	pGMS[hand]->store.probeoffset = (unsigned char) probe_offset;
+
 	pGMS[hand]->store.time.hour=0;
 	pGMS[hand]->store.time.min=0;
 	pGMS[hand]->store.time.sec=0;

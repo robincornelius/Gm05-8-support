@@ -210,6 +210,7 @@ int main(int argv, char * argvc[])
 					store.range=gm0_getrange(mygm);
 					store.units=gm0_getunits(mygm);
 					store.mode=gm0_getmode(mygm);
+					store.probeoffset = (unsigned char) probe_offset;
 					callback(mygm,store);
 				} //case v 
 			break;
@@ -383,8 +384,10 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 	}
 
 	printf("Reading is ");
-
-	printf("%f",store.value);
+	if (store.value > 0.001)
+		printf("%f",store.value);
+	else
+		printf("%01.3e",store.value);
 	
 	printf(" %s",units_str[store.units]);
 

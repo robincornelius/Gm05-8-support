@@ -394,6 +394,8 @@ void processgmcomms(HANDLEGM hand)
 	pGMS[hand]->store.range=(unsigned char)strtol(pGMS[hand]->prange,&stop,10);
 	pGMS[hand]->store.mode=(unsigned char)strtol(pGMS[hand]->pmode,&stop,10);
 
+	pGMS[hand]->store.probeoffset = (unsigned char) probe_offset;
+
 	value=strtod(pGMS[hand]->pvalue,&stop);
 
 	gm0_convertvalue(pGMS[hand]->store.range,pGMS[hand]->store.units,value,&pGMS[hand]->store.value,FALSE);
@@ -708,6 +710,7 @@ void __cdecl connectthread(void * pParam)
 	HANDLEGM hand;
 	int connected,timeout;
 	int retdata;
+	int probe_type;
 	hand=(HANDLEGM)pParam;
 
 	timeout=FALSE;
@@ -850,6 +853,66 @@ void __cdecl connectthread(void * pParam)
 	// BUG in GM08 RS232,need to do interval commands as below
 	gm0_setinterval(hand,2);
 	gm0_setinterval(hand,1);
+
+	probe_offset = 0;
+
+	probe_type = gm0_getprobe_type(hand);
+	switch(probe_type)
+			{
+					case 'T':
+						//sprintf(probesubstr,"%s", TType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("  ");
+						//DisplayData("Transverse Probe.");
+						probe_offset = 0;
+						break;
+					case 'A':
+						//sprintf(probesubstr,"%s", AType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("    ");
+						//DisplayData("Axial Probe.");
+						probe_offset = 0;
+						break;
+					case 'S':
+						//sprintf(probesubstr,"%s", SType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("  ");
+						//DisplayData("Special Probe.");
+						probe_offset = 0;
+						break;
+
+					case 0x6c54:	//lT
+						//sprintf(probesubstr,"%s", TlType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("  ");
+						//DisplayData("Low Field Transverse Probe.");
+						probe_offset = 1;
+						break;
+
+					case 0x6c41:	//lA
+						//sprintf(probesubstr,"%s", AlType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("  ");
+						//DisplayData("Low Field Axial Probe.");
+						probe_offset = 1;
+						break;
+					case 0x6641:	//fA
+						//sprintf(probesubstr,"%s", AfType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("  ");
+						//DisplayData("Fluxgate Axial Probe.");
+						probe_offset = 5;
+						break;
+					case 0x6654:	//fT
+						//sprintf(probesubstr,"%s", TfType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("  ");
+						//DisplayData("Fluxgate Transverse Probe.");
+						probe_offset = 5;
+						break;
+					default:
+						//sprintf(probesubstr,"%s", XType.text[gm0e2.rLanguage & 0xf]);
+						//LCD_MGLS_printstr("  ");
+						//DisplayData("Unknown Probe.");
+						probe_offset = 0;
+						break;
+			}
+
+	
+
 
 	if(pGMS[hand]->pConnectCallback!=NULL)
 	{
