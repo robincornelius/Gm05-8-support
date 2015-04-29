@@ -1,4 +1,3 @@
-
 /*
    Copyright © 2004-2008 Hirst Magnetic Instruments Ltd and Robin Cornelius.
 
@@ -343,6 +342,14 @@ int main(int argv, char * argvc[])
 				printf("Probe type %d\n",gm0_getprobetype(mygm));
 
 			}
+			case 'F':
+			{
+				
+				int width;
+				printf("\nNew filter width =");
+				scanf("%s",&width);
+				gm0_setfilterwidth(mygm,(unsigned char)width);
+			}
 		}
 	}
 	
@@ -367,7 +374,9 @@ printf(" (A) - Auto Zero        (N) - Null                  (T) - Enable Time\n"
 printf(" (1) - Enable callback  (0) - Disable callback      (<) - Set GM Time\n");
 printf(" (I) - Set interval     (Q) - Reset peak            (>) - Get GM Time\n");	
 printf(" (W) - Power Off        (G) - Get reg               (H) - Get Reg(s)\n");
-printf(" (B) - Reconnect        (X) - Exit                  (9) - Get E2\n");	
+printf(" (B) - Reconnect        (X) - Exit                  (9) - Get E2\n");
+printf(" (F) - FilterWidth\n");
+
 printf("\n\n");
 
 }
@@ -456,6 +465,7 @@ void loadallfunctions()
 	loadfunction(lib,&gm0_getgmserial,"gm0_getgmserial"); 
 	loadfunction(lib,&gm0_getprobetype,"gm0_getprobetype"); 
 	loadfunction(lib,&gm0_getprobecaldate,"gm0_getprobecaldate"); 
+	loadfunction(lib,&gm0_setfilterwidth,"gm0_setfilterwidth"); 
 
 }
 
