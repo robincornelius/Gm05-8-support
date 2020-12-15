@@ -37,33 +37,44 @@ namespace gm0_sharp_console_test
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Creating a new gm0");
-            
-            // connectiontype is only important for RS232 comms;
-            // they use different baud rates
-
-            // the port should be -1 for the first USB device -2 for the 2nd etc
-            // 1 for com1 or /dev/ttyS0 etc..
-            mygm = new gm0(connectiontype.Connection_Serial_GM08, -1);
-            Console.WriteLine("Registering callbacks");
-
-            waitconnect.Reset();
- 
-            mygm.onConnectedCallback += new gm0.ConnectedCallback(mygm_onConnectedCallback);
-
-            Console.WriteLine("Trying to connect to meter");
-            mygm.StartConnect();
-
-            if (!waitconnect.WaitOne(10000,false))
+            try
             {
-                Console.WriteLine("Failed to connect to meter");
-                System.Threading.Thread.Sleep(2500);
-                return;
-            }
+                Console.WriteLine("Creating a new gm0");
 
-            showmenu();
-            douserinput();
-            mygm.terminate();
+                // connectiontype is only important for RS232 comms;
+                // they use different baud rates
+
+                // the port should be -1 for the first USB device -2 for the 2nd etc
+                // 1 for com1 or /dev/ttyS0 etc..
+                mygm = new gm0(connectiontype.Connection_Serial_GM08, -1);
+                Console.WriteLine("Registering callbacks");
+
+                waitconnect.Reset();
+
+                mygm.onConnectedCallback += new gm0.ConnectedCallback(mygm_onConnectedCallback);
+
+                Console.WriteLine("Trying to connect to meter");
+                mygm.StartConnect();
+
+                if (!waitconnect.WaitOne(10000, false))
+                {
+                    Console.WriteLine("Failed to connect to meter");
+                    System.Threading.Thread.Sleep(2500);
+                    return;
+                }
+
+                showmenu();
+                douserinput();
+                mygm.terminate();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+
+                Console.WriteLine("\nPress any key to continue");
+                Console.ReadKey();
+
+            }
 
         }
 

@@ -412,21 +412,36 @@ void __stdcall callback(HANDLEGM hand,struct gm_store store)
 
 #ifndef _LINUX
 
+
 void loadallfunctions()
 {
 	HMODULE lib;
 
-	lib=LoadLibrary("gm0.dll");
-	
+#if defined(_WIN64)
+	{
+		printf("\nTrying to load 64 bit gm0_x64.dll\n");
+		lib = LoadLibrary("gm0.dll");
+	}
+#else
+	{
+		printf("\nTrying to load 32 bit gm0_x86.dll\n");
+		lib = LoadLibrary("gm0.dll");
+	}
+#endif
+
 	if(lib==NULL)
 	{
-		printf("\nCould not load gm0.dll going to try to find debug version\n");
-		lib=LoadLibrary("gm0D.dll");
-		if(lib==NULL)
-		{
-			printf("Sorry neither gm0.dll or gm0D.dll was found in DLL search path\n");
-			exit (-1);
-		}
+		DWORD errnum = GetLastError();
+
+		char err[256];
+		memset(err, 0, 256);
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err, 255, NULL);
+
+		printf("Failed to load DLL error code %d - %s", errnum, err);
+
+		system("pause");
+		exit (-1);	
 	}
 	
 	loadfunction(lib,&gm0_newgm,"gm0_newgm");

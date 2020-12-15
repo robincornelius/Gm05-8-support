@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace gm0_sharp
 {
@@ -208,6 +209,9 @@ namespace gm0_sharp
 
     public class gm0
     {
+
+        public const string DLL_FILE_NAME = "gm0.dll";
+
         connectiontype contype;
         int connectionport;
         int hand=-1;
@@ -218,10 +222,31 @@ namespace gm0_sharp
         public dllConnectedCallBack meh;
         public DataCallBack meh2;
 
-        [DllImport("gm0.dll")]
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr LoadLibrary(string dllToLoad);
+
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_newgm(int port, int mode);
         public gm0(connectiontype contype,int port)
         {
+
+            //Try to load the gm0.dll from current application folder bin32 or bin64 dirs
+            //then try and load from Program Files (x86)\Hirst Magnetic Instruments Ltd\gm0
+            var myPath = new Uri(typeof(gm0).Assembly.CodeBase).LocalPath;
+            var myFolder = Path.GetDirectoryName(myPath);
+
+            var is64 = IntPtr.Size == 8;
+            var subfolder = is64 ? "bin64" : "bin32";
+
+            LoadLibrary(Path.Combine(myPath, subfolder, "gm0.dll"));
+
+            string pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+
+            myPath = Path.Combine(pf, "Hirst Magnetic Instruments Ltd","gm0");
+
+            LoadLibrary(Path.Combine(myPath,subfolder,"gm0.dll"));
+
+
             lastreading = new gmstore();
 
             contype = contype;
@@ -238,7 +263,7 @@ namespace gm0_sharp
             //gm0_setnullcallback(hand, nullcallback);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_killgm(int hand);
         public void terminate()
         {
@@ -247,7 +272,7 @@ namespace gm0_sharp
             hand = -1;
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_startconnect(int hand);
         public void StartConnect()
         {
@@ -255,7 +280,7 @@ namespace gm0_sharp
             gm0_startconnect(hand);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_getconnect(int hand);
         public bool GetConnectionStatus()
         {
@@ -267,7 +292,7 @@ namespace gm0_sharp
         }
 
         public delegate void dllConnectedCallBack();
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setconnectcallback(int hand, dllConnectedCallBack x);
         public delegate void ConnectedCallback();
         public event ConnectedCallback onConnectedCallback;
@@ -303,7 +328,7 @@ namespace gm0_sharp
         public event NewUnitsCallback onNewUnits;
 
         public delegate void DataCallBack(int hand, gm_store data);
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setcallback(int hand, DataCallBack x);
 
         void datacallback(int hand, gm_store data)
@@ -339,7 +364,7 @@ namespace gm0_sharp
             lastreading = data;
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setlanguage(int hand, byte lan);
         public void setMeterLanguage(languages lan)
         {
@@ -347,7 +372,7 @@ namespace gm0_sharp
             gm0_setlanguage(hand, (byte)(int)Enum.Parse(typeof(languages), lan.ToString()));
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_getlanguage(int hand);
         public languages GetMeterLanguage()
         {
@@ -356,7 +381,7 @@ namespace gm0_sharp
             return (languages) Enum.Parse(typeof(languages), lan.ToString());
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setrange(int hand, byte range);
         public void setrange(byte range)
         {
@@ -370,7 +395,7 @@ namespace gm0_sharp
             gm0_setrange(hand, (byte)(int)Enum.Parse(typeof(ranges), range.ToString()));
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setmode(int hand, byte mode);
         public void setmode(modes mode)
         {
@@ -378,7 +403,7 @@ namespace gm0_sharp
             gm0_setmode(hand, (byte)(int)Enum.Parse(typeof(modes), mode.ToString()));
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setunits(int hand, byte units);
         public void setunits(units units)
         {
@@ -386,7 +411,7 @@ namespace gm0_sharp
             gm0_setunits(hand, (byte)(int)Enum.Parse(typeof(units), units.ToString()));
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_resetpeak(int hand);
         public void resetpeak()
         {
@@ -395,7 +420,7 @@ namespace gm0_sharp
 
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_donull(int hand);
         public void donull()
         {
@@ -404,7 +429,7 @@ namespace gm0_sharp
 
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_doaz(int hand);
         public void autozero()
         {
@@ -413,7 +438,7 @@ namespace gm0_sharp
 
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_resetnull(int hand);
         public void resetnull()
         {
@@ -422,7 +447,7 @@ namespace gm0_sharp
         }
 
         delegate void dllNullCallBack();
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setnullcallback(int hand, dllNullCallBack x);
         void nullcallback()
         {
@@ -430,7 +455,7 @@ namespace gm0_sharp
 
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_sendtime(int hand, bool extended);
         public void send_time_with_value(bool enabled)
         {
@@ -438,7 +463,7 @@ namespace gm0_sharp
             gm0_sendtime(hand, enabled);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_settime(int hand, gm_time time);
         public void set_meter_time(DateTime time)
         {
@@ -454,7 +479,7 @@ namespace gm0_sharp
 
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern gm_time gm0_gettime(int hand);
         public DateTime get_meter_time()
         {
@@ -465,7 +490,7 @@ namespace gm0_sharp
             return time;
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern gm_store gm0_getstore(int hand, int pos);
         public gmstore get_saved_value(int pos)
         {
@@ -474,7 +499,7 @@ namespace gm0_sharp
             return (data);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_simkey(int hand, byte meterkey);
         public void simkey(gm0_sharp.meter_keys key)
         {
@@ -482,7 +507,7 @@ namespace gm0_sharp
             gm0_simkey(hand, (byte)(int)Enum.Parse(typeof(meter_keys), key.ToString()));
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_setinterval(int hand, int interval);
         public void SetDataRate(int rate)
         {
@@ -490,7 +515,7 @@ namespace gm0_sharp
             gm0_setinterval(hand, rate);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern int gm0_fastUSBpoll(int hand, int enabled);
         public void enable_fastUSBpoll(bool enabled)
         {
@@ -498,7 +523,7 @@ namespace gm0_sharp
             gm0_fastUSBpoll(hand, enabled==true?1:0);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern void gm0_sampleondemand(int hand);
         public void enable_sampleOnDemand()
         {
@@ -506,7 +531,7 @@ namespace gm0_sharp
             gm0_sampleondemand(hand);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern gm_store gm0_demandsample(int hand, int extra);
         public gmstore demand_sample(bool extended)
         {
@@ -516,7 +541,7 @@ namespace gm0_sharp
         }
 
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_getgmserial(int hand);
         public UInt16 GetMeterSerial()
         {
@@ -525,7 +550,7 @@ namespace gm0_sharp
 
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_getprobeserial(int hand);
         public UInt16 GetProbeSerial()
         {
@@ -533,7 +558,7 @@ namespace gm0_sharp
             return gm0_getprobeserial(hand);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_getprobetype(int hand);
         public UInt16 GetProbeType()
         {
@@ -541,7 +566,7 @@ namespace gm0_sharp
             return gm0_getprobetype(hand);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_getprobecaldate(int hand);
         public UInt16 GetProbeCalDate()
         {
@@ -549,7 +574,7 @@ namespace gm0_sharp
             return gm0_getprobecaldate(hand);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_readprobee2wordfast(int hand,byte pos);
         public UInt16 GetProbeE2Word(byte location)
         {
@@ -557,7 +582,7 @@ namespace gm0_sharp
              return gm0_readprobee2wordfast(hand, location);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_writeprobee2word(int hand, byte pos,int data);
         public UInt16 WriteProbeE2Word(byte location,ushort data)
         {
@@ -565,7 +590,7 @@ namespace gm0_sharp
             return gm0_writeprobee2word(hand, location,data);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_startproberead(int hand);
         public UInt16 BeginProbeRead()
         {
@@ -573,7 +598,7 @@ namespace gm0_sharp
             return gm0_startproberead(hand);
         }
 
-        [DllImport("gm0.dll")]
+        [DllImport(DLL_FILE_NAME)]
         static extern UInt16 gm0_endproberead(int hand);
         public UInt16 EndProbeRead()
         {

@@ -38,21 +38,21 @@ Page instfiles
 
 Section "Microsoft x86 redistributables"
 SetOutPath "$TEMP"
- File c:\code\vcredist_x86_2013.exe          
- DetailPrint "Installing VC++ 2013 32bit runtime"         
- ExecWait "$TEMP\vcredist_x86_2013.exe /q"         
+ File ..\redist\VC_redist.x86.exe          
+ DetailPrint "Installing VC++ 2019 32 bit runtime"         
+ ExecWait "$TEMP\VC_redist.x86.exe /q"         
  DetailPrint "Cleaning up"         
- Delete $TEMP\vcredist_x86_2013.exe     
+ Delete $TEMP\VC_redist.x86.exe      
 SectionEnd
 
 
 Section "Microsoft x64 redistributables"
 SetOutPath "$TEMP"
- File c:\code\vcredist_x64_2013.exe          
- DetailPrint "Installing VC++ 2013 64 bit runtime"         
- ExecWait "$TEMP\vcredist_x64_2013.exe /q"         
+ File ..\redist\VC_redist.x64.exe        
+ DetailPrint "Installing VC++ 2019 64 bit runtime"         
+ ExecWait "$TEMP\VC_redist.x64.exe /q"         
  DetailPrint "Cleaning up"         
- Delete $TEMP\vcredist_x64_2013.exe     
+ Delete $TEMP\VC_redist.x64.exe   
 SectionEnd
 
 ;Section "System Wide Driver"
@@ -78,30 +78,27 @@ IfFileExists "$INSTDIR" 0 DoInstall
 	Abort "Quitting the install process"
 DoInstall:
 
-
  SetOutPath "$INSTDIR\bin32"
- file "..\Release\Win32\gm0.dll"
- file "..\Release\Win32\gm0.lib"
- file "..\Release\Win32\gm0-sharp.dll"
- file "..\Release\Win32\consoleexample.exe"
- file "..\Release\Win32\gm0-sharp.dll"
- file "..\Release\Win32\gm0_sharp_console_test.exe"
- file /r /x CVS "..\apps\"
+ file "..\Release\x86\gm0.dll"
+ file "..\Release\x86\gm0.lib"
+ file "..\Release\x86\consoleexample.exe"
+ file "..\apps\gm-control-32.xls"
    
-  SetOutPath "$INSTDIR\bin64"
+ SetOutPath "$INSTDIR\bin64"
  file "..\Release\x64\gm0.dll"
  file "..\Release\x64\gm0.lib"
- file "..\Release\x64\gm0-sharp.dll"
  file "..\Release\x64\consoleexample.exe"
- file "..\Release\x64\gm0-sharp.dll"
- file "..\Release\x64\gm0_sharp_console_test.exe"
- file /r /x CVS "..\apps\"
-   
+ file "..\apps\gm-control-64.xls"
+
+ SetOutPath "$INSTDIR\bin"
+ file "..\Release\gm0-sharp.dll"
+ file "..\Release\gm0_sharp_console_test.exe"
+ 
  SetOutPath "$INSTDIR\include"
  file "..\lib\gm0.h"
 
  SetOutPath "$INSTDIR\source"
- file /r /x CVS /x apps /x Installer /x *.pch /x *.ncb /x *.dll /x Debug /x Release /x obj /x docs /x *.*sdf /x *.git /x x64 /x Backup* /x ipch /x m4 "..\"
+ file /r /x .vs /x CVS /x apps /x Installer /x *.pch /x *.ncb /x *.dll /x Debug /x Release /x obj /x docs /x *.*sdf /x *.git /x x64 /x Backup* /x ipch /x m4 "..\"
 
  SetOutPath "$INSTDIR\"
  file /r /x CVS "..\docs"
@@ -117,7 +114,9 @@ DoInstall:
  
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\GM05 & GM08 Programming Manual.lnk" "$INSTDIR\docs\GM05&08PROGRAMMING MANUAL.pdf" "" "$INSTDIR\docs\GM05&08PROGRAMMING MANUAL.pdf" 0
  
- CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Excel Example.lnk" "$INSTDIR\bin32\gm05-control.xls" "" "$INSTDIR\bin32\gm05-control.xls" 0
+ CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Excel Example 32.lnk" "$INSTDIR\bin32\gm-control-32.xls" "" "$INSTDIR\bin32\gm-control-32.xls" 0
+ CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Excel Example 64.lnk" "$INSTDIR\bin64\gm-control-64.xls" "" "$INSTDIR\bin64\gm-control-32.xls" 0
+ 
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Labview Example.lnk" "$INSTDIR\bin32\simplegm0-1-6.vi" "" "$INSTDIR\bin32\simplegm0-1-6.vi" 0
  
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Headers.lnk" "$INSTDIR\include" "" "$INSTDIR\include" 0
