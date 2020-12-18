@@ -11,7 +11,7 @@ CRCCheck on
 
 !define PRODUCT "gm0"
 !define VENDOR "Hirst Magnetic Instruments Ltd"
-!define VERSION "29042015"
+!define VERSION "18122020"
 
 Name "Hirst Gaussmeter drivers"
 OutFile "gm0driver.exe"
@@ -78,11 +78,21 @@ IfFileExists "$INSTDIR" 0 DoInstall
 	Abort "Quitting the install process"
 DoInstall:
 
+ DetailPrint "Uninstalling previous version"   
+      
+ Delete $SYSDIR\gm0.dll	
+ RMDir /r "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter"
+
+ DetailPrint "Uninstall complete"      
+  
+
  SetOutPath "$INSTDIR\bin32"
  file "..\Release\x86\gm0.dll"
  file "..\Release\x86\gm0.lib"
  file "..\Release\x86\consoleexample.exe"
  file "..\apps\gm-control-32.xls"
+ file "..\apps\*.vi"
+
    
  SetOutPath "$INSTDIR\bin64"
  file "..\Release\x64\gm0.dll"
@@ -110,7 +120,7 @@ DoInstall:
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\dotnetconsoleexample32bit.lnk" "$INSTDIR\bin32\gm0_sharp_console_test.exe" "" "$INSTDIR\bin32\gm0_sharp_console_test.exe" 0
  
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\consoleexample64bit.lnk" "$INSTDIR\bin64\consoleexample.exe" "" "$INSTDIR\bin64\consoleexample.exe" 0
- CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\dotnetconsoleexample64bit.lnk" "$INSTDIR\bin64\gm0_sharp_console_test.exe" "" "$INSTDIR\bin64\gm0_sharp_console_test.exe" 0
+ CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\dotnetconsoleexample.lnk" "$INSTDIR\bin\gm0_sharp_console_test.exe" "" "$INSTDIR\bin\gm0_sharp_console_test.exe" 0
  
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\GM05 & GM08 Programming Manual.lnk" "$INSTDIR\docs\GM05&08PROGRAMMING MANUAL.pdf" "" "$INSTDIR\docs\GM05&08PROGRAMMING MANUAL.pdf" 0
  
@@ -120,7 +130,8 @@ DoInstall:
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Labview Example.lnk" "$INSTDIR\bin32\simplegm0-1-6.vi" "" "$INSTDIR\bin32\simplegm0-1-6.vi" 0
  
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Headers.lnk" "$INSTDIR\include" "" "$INSTDIR\include" 0
- CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Lib.lnk" "$INSTDIR\lib" "" "$INSTDIR\lib" 0
+ CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Lib32.lnk" "$INSTDIR\bin32" "" "$INSTDIR\bin32" 0
+ CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Lib64.lnk" "$INSTDIR\bin64" "" "$INSTDIR\bin64" 0
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Source.lnk" "$INSTDIR\source" "" "$INSTDIR\source" 0
  CreateShortCut "$SMPROGRAMS\Hirst Magnetic Instruments Ltd\Gaussmeter\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
  
@@ -129,8 +140,6 @@ DoInstall:
  WriteUninstaller $INSTDIR\Uninstall.exe
 
 SectionEnd ; end the section
-
-
 
 Section "Uninstall"
   RMDir /r $INSTDIR
