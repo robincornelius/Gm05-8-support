@@ -51,6 +51,7 @@ namespace gm0_sharp_console_test
 
                 waitconnect.Reset();
 
+
                 mygm.onConnectedCallback += new gm0.ConnectedCallback(mygm_onConnectedCallback);
 
                 Console.WriteLine("Trying to connect to meter");
@@ -67,7 +68,7 @@ namespace gm0_sharp_console_test
                 douserinput();
                 mygm.terminate();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
 
@@ -100,26 +101,26 @@ namespace gm0_sharp_console_test
             Console.WriteLine("********************************************************************************");
             Console.WriteLine("\n");
             Console.WriteLine(" (R) - Set Range        (U) - Set Units             (M) - Mode   ");
-            Console.WriteLine(" (L) - language         (V) - Get Value             ( ) - Show menu");	
-            Console.WriteLine(" (A) - Auto Zero        (N) - Null                                  ");	
+            Console.WriteLine(" (L) - language         (V) - Get Value             ( ) - Show menu");
+            Console.WriteLine(" (A) - Auto Zero        (N) - Null                                  ");
             Console.WriteLine(" (1) - Enable callback  (0) - Disable callback      (<) - Set GM Time");
-            Console.WriteLine(" (I) - Set interval     (Q) - Reset peak            (>) - Get GM Time");	
+            Console.WriteLine(" (I) - Set interval     (Q) - Reset peak            (>) - Get GM Time");
             Console.WriteLine(" (W) - Power Off        (G) - Get reg               (H) - Get Reg(s)");
-            Console.WriteLine("                        (X) - Exit                  (9) - Get E2");	
+            Console.WriteLine("                        (X) - Exit                  (9) - Get E2");
             Console.WriteLine("\n\n");
 
         }
 
         static void douserinput()
         {
-            bool run=true;
+            bool run = true;
             string input;
             int value;
 
-            while(run)
+            while (run)
             {
                 Console.Write("Your selection :");
-                ConsoleKeyInfo key=Console.ReadKey();
+                ConsoleKeyInfo key = Console.ReadKey();
                 Console.Write("\n");
                 switch (key.KeyChar)
                 {
@@ -127,7 +128,7 @@ namespace gm0_sharp_console_test
                     case 'r':
                     case 'R':
                         Console.Write("New range (0-4) :");
-                        input=Console.ReadLine();
+                        input = Console.ReadLine();
                         if (int.TryParse(input, out value))
                         {
                             mygm.setrange((byte)value);
@@ -137,8 +138,8 @@ namespace gm0_sharp_console_test
                     case 'U':
                     case 'u':
                         Console.Write("Select new units :-\n");
-                       
-                        foreach(string unit in Enum.GetNames(typeof(units)))
+
+                        foreach (string unit in Enum.GetNames(typeof(units)))
                         {
                             Console.WriteLine("Units: {0} - {1}", unit, (int)Enum.Parse(typeof(units), unit));
                         }
@@ -146,7 +147,7 @@ namespace gm0_sharp_console_test
                         {
                             mygm.setunits((units)Enum.Parse(typeof(units), Console.ReadLine()));
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             Console.WriteLine(e.Message);
                         }
@@ -155,7 +156,7 @@ namespace gm0_sharp_console_test
 
                     case 'M':
                     case 'm':
-                       
+
                         Console.Write("Select new mode :-\n");
 
                         foreach (string mode in Enum.GetNames(typeof(modes)))
@@ -196,8 +197,8 @@ namespace gm0_sharp_console_test
                     case 'v':
                         Console.WriteLine("Reading is " + mygm.lastreading.ToString());
                         Console.WriteLine(mygm.lastreading.value.ToString() + " " + mygm.lastreading.getCurrentUnitsBaseDisp());
-  
-                      break;
+
+                        break;
 
                     case ' ':
                         showmenu();
@@ -234,12 +235,12 @@ namespace gm0_sharp_console_test
                     case 'i':
                         Console.Write("New data rate :");
                         input = Console.ReadLine();
-                        
+
                         if (int.TryParse(input, out value))
                         {
                             mygm.SetDataRate(value);
                         }
-                       
+
                         break;
 
                     case 'Q':
@@ -267,12 +268,12 @@ namespace gm0_sharp_console_test
                     case 'g':
                         Console.Write("Register (0-99) :");
                         input = Console.ReadLine();
-                        
+
                         if (int.TryParse(input, out value))
                         {
-                            gmstore data=mygm.get_saved_value(value);
+                            gmstore data = mygm.get_saved_value(value);
                             Console.WriteLine(data.ToString());
-                        }       
+                        }
                         break;
 
                     case 'H':
@@ -283,12 +284,12 @@ namespace gm0_sharp_console_test
 
                         Console.Write("End Register (0-99) :");
                         int end;
-                        int.TryParse(Console.ReadLine(),out end);
+                        int.TryParse(Console.ReadLine(), out end);
 
-                        for(int x=start;x<=end;x++)
+                        for (int x = start; x <= end; x++)
                         {
-                            gmstore data=mygm.get_saved_value(x);
-                            Console.WriteLine("Register "+x.ToString()+" is "+data.ToString());
+                            gmstore data = mygm.get_saved_value(x);
+                            Console.WriteLine("Register " + x.ToString() + " is " + data.ToString());
                         }
 
                         break;
@@ -308,7 +309,7 @@ namespace gm0_sharp_console_test
 
 
             }
-        
+
 
 
 

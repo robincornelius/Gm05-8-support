@@ -19,4 +19,5 @@ VS2003/*
 *.ipch
 *.suo
 *.opensdf
-/.vs/gm0/v16
+/.vs
+
