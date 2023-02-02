@@ -151,7 +151,7 @@ struct gm_store{
  unsigned char probeoffset;
 };
 
-int	probe_offset;
+extern int	probe_offset;
 
 // Thread and initaliseation fuctions
 GM0_API HANDLEGM LIBTYPE gm0_newgm BKET (int port,int mode);

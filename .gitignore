@@ -21,3 +21,4 @@ VS2003/*
 *.opensdf
 /.vs
 
+/lib/.deps

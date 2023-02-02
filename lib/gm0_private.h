@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 	gm0.dll/gm0.so shared gaussmeter function driver library for Hirst Gaussmeters
     Copyright © 2004-2008  Robin Cornelius/Hirst Magnetic Instruments Ltd
@@ -35,8 +37,8 @@
 	#include <usb.h>
 #endif
 
-unsigned __int16 probee2buf[255];
-unsigned __int16 gme2buf[255];
+extern unsigned __int16 probee2buf[255];
+extern unsigned __int16 gme2buf[255];
 
 BOOL checkhand(int hand);
 
@@ -144,12 +146,10 @@ struct GM_STRUCT{
 
 
 
-FILE * logfile;
-
-struct GM_STRUCT *pGMS[255];
+extern FILE * logfile;
+extern struct GM_STRUCT *pGMS[255];
 
 #define true TRUE
-
 #define false FALSE
 
 

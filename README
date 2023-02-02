@@ -1,0 +1,39 @@
+
+Linux Instructions
+
+Last tested 2/2/2023 on Debian Linux Bullseye
+
+1) Grab the build tools and required dependencies
+
+	sudo apt-get install build-essental autotools automake autotools-dev autoconf m4 libtool
+	sudo apt-get install libusb libusb-dev
+
+2) Rerun the auto tools generator, from inside the gaussmeter source code run
+
+	autoreconf -i -f
+	./configure
+	make
+	sudo make install
+
+by default this will build the library and example using the library and install in to /usr/local/lib and /usr/local/bin shared 
+and static lins are built.
+
+3) Testing
+
+Depending on your setup it may be necessary to tell the system where the library is, if you installed by default in to /usr/local/lib
+then please first set LD_LIBRRY_PATH
+
+	export LD_LIBRARY_PATH=/usr/local/lib
+	/usr/local/bin/consoleexample
+
+Select USB or serial port and allow to connect to gaussmeter, a menu is shown and demonstrates all the API functions
+
+
+
+
+
+
+
+
+
+

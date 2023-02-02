@@ -39,6 +39,9 @@
 
 
 
+FILE * logfile;
+struct GM_STRUCT *pGMS[255];
+
 
 struct mode_array
 {	
