@@ -22,3 +22,6 @@ VS2003/*
 /.vs
 
 /lib/.deps
+/autom4te.cache
+/consoleexample/.deps
+/apps/__pycache__/*.pyc
