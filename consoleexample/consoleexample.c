@@ -36,6 +36,8 @@
 visual C extensions
 */
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -106,7 +108,6 @@ int main(int argv, char* argvc[])
 	unsigned char buffer[1024];
 	unsigned char cmd;
 	unsigned char data;
-	int  integer;
 
 #ifndef _LINUX
 
@@ -210,10 +211,10 @@ int main(int argv, char* argvc[])
 		{
 			struct gm_store store;
 			store.value = (float)gm0_getvalue(mygm);
-			store.range = (float)gm0_getrange(mygm);
-			store.units = (float)gm0_getunits(mygm);
-			store.mode = (float)gm0_getmode(mygm);
-			store.probeoffset = (unsigned char)probe_offset;
+			store.range = (unsigned char)gm0_getrange(mygm);
+			store.units = (unsigned char)gm0_getunits(mygm);
+			store.mode = (unsigned char)gm0_getmode(mygm);
+			//store.probeoffset = (unsigned char)probe_offset;
 			callback(mygm, store);
 		} //case v 
 		break;
@@ -236,6 +237,13 @@ int main(int argv, char* argvc[])
 		case '1':
 			gm0_setcallback(mygm, &callback);
 			break;
+		case '2':
+			gm0_fastUSBpoll(mygm,1);
+			break;
+		case '3':
+			gm0_fastUSBpoll(mygm, 0);
+			break;
+
 		case '0':
 			gm0_setcallback(mygm, NULL);
 			break;
@@ -447,43 +455,46 @@ void loadallfunctions()
 		exit(-1);
 	}
 
-	loadfunction(lib, &gm0_newgm, "gm0_newgm");
-	loadfunction(lib, &gm0_killgm, "gm0_killgm");
-	loadfunction(lib, &gm0_getrange, "gm0_getrange");
-	loadfunction(lib, &gm0_getunits, "gm0_getunits");
-	loadfunction(lib, &gm0_getvalue, "gm0_getvalue");
-	loadfunction(lib, &gm0_getmode, "gm0_getmode");
+	loadfunction(lib, (void **) &gm0_newgm, "gm0_newgm");
+	loadfunction(lib, (void**) &gm0_killgm, "gm0_killgm");
+	loadfunction(lib, (void**) &gm0_getrange, "gm0_getrange");
+	loadfunction(lib, (void**) &gm0_getunits, "gm0_getunits");
+	loadfunction(lib, (void**) &gm0_getvalue, "gm0_getvalue");
+	loadfunction(lib, (void**) &gm0_getmode, "gm0_getmode");
 
-	loadfunction(lib, &gm0_startconnect, "gm0_startconnect");
-	loadfunction(lib, &gm0_getconnect, "gm0_getconnect");
+	loadfunction(lib, (void**) &gm0_startconnect, "gm0_startconnect");
+	loadfunction(lib, (void**) &gm0_getconnect, "gm0_getconnect");
 
-	loadfunction(lib, &gm0_setrange, "gm0_setrange");
-	loadfunction(lib, &gm0_setunits, "gm0_setunits");
-	loadfunction(lib, &gm0_setmode, "gm0_setmode");
-	loadfunction(lib, &gm0_setlanguage, "gm0_setlanguage");
+	loadfunction(lib, (void**) &gm0_setrange, "gm0_setrange");
+	loadfunction(lib, (void**) &gm0_setunits, "gm0_setunits");
+	loadfunction(lib, (void**) &gm0_setmode, "gm0_setmode");
+	loadfunction(lib, (void**) &gm0_setlanguage, "gm0_setlanguage");
 
-	loadfunction(lib, &gm0_doaz, "gm0_doaz");
-	loadfunction(lib, &gm0_resetnull, "gm0_resetnull");
+	loadfunction(lib, (void**) &gm0_doaz, "gm0_doaz");
+	loadfunction(lib, (void**) &gm0_resetnull, "gm0_resetnull");
 
-	loadfunction(lib, &gm0_setcallback, "gm0_setcallback");
+	loadfunction(lib, (void**) &gm0_setcallback, "gm0_setcallback");
 
-	loadfunction(lib, &gm0_setinterval, "gm0_setinterval");
-	loadfunction(lib, &gm0_resetpeak, "gm0_resetpeak");
-	loadfunction(lib, &gm0_sendtime, "gm0_sendtime");
+	loadfunction(lib, (void**) &gm0_setinterval, "gm0_setinterval");
+	loadfunction(lib, (void**) &gm0_resetpeak, "gm0_resetpeak");
+	loadfunction(lib, (void**) &gm0_sendtime, "gm0_sendtime");
 
-	loadfunction(lib, &gm0_startcmd, "gm0_startcmd");
-	loadfunction(lib, &gm0_endcmd, "gm0_endcmd");
-	loadfunction(lib, &gm0_getstore, "gm0_getstore");
+	loadfunction(lib, (void**) &gm0_startcmd, "gm0_startcmd");
+	loadfunction(lib, (void**) &gm0_endcmd, "gm0_endcmd");
+	loadfunction(lib, (void**) &gm0_getstore, "gm0_getstore");
 
 
-	loadfunction(lib, &gm0_gettime, "gm0_gettime");
-	loadfunction(lib, &gm0_settime, "gm0_settime");
+	loadfunction(lib, (void**) &gm0_gettime, "gm0_gettime");
+	loadfunction(lib, (void**) &gm0_settime, "gm0_settime");
 
-	loadfunction(lib, &gm0_getprobeserial, "gm0_getprobeserial");
-	loadfunction(lib, &gm0_getgmserial, "gm0_getgmserial");
-	loadfunction(lib, &gm0_getprobetype, "gm0_getprobetype");
-	loadfunction(lib, &gm0_getprobecaldate, "gm0_getprobecaldate");
-	loadfunction(lib, &gm0_setfilterwidth, "gm0_setfilterwidth");
+	loadfunction(lib, (void**) &gm0_getprobeserial, "gm0_getprobeserial");
+	loadfunction(lib, (void**) &gm0_getgmserial, "gm0_getgmserial");
+	loadfunction(lib, (void**) &gm0_getprobetype, "gm0_getprobetype");
+	loadfunction(lib, (void**) &gm0_getprobecaldate, "gm0_getprobecaldate");
+	loadfunction(lib, (void**) &gm0_setfilterwidth, "gm0_setfilterwidth");
+
+	loadfunction(lib, (void**) &gm0_fastUSBpoll, "gm0_fastUSBpoll");
+
 
 }
 
@@ -495,7 +506,7 @@ void loadfunction(HANDLE lib, void** functionpointer, char* functionname)
 		printf("Error loading function %s \n", functionname);
 		exit(-1);
 	}
-	printf("Function %s loaded @ %x OK\n", functionname, functionpointer);
+	printf("Function %s loaded @ %x OK\n", functionname, (unsigned long)functionpointer);
 	return;
 }
 #endif
@@ -591,22 +602,22 @@ void setgmtime()
 
 	tempbuffer[0] = tbuffer[0];
 	tempbuffer[1] = tbuffer[1];
-	gaussmeter_time.hour = strtol(tempbuffer, &stop, 10);
+	gaussmeter_time.hour = (unsigned char) strtol(tempbuffer, &stop, 10);
 	tempbuffer[0] = tbuffer[3];
 	tempbuffer[1] = tbuffer[4];
-	gaussmeter_time.min = strtol(tempbuffer, &stop, 10);
+	gaussmeter_time.min = (unsigned char) strtol(tempbuffer, &stop, 10);
 	tempbuffer[0] = tbuffer[6];
 	tempbuffer[1] = tbuffer[7];
-	gaussmeter_time.sec = strtol(tempbuffer, &stop, 10);
+	gaussmeter_time.sec = (unsigned char) strtol(tempbuffer, &stop, 10);
 	tempbuffer[0] = dbuffer[3];
 	tempbuffer[1] = dbuffer[4];
-	gaussmeter_time.day = strtol(tempbuffer, &stop, 10);
+	gaussmeter_time.day = (unsigned char) strtol(tempbuffer, &stop, 10);
 	tempbuffer[0] = dbuffer[0];
 	tempbuffer[1] = dbuffer[1];
-	gaussmeter_time.month = strtol(tempbuffer, &stop, 10);
+	gaussmeter_time.month = (unsigned char) strtol(tempbuffer, &stop, 10);
 	tempbuffer[0] = dbuffer[6];
 	tempbuffer[1] = dbuffer[7];
-	gaussmeter_time.year = strtol(tempbuffer, &stop, 10);
+	gaussmeter_time.year = (unsigned char) strtol(tempbuffer, &stop, 10);
 
 
 	printf("Setting GM time to %d:%d:%d %d/%d/%d \n", gaussmeter_time.hour, gaussmeter_time.min, gaussmeter_time.sec, gaussmeter_time.day, gaussmeter_time.month, gaussmeter_time.year);

@@ -15,6 +15,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gm0", "lib\gm0.vcxproj", "{BE100C74-5A7A-467E-BCF3-896C9B6BF1A3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "consoleexample", "consoleexample\consoleexample.vcxproj", "{DFE296F0-4257-4B63-9A48-C8C5D027BC55}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BE100C74-5A7A-467E-BCF3-896C9B6BF1A3} = {BE100C74-5A7A-467E-BCF3-896C9B6BF1A3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

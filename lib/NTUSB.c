@@ -559,7 +559,8 @@ int GetReadingFromGM08(HANDLEGM hand)
 	char counter = 0;
 	DWORD Result = 0;
 
-	char inttext[16];
+#define INTTEXT_BUFSIZE 16
+	char inttext[INTTEXT_BUFSIZE];
 
 	__int16 intreading;
 
@@ -629,7 +630,7 @@ int GetReadingFromGM08(HANDLEGM hand)
 
 	*(p_uchar + 1) = (unsigned char)Reading[1];
 
-	sprintf(inttext, "%d", intreading);
+	sprintf_s(inttext, INTTEXT_BUFSIZE,"%d", intreading);
 
 	//DisplayData(inttext);
 
@@ -646,26 +647,32 @@ void polldata(HANDLEGM hand)
 	if (pGMS[hand]->m_Iportno > 0)
 		return;
 
-	WritepacketToDevice(hand, 42, 42, NULL);
+	if (!pGMS[hand]->fastUSBcapture)
+	{
+		WritepacketToDevice(hand, 42, 42, NULL);
+	}
 
 	data = GetReadingFromGM08(hand);
 
-	pGMS[hand]->store.range = WritepacketToDevice(hand, 48, 0, NULL) & 0x07;
+	if (!pGMS[hand]->fastUSBcapture)
+	{
+		pGMS[hand]->store.range = WritepacketToDevice(hand, 48, 0, NULL) & 0x07;
 
-	pGMS[hand]->store.units = WritepacketToDevice(hand, 47, 0, NULL) & 0x03;
+		pGMS[hand]->store.units = WritepacketToDevice(hand, 47, 0, NULL) & 0x03;
 
-	pGMS[hand]->store.probeoffset = (unsigned char)probe_offset;
+		pGMS[hand]->store.probeoffset = (unsigned char)probe_offset;
 
-	pGMS[hand]->store.time.hour = 0;
-	pGMS[hand]->store.time.min = 0;
-	pGMS[hand]->store.time.sec = 0;
-	pGMS[hand]->store.time.year = 0;
-	pGMS[hand]->store.time.month = 0;
-	pGMS[hand]->store.time.day = 0;
+		pGMS[hand]->store.time.hour = 0;
+		pGMS[hand]->store.time.min = 0;
+		pGMS[hand]->store.time.sec = 0;
+		pGMS[hand]->store.time.year = 0;
+		pGMS[hand]->store.time.month = 0;
+		pGMS[hand]->store.time.day = 0;
 
-	tempmode = WritepacketToDevice(hand, 46, 0, NULL);
+		tempmode = WritepacketToDevice(hand, 46, 0, NULL);
 
-	pGMS[hand]->store.mode = tempmode > 4 || tempmode < 0 ? 0 : tempmode;
+		pGMS[hand]->store.mode = tempmode > 4 || tempmode < 0 ? 0 : tempmode;
+	}
 
 	gm0_convertvalue(pGMS[hand]->store.range, pGMS[hand]->store.units, (float)data, &pGMS[hand]->store.value, TRUE);
 

@@ -207,7 +207,7 @@ GM0_API int  LIBTYPE gm0_simkey BKET (HANDLEGM,char keycode);
 GM0_API int LIBTYPE gm0_setinterval BKET (HANDLEGM hand,int interval);
 // FAST USBpoll disbales checking range mode and units on the meter for faster comms
 // if you change the mode,range or units then call this function again to refresh.
-GM0_API int gm0_fastUSBpoll(HANDLEGM hand,int enabled);
+GM0_API int LIBTYPE gm0_fastUSBpoll BKET(HANDLEGM hand,int enabled);
 
 //GM08 USB ONLY,this also kiils the read thread
 GM0_API void gm0_sampleondemand(HANDLEGM hand);
@@ -235,6 +235,7 @@ GM0_API int gm0_resetbuffersamples(HANDLEGM hand);
 GM0_API int gm0_getnobuffersamples(HANDLEGM hand);
 
 GM0_API int LIBTYPE gm0_setfilterwidth BKET (HANDLEGM hand,unsigned __int8 width);
+
 
 GM0_API void gm0_enabledebug();
 GM0_API void gm0_disabledebug();
