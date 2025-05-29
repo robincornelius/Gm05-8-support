@@ -12,7 +12,6 @@
 *UpgradeReport*
 *UpgradeLog*
 VS2003/*
-*.vcxproj*
 *.ncb
 *.sdf
 *.old

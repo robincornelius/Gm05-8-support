@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{38063dd1-b846-4536-8940-064e30224d7f}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{ebd6eda8-6360-4868-899d-40f7eb30eda6}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{542ba0a5-4f09-42f0-af0d-97ca937f287e}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="gm0.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gm0_comms.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="linuxcomms.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="linuxusb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NTcomms.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NTUSB.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gm0.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="comms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gm0.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gm0_private.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NTUSB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="LICENCE.txt" />
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>
