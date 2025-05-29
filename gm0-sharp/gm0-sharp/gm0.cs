@@ -112,6 +112,7 @@ namespace gm0_sharp
      public byte mode;
      public byte units;
      public float value;
+     public byte probeoffset;
     };
 
     public class gmtime
@@ -138,7 +139,7 @@ namespace gm0_sharp
         public byte month;
         public byte year;
 
-        public string ToString()
+        public override string ToString()
         {
             if (year == 0)
             {
@@ -186,7 +187,7 @@ namespace gm0_sharp
         public units units;
         public float value;
 
-        public string ToString()
+        public override string ToString()
         {
             return value.ToString() + " " + range.ToString() + " " + mode.ToString() + " " + units.ToString() + " " + time.ToString();
         }
@@ -211,8 +212,7 @@ namespace gm0_sharp
     {
 
         public const string DLL_FILE_NAME = "gm0.dll";
-
-        connectiontype contype;
+ 
         int connectionport;
         int hand=-1;
 
@@ -248,8 +248,6 @@ namespace gm0_sharp
 
 
             lastreading = new gmstore();
-
-            contype = contype;
             connectionport = port;
 
             hand = gm0_newgm(port, (int)Enum.Parse(typeof(connectiontype), contype.ToString()));
@@ -260,6 +258,7 @@ namespace gm0_sharp
 
             gm0_setconnectcallback(hand, meh);
             gm0_setcallback(hand, meh2);
+
             //gm0_setnullcallback(hand, nullcallback);
         }
 
