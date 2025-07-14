@@ -605,6 +605,14 @@ namespace gm0_sharp
             return gm0_endproberead(hand);
         }
 
+        [DllImport(DLL_FILE_NAME)]
+        static extern UInt16 gm0_reloadprobe(int hand);
+        public UInt16 ReloadProbe()
+        {
+            checkvalidhandorthrow();
+            return gm0_reloadprobe(hand);
+        }
+
 
 
         public void checkvalidhandorthrow()

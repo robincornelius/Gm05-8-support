@@ -1,6 +1,6 @@
 /*
 
-   Copyright © 2004-2008 Hirst Magnetic Instruments Ltd and Robin Cornelius.
+   Copyright Â© 2004-2008 Hirst Magnetic Instruments Ltd and Robin Cornelius.
 
    The GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 
@@ -240,5 +240,6 @@ GM0_API int LIBTYPE gm0_setfilterwidth BKET (HANDLEGM hand,unsigned __int8 width
 GM0_API void gm0_enabledebug();
 GM0_API void gm0_disabledebug();
 
+GM0_API int gm0_reloadprobe(HANDLEGM hand);
 
 #endif

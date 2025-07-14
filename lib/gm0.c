@@ -1256,3 +1256,16 @@ GM0_API int gm0_setfilterwidth(HANDLEGM hand,unsigned __int8 width)
 
 	return 0;
 }
+
+GM0_API int gm0_reloadprobe(HANDLEGM hand)
+{
+	if (!checkhand(hand))
+		return -1;
+
+	gm0_gmstar(hand);
+
+	gm0_gmcmd(hand, 54,0);
+	gm0_gmmode1(hand);
+
+	return 0;
+}
